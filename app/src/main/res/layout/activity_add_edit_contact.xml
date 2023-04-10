@@ -13,6 +13,13 @@
         android:orientation="vertical"
         android:padding="10dp"
         android:layout_centerInParent="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Identifiant"
+            android:textColor="@color/button"
+            android:layout_marginStart="2dp"
+            android:textStyle="bold"/>
         <EditText
             android:id="@+id/EditTextId"
             android:layout_width="match_parent"
@@ -24,7 +31,14 @@
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
             android:padding="10dp"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/button"
+            android:textStyle="bold"/>
         <EditText
             android:id="@+id/EditTextLastName"
             android:layout_width="match_parent"
@@ -36,7 +50,14 @@
             android:layout_marginTop="10dp"
             android:textColor="@color/white"
             android:padding="10dp"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Prénom"
+            android:layout_marginStart="2dp"
+            android:textColor="@color/button"
+            android:textStyle="bold"/>
         <EditText
             android:id="@+id/EditTextFirstName"
             android:layout_width="match_parent"
