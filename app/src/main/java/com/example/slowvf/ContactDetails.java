@@ -44,10 +44,8 @@ public class ContactDetails extends AppCompatActivity {
         buttonDeleteContact = findViewById(R.id.deleteContact);
 
         textViewEdit.setOnClickListener(v -> {
-            Log.i("Info", "Edit Button clicked");
 
             // go to add edit contact  page
-            Log.i("Info", "Contact item view clicked");
             Intent intentEditContact = new Intent(ContactDetails.this, AddEditContact.class);
             intentEditContact.putExtra("id", id);
             intentEditContact.putExtra("lastName", lastName);
@@ -60,7 +58,6 @@ public class ContactDetails extends AppCompatActivity {
         });
 
         buttonDeleteContact.setOnClickListener(v -> {
-            Log.i("Info", "Delete Contact button clicked");
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ContactDetails.this);
 
             // Title
@@ -73,7 +70,6 @@ public class ContactDetails extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // if yes delete contact
-                            Log.i("Info", "Delete contact");
                             ContactDetails.this.finish();
                         }
                     }).setNegativeButton("Non", new DialogInterface.OnClickListener() {

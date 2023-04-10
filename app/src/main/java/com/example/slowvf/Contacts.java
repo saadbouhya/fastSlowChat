@@ -67,7 +67,6 @@ public class Contacts extends AppCompatActivity {
         LinearLayoutManager lm = new LinearLayoutManager(this);
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
-        Log.i("Info", "Data loaded!");
     }
 
     private void loadData() {
@@ -75,7 +74,6 @@ public class Contacts extends AppCompatActivity {
         LinearLayoutManager lm = new LinearLayoutManager(this);
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
-        Log.i("Info", "Data loaded!");
     }
 
     //@Override
@@ -129,7 +127,6 @@ public class Contacts extends AppCompatActivity {
         contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
         contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
 
-        //Log.i("Info", "Data sent");
 
         return contacts;
     }
