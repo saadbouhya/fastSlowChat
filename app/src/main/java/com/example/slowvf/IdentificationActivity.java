@@ -18,7 +18,7 @@ public class IdentificationActivity extends AppCompatActivity {
 
         // Obtenir les références des vues dans le fichier de mise en page
         Button signupButton = findViewById(R.id.signup_button);
-        Button otherButton = findViewById(R.id.other_button);
+        Button importData = findViewById(R.id.import_data);
 
         // Ajouter un écouteur de clic pour le bouton d'inscription
         signupButton.setOnClickListener(new View.OnClickListener() {
@@ -29,7 +29,7 @@ public class IdentificationActivity extends AppCompatActivity {
         });
 
         // Ajouter un écouteur de clic pour le bouton en bas de la page
-        otherButton.setOnClickListener(new View.OnClickListener() {
+        importData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 View popupView = LayoutInflater.from(IdentificationActivity.this).inflate(R.layout.old_account, null);
@@ -49,9 +49,6 @@ public class IdentificationActivity extends AppCompatActivity {
                         alertDialog.dismiss();
                     }
                 });
-                // Create and set the Close button action
-                //Button closeButton = popupView.findViewById(R.id.close_button);
-
 
             }
         });
