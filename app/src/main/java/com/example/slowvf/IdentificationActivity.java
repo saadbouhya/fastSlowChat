@@ -32,7 +32,7 @@ public class IdentificationActivity extends AppCompatActivity {
         otherButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View popupView = LayoutInflater.from(IdentificationActivity.this).inflate(R.layout.anciencompte, null);
+                View popupView = LayoutInflater.from(IdentificationActivity.this).inflate(R.layout.old_account, null);
 
                 // Create the AlertDialog object and set the popup layout as its view
                 AlertDialog.Builder builder = new AlertDialog.Builder(IdentificationActivity.this);
