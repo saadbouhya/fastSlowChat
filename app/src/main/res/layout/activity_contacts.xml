@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".Contacts">
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="5dp"
+        android:hint="Chercher un contact"
+        android:inputType="textShortMessage"
+        android:textColor="@color/black"
+        android:background="@color/white" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewContacts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_marginTop="60dp"
+        tools:listitem="@layout/row_contact_item"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+<!--    fab button to add contact-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/buttonAddContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        app:backgroundTint="@color/button"
+        android:src="@drawable/baseline_add_24"
+        app:tint="@color/background"
+        android:elevation="5dp"
+        app:pressedTranslationZ="10dp"
+        android:contentDescription="Add a new contact" />
+
+</RelativeLayout>
