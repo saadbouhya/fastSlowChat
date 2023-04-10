@@ -3,6 +3,7 @@ package com.example.slowvf;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ public class IdentificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Code à exécuter lorsque l'utilisateur clique sur le bouton "Inscription"
+                Intent intent = new Intent(IdentificationActivity.this, Contacts.class);
+                startActivity(intent);
             }
         });
 
