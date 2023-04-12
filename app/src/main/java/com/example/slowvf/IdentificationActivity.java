@@ -26,7 +26,7 @@ public class IdentificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Code à exécuter lorsque l'utilisateur clique sur le bouton "Inscription"
-                Intent intent = new Intent(IdentificationActivity.this, Contacts.class);
+                Intent intent = new Intent(IdentificationActivity.this, MainActivityChat.class);
                 startActivity(intent);
             }
         });
