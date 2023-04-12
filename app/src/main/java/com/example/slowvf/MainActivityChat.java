@@ -10,15 +10,15 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import android.os.Bundle;
 
-public class MainActivityMessagerie extends AppCompatActivity {
+public class MainActivityChat extends AppCompatActivity {
 
-    int[] tabIcons = {R.drawable.ic_baseline_email_24, R.drawable.ic_baseline_send_24, R.drawable.ic_baseline_chat_24};
+    int[] tabIcons = {R.drawable.ic_baseline_email_24, R.drawable.ic_baseline_sent_24, R.drawable.ic_baseline_chat_24};
     String[] tabTitles = {"REÇUS", "EMIS", "CHAT"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.messagerie_activity_main);
+        setContentView(R.layout.chat_activity_main);
 
         ViewPager2 viewPager = findViewById(R.id.activity_main_viewpager);
         viewPager.setAdapter(new MypagerAdapter(getSupportFragmentManager(), getLifecycle()));

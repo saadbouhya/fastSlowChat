@@ -13,7 +13,7 @@ import com.example.slowvf.Adapters.CustomAdapter;
 import com.example.slowvf.R;
 
 
-public class EmisFragment extends Fragment {
+public class SentFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -22,17 +22,17 @@ public class EmisFragment extends Fragment {
     private String[] myDataset = {"Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis"};
 
 
-    public EmisFragment(){}
+    public SentFragment(){}
 
-    public static EmisFragment newInstance() {
-        return (new EmisFragment());
+    public static SentFragment newInstance() {
+        return (new SentFragment());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view =  inflater.inflate(R.layout.fragment_emis, container, false);
+        View view =  inflater.inflate(R.layout.fragment_sent, container, false);
         recyclerView = view.findViewById(R.id.recyclerViewEmis);
 
         layoutManager = new LinearLayoutManager(getActivity());

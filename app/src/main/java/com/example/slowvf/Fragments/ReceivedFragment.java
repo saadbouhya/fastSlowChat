@@ -13,7 +13,7 @@ import com.example.slowvf.Adapters.CustomAdapter;
 import com.example.slowvf.R;
 
 
-public class RecusFragment extends Fragment {
+public class ReceivedFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -21,10 +21,10 @@ public class RecusFragment extends Fragment {
 
     private String[] myDataset = {"Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis"};
 
-public RecusFragment(){}
+public ReceivedFragment(){}
 
-    public static RecusFragment newInstance() {
-        return (new RecusFragment());
+    public static ReceivedFragment newInstance() {
+        return (new ReceivedFragment());
     }
 
     @Override
@@ -32,7 +32,7 @@ public RecusFragment(){}
                              Bundle savedInstanceState) {
 
 
-        View view = inflater.inflate(R.layout.fragment_recus, container, false);
+        View view = inflater.inflate(R.layout.fragment_received, container, false);
 
         recyclerView = view.findViewById(R.id.recyclerView);
 
