@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/chat_bubble_black_24dp"
+        android:title="@string/title_chat" />
+
+    <item
+        android:id="@+id/navigation_echange"
+        android:icon="@drawable/sync_icon_black_24dp"
+        android:title="@string/title_echange" />
+
+    <item
+        android:id="@+id/navigation_carte"
+        android:icon="@drawable/map_icon_black_24dp"
+        android:title="@string/title_carte" />
+
+    <item
+        android:id="@+id/navigation_contacts"
+        android:icon="@drawable/contacts_icon_black_24dp"
+        android:title="@string/title_contacts" />
+
+    <item
+        android:id="@+id/navigation_reglages"
+        android:icon="@drawable/settings_icon_black_24dp"
+        android:title="@string/title_reglages" />
+
+</menu>
