@@ -11,6 +11,9 @@ public class ChatViewModel extends ViewModel {
     public ChatViewModel() {
         mText = new MutableLiveData<>();
         mText.setValue("Fragment du Chat");
+
+
+        // TODO: bind conversation so variables update in realtime
     }
 
     public LiveData<String> getText() {

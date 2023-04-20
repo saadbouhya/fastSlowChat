@@ -60,14 +60,14 @@
             android:maxLines="6"
             tools:ignore="Autofill" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button_gchat_send"
             android:layout_width="100dp"
             android:layout_height="60dp"
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
-            android:textColor="?attr/colorOnBackground"
-            android:text="SEND" />
+            app:tint="?attr/colorOnBackground"
+            android:src="@drawable/send_icon_black_24dp"/>
 
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
