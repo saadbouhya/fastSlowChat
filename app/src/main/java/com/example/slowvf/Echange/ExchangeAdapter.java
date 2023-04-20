@@ -1,7 +1,9 @@
 package com.example.slowvf.Echange;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.R;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.ExchangeViewHolder> {
@@ -49,7 +52,10 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
                 builder.setPositiveButton("Apply", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Do something when Apply button is clicked
+                        Context context = holder.itemView.getContext();
+                        Intent intent = new Intent(context, Synchonosation.class);
+                        intent.putExtra("bluetoothItem", (Serializable) device);
+                        context.startActivity(intent);
                     }
                 });
                 builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {

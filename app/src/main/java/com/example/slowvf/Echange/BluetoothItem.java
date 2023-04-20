@@ -1,5 +1,7 @@
 package com.example.slowvf.Echange;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BluetoothItem {
+public class BluetoothItem implements Serializable {
     String name;
     String macAddress;
 }
