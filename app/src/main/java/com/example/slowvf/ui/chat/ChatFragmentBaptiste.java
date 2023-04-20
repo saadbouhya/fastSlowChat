@@ -13,11 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowvf.R;
 import com.example.slowvf.conversation.MessageListActivity;
-import com.example.slowvf.databinding.FragmentChatBinding;
+import com.example.slowvf.databinding.FragmentChatBaptisteBinding;
 
-public class ChatFragment extends Fragment {
+public class ChatFragmentBaptiste extends Fragment {
 
-    private FragmentChatBinding binding;
+    private FragmentChatBaptisteBinding binding;
     private Button Conversation1;
     private Button Conversation2;
 
@@ -27,7 +27,7 @@ public class ChatFragment extends Fragment {
         ChatViewModel chatViewModel =
                 new ViewModelProvider(this).get(ChatViewModel.class);
 
-        binding = FragmentChatBinding.inflate(inflater, container, false);
+        binding = FragmentChatBaptisteBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         Conversation1 = root.findViewById(R.id.conversation_button);
