@@ -23,7 +23,7 @@ public class Synchronization extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_synchonosation);
+        setContentView(R.layout.activity_synchronization);
         progressBar = findViewById(R.id.progressBar);
         Intent intent = getIntent();
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");

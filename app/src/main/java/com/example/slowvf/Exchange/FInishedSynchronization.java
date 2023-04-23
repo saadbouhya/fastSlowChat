@@ -17,7 +17,7 @@ public class FInishedSynchronization extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_finished_synchronisation);
+        setContentView(R.layout.activity_finished_synchronization);
 
         Intent intent = getIntent();
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");

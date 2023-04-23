@@ -13,13 +13,6 @@
         android:theme="@style/Theme.SlowVF"
         tools:targetApi="31" >
         <activity
-            android:name=".connection_confirmation"
-            android:exported="false" >
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".Exchange.FInishedSynchronization"
             android:exported="false" >
             <meta-data
