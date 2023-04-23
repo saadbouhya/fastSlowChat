@@ -33,6 +33,9 @@ public class Exchange extends AppCompatActivity {
         exchangeView.setLayoutManager(exchangeLayoutManager);
         exchangeView.setAdapter(exchangeAdapter);
 
+        // Add a single Bluetooth device to the list
+        bluetoothDevices.add(new BluetoothItem("Test Device", "00:00:00:00:00:00"));
+
         TextView instructionView = findViewById(R.id.instruction_view);
         Button scanButton = findViewById(R.id.scan_button);
 
