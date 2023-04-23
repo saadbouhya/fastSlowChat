@@ -1,4 +1,4 @@
-package com.example.slowvf.Fragments;
+package com.example.slowvf.View.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Adapters.CustomAdapterChat;
+import com.example.slowvf.View.Adapters.CustomAdapterChat;
 import com.example.slowvf.R;
 
 

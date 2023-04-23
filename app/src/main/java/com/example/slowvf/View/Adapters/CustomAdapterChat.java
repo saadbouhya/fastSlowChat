@@ -1,4 +1,4 @@
-package com.example.slowvf.Adapters;
+package com.example.slowvf.View.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.R;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
+public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.ViewHolder> {
 
     private String[] localDataSet;
 
@@ -27,14 +27,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
-    public CustomAdapter(String[] dataSet) {
+    public CustomAdapterChat(String[] dataSet) {
         localDataSet = dataSet;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.received_item, viewGroup, false);
+                .inflate(R.layout.chat_item, viewGroup, false);
 
         return new ViewHolder(view);
     }

@@ -1,4 +1,4 @@
-package com.example.slowvf.Adapters;
+package com.example.slowvf.View.Adapters;
 
 
 import androidx.annotation.NonNull;
@@ -7,9 +7,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.slowvf.Fragments.ChatFragment;
-import com.example.slowvf.Fragments.SentFragment;
-import com.example.slowvf.Fragments.ReceivedFragment;
+import com.example.slowvf.View.Fragments.ChatFragment;
+import com.example.slowvf.View.Fragments.SentFragment;
+import com.example.slowvf.View.Fragments.ReceivedFragment;
 
 public class MypagerAdapter extends FragmentStateAdapter {
 

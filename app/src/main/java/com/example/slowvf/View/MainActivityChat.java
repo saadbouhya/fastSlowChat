@@ -3,7 +3,7 @@ package com.example.slowvf.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.slowvf.Adapters.MypagerAdapter;
+import com.example.slowvf.View.Adapters.MypagerAdapter;
 import com.example.slowvf.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
