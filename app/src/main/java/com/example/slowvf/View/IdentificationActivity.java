@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.example.slowvf.MainActivityNavigation;
 import com.example.slowvf.R;
 
 public class IdentificationActivity extends AppCompatActivity {

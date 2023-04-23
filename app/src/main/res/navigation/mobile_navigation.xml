@@ -7,31 +7,31 @@
 
     <fragment
         android:id="@+id/navigation_chat"
-        android:name="com.example.slowvf.ui.chat.ChatFragmentBaptiste"
+        android:name="com.example.slowvf.View.ui.chat.ChatFragmentBaptiste"
         android:label="@string/title_chat"
         tools:layout="@layout/fragment_chat_baptiste" />
 
     <fragment
         android:id="@+id/navigation_echange"
-        android:name="com.example.slowvf.ui.echange.EchangeFragment"
+        android:name="com.example.slowvf.View.ui.echange.EchangeFragment"
         android:label="@string/title_echange"
         tools:layout="@layout/fragment_echange" />
 
     <fragment
         android:id="@+id/navigation_carte"
-        android:name="com.example.slowvf.ui.carte.CarteFragment"
+        android:name="com.example.slowvf.View.ui.carte.CarteFragment"
         android:label="@string/title_carte"
         tools:layout="@layout/fragment_echange" />
 
     <fragment
         android:id="@+id/navigation_contacts"
-        android:name="com.example.slowvf.ui.contacts.ContactsFragment"
+        android:name="com.example.slowvf.View.ui.contacts.ContactsFragment"
         android:label="@string/title_contacts"
         tools:layout="@layout/fragment_contacts" />
 
     <fragment
         android:id="@+id/navigation_reglages"
-        android:name="com.example.slowvf.ui.reglages.ReglagesFragment"
+        android:name="com.example.slowvf.View.ui.reglages.ReglagesFragment"
         android:label="@string/title_reglages"
         tools:layout="@layout/fragment_reglages" />
 </navigation>

@@ -27,49 +27,49 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".MainActivityNavigation"
+            android:name=".View.MainActivityNavigation"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".conversation.MessageListActivity"
+            android:name=".View.conversation.MessageListActivity"
             android:exported="true"
             android:label="@string/app_name">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivityNavigation" />
+                android:value=".View.MainActivityNavigation" />
 
         </activity>
         <activity android:name=".View.MainActivityChat"
             android:exported="false"/>
         <activity
-            android:name=".ContactDetails"
+            android:name=".View.ContactDetails"
             android:exported="false" />
         <activity
-            android:name=".AddEditContact"
+            android:name=".View.AddEditContact"
             android:exported="false" />
         <activity
-            android:name=".Contacts"
+            android:name=".View.Contacts"
             android:exported="false" />
         <activity
-            android:name=".Exchange.FInishedSynchronization"
+            android:name=".View.Exchange.FInishedSynchronization"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".Exchange.Synchronization"
+            android:name=".View.Exchange.Synchronization"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".Exchange.Exchange"
+            android:name=".View.Exchange.Exchange"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
