@@ -1,0 +1,25 @@
+{
+  "messages": [
+    {
+      "id_sender": "5E:FF:56:A2:AF:15yopi14-04-2023",
+      "id_receiver": "5E:FF:56:A2:AF:15malo14-04-2023",
+      "date_writing": "2023-04-22 10:00:00",
+      "message_text": "Bonjour, comment vas-tu ?",
+      "receipt": false
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15pierre14-04-2023",
+      "id_receiver": "5E:FF:56:A2:AF:15paul14-04-2023",
+      "date_writing": "2023-04-22 10:05:00",
+      "message_text": "Je vais bien, merci. Et toi ?",
+      "receipt": false
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15yolo14-04-2023",
+      "id_receiver": "5E:FF:56:A2:AF:15naruto14-04-2023",
+      "date_writing": "2023-04-22 10:10:00",
+      "message_text": "Je vais bien aussi, merci.",
+      "receipt": true
+    }
+  ]
+}
