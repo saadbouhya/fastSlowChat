@@ -1,4 +1,4 @@
-package com.example.slowvf.Echange;
+package com.example.slowvf.Exchange;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,7 +14,9 @@ import com.example.slowvf.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Echange extends AppCompatActivity {
+public class Exchange extends AppCompatActivity {
+    private final static String emptyList = "Cliquer sur le bouton scan pour chercher les appareils à proximité";
+    private final static String nonEmptyList ="Choisir un appareil pour échanger vos données";
     private RecyclerView exchangeView;
     private  RecyclerView.Adapter exchangeAdapter;
     private RecyclerView.LayoutManager exchangeLayoutManager;
@@ -23,10 +25,9 @@ public class Echange extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_echange);
+        setContentView(R.layout.activity_exchange);
 
         exchangeView = findViewById(R.id.exchangeView);
-        exchangeView.setHasFixedSize(true);
         exchangeLayoutManager = new LinearLayoutManager(this);
         exchangeAdapter = new ExchangeAdapter(bluetoothDevices);
         exchangeView.setLayoutManager(exchangeLayoutManager);
@@ -35,12 +36,12 @@ public class Echange extends AppCompatActivity {
         // Add a single Bluetooth device to the list
         bluetoothDevices.add(new BluetoothItem("Test Device", "00:00:00:00:00:00"));
 
-        TextView emptyView = findViewById(R.id.empty_view);
+        TextView instructionView = findViewById(R.id.instruction_view);
         Button scanButton = findViewById(R.id.scan_button);
 
         // Hide the RecyclerView and show the empty view initially
         exchangeView.setVisibility(View.GONE);
-        emptyView.setVisibility(View.VISIBLE);
+        instructionView.setText(emptyList);
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,11 +51,11 @@ public class Echange extends AppCompatActivity {
 
                 if (bluetoothDevices.isEmpty()) {
                     // If the list is empty, show the empty view and hide the RecyclerView
-                    emptyView.setVisibility(View.VISIBLE);
+                    instructionView.setVisibility(View.VISIBLE);
                     exchangeView.setVisibility(View.GONE);
                 } else {
                     // If the list has devices, hide the empty view and show the RecyclerView
-                    emptyView.setVisibility(View.GONE);
+                    instructionView.setText(nonEmptyList);
                     exchangeView.setVisibility(View.VISIBLE);
 
                     // Update the adapter with the new list of devices

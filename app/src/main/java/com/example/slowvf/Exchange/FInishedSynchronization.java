@@ -1,4 +1,4 @@
-package com.example.slowvf.Echange;
+package com.example.slowvf.Exchange;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.example.slowvf.R;
 
-public class FInishedSynchronisation extends AppCompatActivity {
+public class FInishedSynchronization extends AppCompatActivity {
 
     private BluetoothItem selectedDevice;
     @Override
@@ -27,7 +27,7 @@ public class FInishedSynchronisation extends AppCompatActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FInishedSynchronisation.this, Echange.class);
+                Intent intent = new Intent(FInishedSynchronization.this, Exchange.class);
                 startActivity(intent);
                 finish();
             }
@@ -36,7 +36,7 @@ public class FInishedSynchronisation extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FInishedSynchronisation.this, Echange.class);
+                Intent intent = new Intent(FInishedSynchronization.this, Exchange.class);
                 startActivity(intent);
                 finish(); // closes the current activity and returns to the previous one
             }

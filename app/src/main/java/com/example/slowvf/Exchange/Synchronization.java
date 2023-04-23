@@ -1,4 +1,4 @@
-package com.example.slowvf.Echange;
+package com.example.slowvf.Exchange;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,11 +14,10 @@ import com.example.slowvf.R;
 
 import java.io.Serializable;
 
-public class Synchonosation extends AppCompatActivity {
+public class Synchronization extends AppCompatActivity {
 
     private int CurrentProgress = 0;
     private ProgressBar progressBar;
-    private Button startProgress;
     private BluetoothItem selectedDevice;
 
     @Override
@@ -26,20 +25,10 @@ public class Synchonosation extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_synchonosation);
         progressBar = findViewById(R.id.progressBar);
-        startProgress = findViewById(R.id.start_progress);
         Intent intent = getIntent();
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");
         TextView deviceNameTextView = findViewById(R.id.device_name_textview);
         deviceNameTextView.setText(selectedDevice.getName());
-        startProgress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                CurrentProgress = CurrentProgress + 10;
-                progressBar.setProgress(CurrentProgress);
-                progressBar.setMax(100);
-            }
-        });
 
         ImageButton backButton = findViewById(R.id.back_synchro);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +42,7 @@ public class Synchonosation extends AppCompatActivity {
         nextSynch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Synchonosation.this, FInishedSynchronisation.class);
+                Intent intent = new Intent(Synchronization.this, FInishedSynchronization.class);
                 intent.putExtra("bluetoothItem", (Serializable) selectedDevice);
                 startActivity(intent);
             }

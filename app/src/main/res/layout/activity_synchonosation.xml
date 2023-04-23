@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/background"
+        android:background="@color/black"
         android:elevation="6dp"
         android:layout_marginBottom="30dp"
 
@@ -66,15 +66,22 @@
         android:text="Te delete button"
         android:textAllCaps="false"
         android:textColor="@color/white" />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_200"
+        android:background="@color/black"
+        android:layout_gravity="left"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Transferts avec l'appareil"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@color/background"
+        android:background="@color/black"
         android:orientation="horizontal"
         android:padding="16dp">
-
         <LinearLayout
             android:layout_width="298dp"
             android:layout_height="wrap_content"
@@ -120,14 +127,21 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:progressDrawable="@drawable/custom_progress_bg" />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_200"
+        android:background="@color/black"
+        android:layout_gravity="left"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Enregistrement et sélection des messages à sauvegarder"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@color/background"
+        android:background="@color/black"
         android:orientation="horizontal"
         android:padding="16dp">
 

@@ -13,22 +13,28 @@
         android:theme="@style/Theme.SlowVF"
         tools:targetApi="31" >
         <activity
-            android:name=".Echange.FInishedSynchronisation"
-            android:exported="false" >
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Echange.Synchonosation"
+            android:name=".connection_confirmation"
             android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".Echange.Echange"
+            android:name=".Exchange.FInishedSynchronization"
+            android:exported="false" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Exchange.Synchronization"
+            android:exported="false" >
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".Exchange.Exchange"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
