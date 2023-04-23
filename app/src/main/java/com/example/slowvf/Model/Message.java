@@ -1,4 +1,4 @@
-package com.example.slowvf.View.conversation;
+package com.example.slowvf.Model;
 
 public class Message {
     private String contenu;

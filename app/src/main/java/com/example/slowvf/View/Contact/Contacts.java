@@ -1,4 +1,4 @@
-package com.example.slowvf.View;
+package com.example.slowvf.View.Contact;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.AdapterContact;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

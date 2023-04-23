@@ -1,4 +1,4 @@
-package com.example.slowvf.View;
+package com.example.slowvf.View.Chat.conversation;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;

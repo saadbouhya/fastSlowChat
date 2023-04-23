@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowvf.R;
-import com.example.slowvf.View.conversation.MessageListActivity;
+import com.example.slowvf.View.Chat.conversation.MessageListActivity;
 import com.example.slowvf.databinding.FragmentChatBaptisteBinding;
 
 public class ChatFragmentBaptiste extends Fragment {

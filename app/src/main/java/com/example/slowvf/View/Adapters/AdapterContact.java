@@ -1,4 +1,4 @@
-package com.example.slowvf.View;
+package com.example.slowvf.View.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Contact.ContactDetails;
 
 import java.util.ArrayList;
 

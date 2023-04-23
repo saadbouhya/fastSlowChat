@@ -1,7 +1,8 @@
-package com.example.slowvf.View.conversation;
+package com.example.slowvf.View.Chat.conversation;
 
 import android.content.Context;
 
+import com.example.slowvf.Model.Message;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

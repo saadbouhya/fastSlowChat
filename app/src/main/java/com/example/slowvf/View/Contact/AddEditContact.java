@@ -1,4 +1,4 @@
-package com.example.slowvf.View;
+package com.example.slowvf.View.Contact;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;

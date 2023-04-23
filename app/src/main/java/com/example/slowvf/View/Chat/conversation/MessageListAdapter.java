@@ -1,4 +1,4 @@
-package com.example.slowvf.View.conversation;
+package com.example.slowvf.View.Chat.conversation;
 
 import static java.sql.DriverManager.println;
 
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Model.Message;
 import com.example.slowvf.R;
 
 import java.io.IOException;

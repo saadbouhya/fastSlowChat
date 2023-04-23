@@ -1,4 +1,4 @@
-package com.example.slowvf.View;
+package com.example.slowvf.View.Identification;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.slowvf.R;
+import com.example.slowvf.View.MainActivityNavigation;
 
 public class IdentificationActivity extends AppCompatActivity {
 

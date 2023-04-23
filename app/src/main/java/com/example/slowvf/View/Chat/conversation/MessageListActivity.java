@@ -1,4 +1,4 @@
-package com.example.slowvf.View.conversation;
+package com.example.slowvf.View.Chat.conversation;
 
 
 import android.content.Intent;
@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Model.Message;
 import com.example.slowvf.R;
 
 import java.io.IOException;

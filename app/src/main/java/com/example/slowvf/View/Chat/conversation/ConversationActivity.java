@@ -1,4 +1,4 @@
-package com.example.slowvf.View.conversation;
+package com.example.slowvf.View.Chat.conversation;
 
 import android.content.Intent;
 import android.os.Bundle;
