@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Chat.conversation;
+package com.example.slowvf.View.Adapters;
 
 import static java.sql.DriverManager.println;
 

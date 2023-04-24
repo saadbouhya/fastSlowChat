@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Exchange;
+package com.example.slowvf.View.Adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,7 +17,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Exchange.Synchronization;
 
 import java.io.Serializable;
 import java.util.List;

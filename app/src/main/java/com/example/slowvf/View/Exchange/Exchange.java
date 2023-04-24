@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.ExchangeAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
 
 public class FInishedSynchronization extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Exchange;
+package com.example.slowvf.Model;
 
 import java.io.Serializable;
 

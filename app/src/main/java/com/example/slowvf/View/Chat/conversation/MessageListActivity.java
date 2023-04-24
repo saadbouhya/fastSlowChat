@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.Model.Message;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.MessageListAdapter;
 
 import java.io.IOException;
 import java.util.List;

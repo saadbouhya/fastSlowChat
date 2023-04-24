@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
 
 import java.io.Serializable;
