@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.carte.CarteFragment">
+    tools:context=".View.ui.carte.CarteFragment">
 
     <TextView
         android:id="@+id/text_carte"
