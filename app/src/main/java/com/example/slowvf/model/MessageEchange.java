@@ -5,7 +5,7 @@ public class MessageEchange {
     private String id_receiver;
     private String date_writing;
     private String message_text;
-    private boolean date_received;
+    private String date_received;
 
     public String getId_sender() {
         return id_sender;
@@ -39,11 +39,11 @@ public class MessageEchange {
         this.message_text = message_text;
     }
 
-    public boolean isReceipt() {
+    public String getDate_received() {
         return date_received;
     }
 
-    public void setReceipt(boolean receipt) {
-        this.date_received = receipt;
+    public void setDate_received(String date_received) {
+        this.date_received = date_received;
     }
 }
