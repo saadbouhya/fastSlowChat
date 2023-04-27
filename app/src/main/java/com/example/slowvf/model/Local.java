@@ -6,11 +6,21 @@ public class Local {
     private String id_local;
     private List<SentMessage> sent_messages;
     private List<ReceivedMessage> received_messages;
+    private String size_file;
 
-    public Local(String id_local) {
+    public Local(String id_local,String size_file) {
         this.id_local = id_local;
         this.sent_messages = new ArrayList<>();
         this.received_messages = new ArrayList<>();
+        this.size_file = size_file;
+    }
+
+    public String getSize_file() {
+        return size_file;
+    }
+
+    public void setSize_file(String size_file) {
+        this.size_file = size_file;
     }
 
     public String getId_local() {
