@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.slowvf.databinding.FragmentReglagesBinding;
 
+
 public class ReglagesFragment extends Fragment {
 
     private FragmentReglagesBinding binding;
