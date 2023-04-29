@@ -49,6 +49,8 @@ public class ReceivedFragment extends Fragment {
 
         try {
             mAdapter = new CustomAdapterReceived(chatController.getMessagesReceivedSentLocal());
+            System.out.println(chatController.getUniqueIdSendersAndReceivers());
+            chatController.getLastMessagesForUniqueSendersAndReceivers();
         } catch (IOException e) {
             e.printStackTrace();
         }
