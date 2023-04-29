@@ -13,6 +13,8 @@ import com.example.slowvf.View.Fragments.ReceivedFragment;
 
 import com.example.slowvf.View.Fragments.SentFragment;
 
+import java.io.IOException;
+
 public class MypagerAdapter extends FragmentStateAdapter {
 
     public MypagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
@@ -26,7 +28,11 @@ public class MypagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position){
             case 0: //Page number 1
-                return ReceivedFragment.newInstance();
+                try {
+                    return ReceivedFragment.newInstance();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             case 1: //Page number 2
                 return SentFragment.newInstance();
             case 2: //Page number 3

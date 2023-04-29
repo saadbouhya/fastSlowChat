@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Dao.ReceivedSentLocalDao;
+
+import com.example.slowvf.Controller.chatController;
+import com.example.slowvf.Dao.Impl.ReceivedSentLocalDao;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.CustomAdapterReceived;
 
@@ -22,16 +24,21 @@ public class ReceivedFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    public ReceivedFragment(){}
+    public ReceivedFragment() throws IOException {}
 
-    public static ReceivedFragment newInstance() {
+    public static ReceivedFragment newInstance() throws IOException {
         return (new ReceivedFragment());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        chatController chatController = null;
+        try {
+            chatController = new chatController(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         View view = inflater.inflate(R.layout.fragment_received, container, false);
 
@@ -41,7 +48,7 @@ public class ReceivedFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-            mAdapter = new CustomAdapterReceived(ReceivedSentLocalDao.localfile(getContext()));
+            mAdapter = new CustomAdapterReceived(chatController.getMessagesReceivedSentLocal());
         } catch (IOException e) {
             e.printStackTrace();
         }

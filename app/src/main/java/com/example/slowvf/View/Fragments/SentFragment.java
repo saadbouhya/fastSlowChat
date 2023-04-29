@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Dao.ReceivedSentLocalDao;
+import com.example.slowvf.Controller.chatController;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.CustomAdapterSent;
 
@@ -31,7 +31,12 @@ public class SentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        chatController chatController = null;
+        try {
+            chatController = new chatController(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         View view =  inflater.inflate(R.layout.fragment_sent, container, false);
         recyclerView = view.findViewById(R.id.recyclerViewEmis);
 
@@ -39,7 +44,7 @@ public class SentFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-            mAdapter = new CustomAdapterSent(ReceivedSentLocalDao.localfile(getContext()));
+            mAdapter = new CustomAdapterSent(chatController.getMessagesReceivedSentLocal());
         } catch (IOException e) {
             e.printStackTrace();
         }

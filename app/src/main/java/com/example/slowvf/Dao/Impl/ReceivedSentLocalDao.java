@@ -1,4 +1,4 @@
-package com.example.slowvf.Dao;
+package com.example.slowvf.Dao.Impl;
 
 import android.content.Context;
 
