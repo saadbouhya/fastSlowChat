@@ -3,6 +3,7 @@ package com.example.slowvf.View.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -56,6 +57,14 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.chat_item, viewGroup, false);
+        LinearLayout linearLayout = view.findViewById(R.id.linear_layout_chat);
+
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("YOLOOOOOOOOOOO");
+            }
+        });
 
         return new ViewHolder(view);
     }
