@@ -8,8 +8,10 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.slowvf.View.Fragments.ChatFragment;
-import com.example.slowvf.View.Fragments.SentFragment;
+
 import com.example.slowvf.View.Fragments.ReceivedFragment;
+
+import com.example.slowvf.View.Fragments.SentFragment;
 
 public class MypagerAdapter extends FragmentStateAdapter {
 

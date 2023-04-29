@@ -9,8 +9,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.View.Adapters.CustomAdapter;
+import com.example.slowvf.Dao.ReceivedSentLocalDao;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.CustomAdapterSent;
+
+import java.io.IOException;
 
 
 public class SentFragment extends Fragment {
@@ -18,9 +21,6 @@ public class SentFragment extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
-
-    private String[] myDataset = {"Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis"};
-
 
     public SentFragment(){}
 
@@ -38,7 +38,11 @@ public class SentFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new CustomAdapter(myDataset);
+        try {
+            mAdapter = new CustomAdapterSent(ReceivedSentLocalDao.localfile(getContext()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         recyclerView.setAdapter(mAdapter);
 
         return view;

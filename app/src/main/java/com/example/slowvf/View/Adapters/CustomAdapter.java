@@ -34,7 +34,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.received_item, viewGroup, false);
+                .inflate(R.layout.received_sent_item, viewGroup, false);
 
         return new ViewHolder(view);
     }
