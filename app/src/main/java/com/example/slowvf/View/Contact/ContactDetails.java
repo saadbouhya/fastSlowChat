@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
 
 public class ContactDetails extends AppCompatActivity {
@@ -18,6 +20,8 @@ public class ContactDetails extends AppCompatActivity {
     private Button buttonDeleteContact;
     private String id, lastName, firstName;
     ActionBar actionBar;
+    private ContactController contactController;
+    private Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,8 @@ public class ContactDetails extends AppCompatActivity {
         id = intent.getStringExtra("id");
         lastName = intent.getStringExtra("lastName");
         firstName = intent.getStringExtra("firstName");
+        contact = new Contact(id, lastName, firstName);
+        contactController = new ContactController(ContactDetails.this);
 
 
         textViewId = findViewById(R.id.id);
@@ -71,6 +77,7 @@ public class ContactDetails extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             // if yes delete contact
+                            contactController.delete(contact, ContactDetails.this);
                             ContactDetails.this.finish();
                         }
                     }).setNegativeButton("Non", new DialogInterface.OnClickListener() {
