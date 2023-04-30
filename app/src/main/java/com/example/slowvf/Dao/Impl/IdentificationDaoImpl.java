@@ -8,7 +8,7 @@ public class IdentificationDaoImpl implements IdentificationDao {
     }
 
     @Override
-    public void createUser(String pseudo) {
-        System.out.println(pseudo);
+    public void createUser(String pseudo, String adresseMac) {
+        System.out.println(pseudo + " " + adresseMac);
     }
 }
