@@ -13,13 +13,13 @@ public class IdentificationController {
     }
 
     public void createUser(String pseudo){
-        String adresseMac = getAdresseMac();
+        String adresseMac = getMacAdresse();
         identificationDao.createUser(pseudo, adresseMac);
     }
 
-    private String getAdresseMac(){
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private String getMacAdresse(){
+        //BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         // ajouter la vérification que le bluetooth est activé
-        return bluetoothAdapter.getAddress();
+        return "58:AD:65:98:SQ";
     }
 }
