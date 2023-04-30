@@ -8,27 +8,31 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.slowvf.Controller.IdentificationController;
 import com.example.slowvf.R;
 import com.example.slowvf.View.MainActivityNavigation;
 
 public class IdentificationActivity extends AppCompatActivity {
-
+    private IdentificationController identificationController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        identificationController = new IdentificationController();
         setContentView(R.layout.activity_identification);
 
         // Obtenir les références des vues dans le fichier de mise en page
         Button signupButton = findViewById(R.id.signup_button);
         Button importData = findViewById(R.id.import_data);
-
+        EditText pseudo = findViewById(R.id.editTextPseudo);
         // Ajouter un écouteur de clic pour le bouton d'inscription
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Code à exécuter lorsque l'utilisateur clique sur le bouton "Inscription"
+                identificationController.createUser(pseudo.getText().toString());
                 Intent intent = new Intent(IdentificationActivity.this, MainActivityNavigation.class);
                 startActivity(intent);
             }
