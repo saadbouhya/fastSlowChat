@@ -95,6 +95,7 @@ public class Contacts extends AppCompatActivity {
        }
 
        adapterContact.filterList(filteredList);
+       recyclerViewContacts.setAdapter(adapterContact);
     }
 
 }
