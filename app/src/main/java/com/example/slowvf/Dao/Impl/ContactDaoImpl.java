@@ -28,6 +28,7 @@ public class ContactDaoImpl implements ContactDao {
 
                 contacts = new ArrayList<>();
 
+                /*
                 contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
                 contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Doe", "John"));
                 contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Sadik", "Mouad"));
@@ -58,6 +59,8 @@ public class ContactDaoImpl implements ContactDao {
                 contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
                 contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
 
+
+                 */
                 // Create a JSONObject with some data
                 JSONArray jsonArray = new JSONArray();
                 for (int i = 0; i < contacts.size(); i++) {
