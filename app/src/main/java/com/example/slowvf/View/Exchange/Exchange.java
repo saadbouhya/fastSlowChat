@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.slowvf.Controller.Exchange.BluetoothController;
 import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.ExchangeAdapter;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Exchange extends AppCompatActivity {
+
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
 
@@ -45,11 +47,12 @@ public class Exchange extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private BluetoothAdapter bluetoothAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        BluetoothController bluetoothController = new BluetoothController(this);
+
         setContentView(R.layout.activity_exchange);
 
         exchangeView = findViewById(R.id.exchangeView);
@@ -65,54 +68,23 @@ public class Exchange extends AppCompatActivity {
         exchangeView.setVisibility(View.GONE);
         instructionView.setText(emptyList);
 
-        // Get the Bluetooth adapter
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // Check if Bluetooth is supported on the device
-        if (bluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        // Check if Bluetooth is enabled on the device
-        if (!bluetoothAdapter.isEnabled()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Bluetooth is not enabled. Do you want to enable it?")
-                    .setCancelable(false)
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
-
-        // Check if the app has location permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-        }
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                checkBluetoothPermission();
                 // Show a waiting dialog
                 progressDialog = new ProgressDialog(Exchange.this);
                 progressDialog.setMessage("Waiting for Bluetooth devices...");
                 progressDialog.setCancelable(false);
                 // Clear the list of Bluetooth devices
                 bluetoothDevices.clear();
-
-                // Scan for nearby Bluetooth devices
-                if (!checkBluetoothPermission()) {
-                    return;
-                }
                 progressDialog.show();
-                Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-                for (BluetoothDevice device : pairedDevices) {
-                    bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
-                }
+
+                bluetoothController.ScanNearby(bluetoothDevices);
+
+
 
                 // Update the UI
                 if (bluetoothDevices.isEmpty()) {
@@ -147,19 +119,38 @@ public class Exchange extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Bluetooth permission granted, proceed with the operation
+            } else {
+                // Bluetooth permission denied, show an error message or handle accordingly
+            }
+        } else if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Location permission granted, proceed with the operation
+            } else {
+                // Location permission denied, show an error message or handle accordingly
+            }
+        }
+    }
+
 
     public boolean checkBluetoothPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
+        if (ContextCompat.checkSelfPermission(Exchange.this, Manifest.permission.BLUETOOTH)
                 != PackageManager.PERMISSION_GRANTED) {
             // Bluetooth permission is not granted, request it
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(Exchange.this,
                     new String[]{Manifest.permission.BLUETOOTH},
                     REQUEST_ENABLE_BT);
             return false; // Return here to prevent the scan from starting until the user grants the permission
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        } else if (ContextCompat.checkSelfPermission(Exchange.this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Location permission is not granted, request it
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(Exchange.this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     REQUEST_LOCATION_PERMISSION);
             return false; // Return here to prevent the scan from starting until the user grants the permission
@@ -167,6 +158,8 @@ public class Exchange extends AppCompatActivity {
             return true;
         }
     }
+
+
 
 
 }

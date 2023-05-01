@@ -1,16 +1,25 @@
 package com.example.slowvf.Controller.Exchange;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
+import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.Model.MessageEchange;
 import com.example.slowvf.View.Exchange.Exchange;
 
@@ -20,10 +29,15 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class BluetoothController {
+
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_LOCATION_PERMISSION = 2;
 
     private static final UUID APP_UUID = UUID.randomUUID();
     private BluetoothAdapter bluetoothAdapter;
@@ -43,6 +57,69 @@ public class BluetoothController {
         this();
         this.activity = activity;
     }
+
+
+    public void ScanNearby(List<BluetoothItem> bluetoothItems){
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (bluetoothAdapter == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setMessage("Bluetooth is not supported on this device. This function is not available")
+                    .setCancelable(false)
+                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else {
+            if (!bluetoothAdapter.isEnabled()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Bluetooth is not enabled. Please enable it.")
+                        .setCancelable(false)
+                        .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+                if (checkBluetoothPermission()) {
+                        // Get nearby Bluetooth devices
+                        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+                    Set<BluetoothDevice> nearbyDevices = new HashSet<>();
+
+                    if (bluetoothAdapter.isDiscovering()) {
+                        bluetoothAdapter.cancelDiscovery();
+                    }
+
+                    bluetoothAdapter.startDiscovery();
+                    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+                    activity.registerReceiver(new BroadcastReceiver() {
+                        public void onReceive(Context context, Intent intent) {
+                            String action = intent.getAction();
+                            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                                if (!pairedDevices.contains(device)) {
+                                    nearbyDevices.add(device);
+                                }
+                            }
+                        }
+                    }, filter);
+
+                    bluetoothItems.clear();
+                    for (BluetoothDevice nearbyDevice : nearbyDevices) {
+                        bluetoothItems.add(new BluetoothItem(nearbyDevice.getName(), nearbyDevice.getAddress()));
+                    }
+                }
+            }
+        }
+
+
+    }
+
 
     public void connectToDevice(String address) {
         device = bluetoothAdapter.getRemoteDevice(address);
@@ -232,6 +309,27 @@ public class BluetoothController {
         MessageEchange parsedMessage = new MessageEchange(idSender, idReceiver, dateWriting, messageText, dateReceived);
 
         return parsedMessage;
+    }
+
+
+    public boolean checkBluetoothPermission() {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Bluetooth permission is not granted, request it
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.BLUETOOTH},
+                    REQUEST_ENABLE_BT);
+            return false; // Return here to prevent the scan from starting until the user grants the permission
+        } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Location permission is not granted, request it
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+            return false; // Return here to prevent the scan from starting until the user grants the permission
+        } else {
+            return true;
+        }
     }
 
     private String getUserId(){
