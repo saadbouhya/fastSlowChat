@@ -34,7 +34,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transferts et sélection des messages terminés "
+        android:text="Transferts et sélection des localForConversations terminés "
         android:textColor="@color/white"
         android:layout_gravity="left"
         android:layout_marginLeft="20dp"
@@ -144,7 +144,7 @@
         android:id="@+id/global_stats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cet appareil est porteur de 85 messages qui doivent
+        android:text="Cet appareil est porteur de 85 localForConversations qui doivent
         \nêtre reçus.
         \nCet appareil est porteur de 25 accusés de réception.
         \nTrouver d'autres trucs"

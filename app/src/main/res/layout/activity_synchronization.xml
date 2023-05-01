@@ -127,7 +127,7 @@
         android:layout_gravity="left"
         android:paddingLeft="20dp"
         android:layout_marginTop="20dp"
-        android:text="Enregistrement et sélection des messages à sauvegarder"
+        android:text="Enregistrement et sélection des localForConversations à sauvegarder"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -144,13 +144,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sélection des nouveaux messages pour d'autres… 0%"
+                android:text="Sélection des nouveaux localForConversations pour d'autres… 0%"
                 android:textColor="@color/white" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sélection des nouveaux messages pour vous… 0%"
+                android:text="Sélection des nouveaux localForConversations pour vous… 0%"
                 android:textColor="@color/white" />
 
             <TextView
@@ -163,7 +163,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Suppression des messages arrivés… 0%"
+                android:text="Suppression des localForConversations arrivés… 0%"
                 android:textColor="@color/white" />
         </LinearLayout>
         <LinearLayout

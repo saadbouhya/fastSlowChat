@@ -4,17 +4,20 @@ import android.content.Context;
 
 import com.example.slowvf.Dao.Impl.ReceivedSentLocalDao;
 import com.example.slowvf.Model.Local;
+import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.Model.ReceivedMessage;
 import com.example.slowvf.Model.SentMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 //   chatController chatController = new chatController(getApplicationContext()); pour l'appeler
 public class chatController {
@@ -90,10 +93,51 @@ public Local getMessagesReceivedSentLocal() throws IOException {
         for (String id : uniqueSendersAndReceivers) {
             String message = lastMessagesMap.get(id);
             String date = lastDatesMap.get(id);
-            lastMessages.add(new LocalForMessage("voirContact",id,message,date));
+            lastMessages.add(new LocalForMessage("voirContact",id,message,date,null));
         }
 
         return lastMessages;
+    }
+
+    public List<LocalForConversation> getMessagesBySenderIdOrReceiverId(String id) throws IOException {
+        List<LocalForConversation> localForConversations = new ArrayList<>();
+        Local local = getMessagesReceivedSentLocal();
+        List<SentMessage> sortedSentMessages = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            sortedSentMessages = local.getSent_messages().stream()
+                    .filter(sentMessage -> sentMessage.getId_receiver().equals(id))
+                    .sorted(Comparator.comparing(SentMessage::getDate_writing))
+                    .collect(Collectors.toList());
+        }
+        List<ReceivedMessage> sortedReceivedMessages = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            sortedReceivedMessages = local.getReceived_messages().stream()
+                    .filter(receivedMessage -> receivedMessage.getId_sender().equals(id))
+                    .sorted(Comparator.comparing(ReceivedMessage::getDate_received))
+                    .collect(Collectors.toList());
+        }
+
+        for (SentMessage sentMessage : sortedSentMessages) {
+            LocalForConversation localForConversation = new LocalForConversation();
+            localForConversation.setContenu(sentMessage.getTexte());
+            localForConversation.setAuteur(local.getId_local());
+            localForConversation.setDestinataire(sentMessage.getId_receiver());
+            localForConversation.setDate_writing(sentMessage.getDate_writing());
+            localForConversation.setDate_received(sentMessage.getDate_received());
+            localForConversations.add(localForConversation);
+        }
+
+        for (ReceivedMessage receivedMessage : sortedReceivedMessages) {
+            LocalForConversation localForConversation = new LocalForConversation();
+            localForConversation.setContenu(receivedMessage.getTexte());
+            localForConversation.setAuteur(receivedMessage.getId_sender());
+            localForConversation.setDestinataire(local.getId_local());
+            localForConversation.setDate_writing(receivedMessage.getDate_writing());
+            localForConversation.setDate_received(receivedMessage.getDate_received());
+            localForConversations.add(localForConversation);
+        }
+
+        return localForConversations;
     }
 
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Model.Message;
+import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.R;
 
 import java.io.IOException;
@@ -21,34 +21,34 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
 
     private Context mContext;
-    private List<Message> mMessageList;
+    private List<LocalForConversation> mLocalForConversationList;
 
     private String correspondant;
 
-    public MessageListAdapter(Context context, List<Message> messageList, String inCorrespondant) throws IOException {
+    public MessageListAdapter(Context context, List<LocalForConversation> localForConversationList, String inCorrespondant) throws IOException {
         mContext = context;
-        mMessageList = messageList;
+        mLocalForConversationList = localForConversationList;
         correspondant = inCorrespondant;
     }
 
     @Override
     public int getItemCount() {
-        return mMessageList.size();
+        return mLocalForConversationList.size();
     }
 
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
-        Message message = (Message) mMessageList.get(position);
+        LocalForConversation localForConversation = (LocalForConversation) mLocalForConversationList.get(position);
 
-        println("auteur :" + message.getAuteur());
+        println("auteur :" + localForConversation.getAuteur());
         println("correspondant :" + this.correspondant);
 
-        if (message.getAuteur().equals(this.correspondant)) {
-            // If the current user is the sender of the message
+        if (localForConversation.getAuteur().equals(this.correspondant)) {
+            // If the current user is the sender of the localForConversation
             return VIEW_TYPE_MESSAGE_RECEIVED;
         } else {
-            // If some other user sent the message
+            // If some other user sent the localForConversation
             return VIEW_TYPE_MESSAGE_SENT;
         }
     }
@@ -74,14 +74,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Message message = (Message) mMessageList.get(position);
+        LocalForConversation localForConversation = (LocalForConversation) mLocalForConversationList.get(position);
 
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
-                ((SentMessageHolder) holder).bind(message);
+                ((SentMessageHolder) holder).bind(localForConversation);
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
-                ((ReceivedMessageHolder) holder).bind(message);
+                ((ReceivedMessageHolder) holder).bind(localForConversation);
         }
     }
 
@@ -92,35 +92,36 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             super(itemView);
 
             messageText = (TextView) itemView.findViewById(R.id.text_gchat_message_me);
-            timeText = (TextView) itemView.findViewById(R.id.text_gchat_timestamp_me);
+            timeText = (TextView) itemView.findViewById(R.id.text_gchat_date_me);
         }
 
-        void bind(Message message) {
-            messageText.setText(message.getContenu());
+        void bind(LocalForConversation localForConversation) {
+            messageText.setText(localForConversation.getContenu());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(message.getDate());
+            timeText.setText(localForConversation.getDate_writing());
         }
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText, nameText;
+        TextView messageText, timeText, nameText,timeText2;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
             messageText = (TextView) itemView.findViewById(R.id.text_gchat_message_other);
             timeText = (TextView) itemView.findViewById(R.id.text_gchat_timestamp_other);
+           timeText2 =  (TextView) itemView.findViewById(R.id.text_gchat_date_other);
             nameText = (TextView) itemView.findViewById(R.id.text_gchat_user_other);
         }
 
-        void bind(Message message) {
-            messageText.setText(message.getContenu());
+        void bind(LocalForConversation localForConversation) {
+            messageText.setText(localForConversation.getContenu());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(message.getDate());
-
-            nameText.setText(message.getAuteur());
+            timeText.setText(localForConversation.getDate_received());
+            timeText2.setText(localForConversation.getDate_writing());
+            nameText.setText(localForConversation.getAuteur());
         }
     }
 }

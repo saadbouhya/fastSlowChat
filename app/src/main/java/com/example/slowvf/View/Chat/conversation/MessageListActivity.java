@@ -9,7 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Model.Message;
+import com.example.slowvf.Controller.chatController;
+import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.MessageListAdapter;
 
@@ -21,6 +22,13 @@ public class MessageListActivity extends AppCompatActivity {
     private MessageListAdapter mMessageAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        chatController chatController = null;
+        try {
+            chatController = new chatController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
@@ -33,9 +41,9 @@ public class MessageListActivity extends AppCompatActivity {
 
         ConversationReader messageReader = new ConversationReader(value,this);
         try {
-            List<Message> messages = messageReader.lireMessages();
+            List<LocalForConversation> localForConversations = chatController.getMessagesBySenderIdOrReceiverId(value);
             mMessageRecycler = (RecyclerView) findViewById(R.id.recycler_gchat);
-            mMessageAdapter = new MessageListAdapter(this, messages, value);
+            mMessageAdapter = new MessageListAdapter(this, localForConversations, value);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

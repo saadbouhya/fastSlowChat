@@ -2,7 +2,7 @@ package com.example.slowvf.View.Chat.conversation;
 
 import android.content.Context;
 
-import com.example.slowvf.Model.Message;
+import com.example.slowvf.Model.LocalForConversation;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,9 +20,9 @@ public class ConversationReader {
         this.context = context;
     }
 
-    public List<Message> lireMessages() throws IOException {
+    public List<LocalForConversation> lireMessages() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Message> messages = null;
+        List<LocalForConversation> localForConversations = null;
 
         // to do: json input stream
         try {
@@ -32,18 +32,18 @@ public class ConversationReader {
             is.read(buffer);
             is.close();
             String json = new String(buffer, "UTF-8");
-            TypeReference<List<Message>> typeReference = new TypeReference<List<Message>>() {};
-            messages = objectMapper.readValue(json, typeReference);
-            List<Message> messagesFiltres = new ArrayList<>();
-            for (Message message : messages) {
-                if (message.getDestinataire().equals(this.nom) || message.getAuteur().equals(this.nom)) {
-                    messagesFiltres.add(message);
+            TypeReference<List<LocalForConversation>> typeReference = new TypeReference<List<LocalForConversation>>() {};
+            localForConversations = objectMapper.readValue(json, typeReference);
+            List<LocalForConversation> messagesFiltres = new ArrayList<>();
+            for (LocalForConversation localForConversation : localForConversations) {
+                if (localForConversation.getDestinataire().equals(this.nom) || localForConversation.getAuteur().equals(this.nom)) {
+                    messagesFiltres.add(localForConversation);
                 }
             }
             return messagesFiltres;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return messages;
+        return localForConversations;
     }
 }

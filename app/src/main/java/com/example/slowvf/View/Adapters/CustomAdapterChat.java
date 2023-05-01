@@ -1,5 +1,6 @@
 package com.example.slowvf.View.Adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Chat.conversation.MessageListActivity;
 
 import java.util.List;
 
@@ -62,7 +64,13 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("YOLOOOOOOOOOOO");
+                TextView myEditText = view.findViewById(R.id.textView4);
+                String text = myEditText.getText().toString();
+
+                System.out.println(text);
+                Intent myIntent = new Intent(view.getContext(), MessageListActivity.class);
+                myIntent.putExtra("key", text); //Optional parameters
+                view.getContext().startActivity(myIntent);
             }
         });
 

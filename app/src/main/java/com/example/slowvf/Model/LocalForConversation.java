@@ -1,20 +1,22 @@
 package com.example.slowvf.Model;
 
-public class Message {
+public class LocalForConversation {
     private String contenu;
     private String auteur;
     private String destinataire;
 
-    private String dateTime;
+    private String date_received;
+    private String date_writing;
 
-    public Message() {}
+    public LocalForConversation() {}
 
     // Constructeur
-    public Message(String contenu, String auteur, String destinataire, String dateTime) {
+    public LocalForConversation(String contenu, String auteur, String destinataire, String date_received, String date_writing) {
         this.contenu = contenu;
         this.auteur = auteur;
         this.destinataire = destinataire;
-        this.dateTime = dateTime;
+        this.date_received = date_received;
+        this.date_writing = date_writing;
     }
 
     // Getters et setters
@@ -42,11 +44,19 @@ public class Message {
         this.destinataire = destinataire;
     }
 
-    public String getDate() {
-        return dateTime;
+    public String getDate_received() {
+        return date_received;
     }
 
-    public void setDate(String date) {
-        this.dateTime = date;
+    public void setDate_received(String date_received) {
+        this.date_received = date_received;
+    }
+
+    public String getDate_writing() {
+        return date_writing;
+    }
+
+    public void setDate_writing(String date_writing) {
+        this.date_writing = date_writing;
     }
 }
