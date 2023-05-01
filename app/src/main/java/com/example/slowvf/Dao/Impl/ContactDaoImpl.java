@@ -22,54 +22,10 @@ public class ContactDaoImpl implements ContactDao {
     public ContactDaoImpl(Context context) {
         try {
             File file = new File(context.getFilesDir(), "Contacts.json");
-            ArrayList<Contact> contacts = null;
             if (!file.exists()) {
                 file.createNewFile();
 
-                contacts = new ArrayList<>();
-
-                /*
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Doe", "John"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Sadik", "Mouad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Duchamps", "Théo"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bortolloti", "Bastite"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-                contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-
-
-                 */
-                // Create a JSONObject with some data
                 JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < contacts.size(); i++) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("id", contacts.get(i).getId());
-                    jsonObject.put("lastName", contacts.get(i).getLastName());
-                    jsonObject.put("firstName", contacts.get(i).getFirstName());
-                    jsonArray.put(jsonObject);
-                }
 
                 // Encapsulate the JSONArray in a JSONObject with a name
                 JSONObject rootJsonObject = new JSONObject();
