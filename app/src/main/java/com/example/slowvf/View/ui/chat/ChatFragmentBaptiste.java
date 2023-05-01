@@ -11,11 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.slowvf.Controller.IdentificationController;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Chat.conversation.MessageListActivity;
 import com.example.slowvf.databinding.FragmentChatBaptisteBinding;
 
 public class ChatFragmentBaptiste extends Fragment {
+    private IdentificationController identificationController;
 
     private FragmentChatBaptisteBinding binding;
     private Button Conversation1;
@@ -26,6 +28,7 @@ public class ChatFragmentBaptiste extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         ChatViewModel chatViewModel =
                 new ViewModelProvider(this).get(ChatViewModel.class);
+        identificationController = new IdentificationController(getContext());
 
         binding = FragmentChatBaptisteBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -36,6 +39,7 @@ public class ChatFragmentBaptiste extends Fragment {
         Conversation1.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                identificationController.deleteFile("Local.json",getContext());
                 Intent myIntent = new Intent(v.getContext(), MessageListActivity.class);
                 myIntent.putExtra("key", "Theo"); //Optional parameters
                 v.getContext().startActivity(myIntent);

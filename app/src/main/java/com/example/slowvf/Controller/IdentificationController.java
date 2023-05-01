@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.slowvf.Dao.IdentificationDao;
 import com.example.slowvf.Dao.Impl.IdentificationDaoImpl;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,4 +29,13 @@ public class IdentificationController {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         return formatter.format(new Date());
     }
+
+    public boolean fileExists(String fileName, Context context) {
+        File file = context.getFileStreamPath(fileName);
+        return file.exists();
+    }
+    public void deleteFile(String fileName, Context context){
+        identificationDao.deleteFile(fileName,context);
+    }
+
 }

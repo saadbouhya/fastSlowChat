@@ -50,9 +50,16 @@ public class IdentificationDaoImpl implements IdentificationDao {
             }
             String contenuFichier = stringBuilder.toString();
             inputStream.close();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    public void deleteFile(String fileName, Context context) {
+        if (context.deleteFile(fileName)) {
+            System.out.println("dele");
+        } else {
+            System.out.println("no");
+        }
+    }
+
 }
