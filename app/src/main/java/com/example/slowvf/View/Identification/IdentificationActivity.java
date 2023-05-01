@@ -1,8 +1,5 @@
 package com.example.slowvf.View.Identification;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.slowvf.Controller.IdentificationController;
 import com.example.slowvf.R;
@@ -21,7 +20,7 @@ public class IdentificationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        identificationController = new IdentificationController();
+        identificationController = new IdentificationController(IdentificationActivity.this);
         setContentView(R.layout.activity_identification);
 
         // Obtenir les références des vues dans le fichier de mise en page

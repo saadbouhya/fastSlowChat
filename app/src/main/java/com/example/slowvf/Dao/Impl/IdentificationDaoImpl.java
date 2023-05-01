@@ -3,13 +3,13 @@ package com.example.slowvf.Dao.Impl;
 import android.content.Context;
 
 import com.example.slowvf.Dao.IdentificationDao;
+import com.example.slowvf.Model.Local;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class IdentificationDaoImpl implements IdentificationDao {
     private ObjectMapper objectMapper;
@@ -25,23 +25,32 @@ public class IdentificationDaoImpl implements IdentificationDao {
     }
 
     @Override
-    public void createUser(String pseudo, String adresseMac) {
-        System.out.println(pseudo + " " + adresseMac);
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("id_local", pseudo);
-        userData.put("sent_messages", new String[]{});
-        userData.put("received_messages", new String[]{});
-        userData.put("size_file", 50);
-        // Remplir la liste des utilisateurs avec les données de l'application
-        Context context = context.getApplicationContext();
-        String filename = "monFichier.txt";
-        int mode = Context.MODE_PRIVATE;
-        String data = "Ceci est une phrase dans mon fichier.";
-
+    public void createUser(String pseudo, String macAdresse, String actualDate) {
+        Local local = new Local(macAdresse+pseudo+actualDate,"50");
+        Gson gson = new Gson();
+        String filename = "Local.json";
+        String localJson = gson.toJson(local);
         try {
-            FileOutputStream outputStream = context.openFileOutput(filename, mode);
-            outputStream.write(data.getBytes());
-            outputStream.close();
+            FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            fos.write(localJson.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // code pour la lecture du fichier ( a enlever plus tard d'ici)
+        try {
+            // Ouvrir le fichier pour lecture
+            FileInputStream inputStream = context.openFileInput(filename);
+
+            // Lire le contenu du fichier
+            StringBuilder stringBuilder = new StringBuilder();
+            int data2;
+            while ((data2 = inputStream.read()) != -1) {
+                stringBuilder.append((char) data2);
+            }
+            String contenuFichier = stringBuilder.toString();
+            inputStream.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
