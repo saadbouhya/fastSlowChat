@@ -2,7 +2,7 @@ package com.example.slowvf.Controller;
 
 import android.content.Context;
 
-import com.example.slowvf.Dao.Impl.ReceivedSentLocalDao;
+import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
 import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.Model.LocalForMessage;
@@ -29,7 +29,7 @@ public class chatController {
 
 public Local getMessagesReceivedSentLocal() throws IOException {
 
-        return ReceivedSentLocalDao.localfile(context);
+        return ReceivedSentLocalDaoImpl.localfile(context);
 }
 
     public List<String> getUniqueIdSendersAndReceivers() throws IOException {

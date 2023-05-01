@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.slowvf.Controller.chatController;
-import com.example.slowvf.Dao.Impl.ReceivedSentLocalDao;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.CustomAdapterReceived;
 
