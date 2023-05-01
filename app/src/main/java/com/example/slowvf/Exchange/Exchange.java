@@ -24,6 +24,8 @@ public class Exchange extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        BluetoothController bluetoothController = new BluetoothController(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange);
 
@@ -43,8 +45,8 @@ public class Exchange extends AppCompatActivity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Populate the Bluetooth devices list
-                populateBluetoothDevices();
+
+                bluetoothController.ScanNearby(bluetoothDevices);
 
                 if (bluetoothDevices.isEmpty()) {
                     // If the list is empty, show the empty view and hide the RecyclerView
@@ -78,6 +80,12 @@ public class Exchange extends AppCompatActivity {
         bluetoothDevices.add(new BluetoothItem("iPad Pro 2021", "60:77:E2:3A:DE:0D"));
         bluetoothDevices.add(new BluetoothItem("Pixelbook Go", "A4:C3:61:47:3E:24"));
         exchangeAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Don't forget to unregister the ACTION_FOUND receiver.
     }
 
 }
