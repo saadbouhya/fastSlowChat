@@ -1,6 +1,7 @@
 package com.example.slowvf.Controller;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
 import com.example.slowvf.Model.Local;
@@ -10,8 +11,11 @@ import com.example.slowvf.Model.ReceivedMessage;
 import com.example.slowvf.Model.SentMessage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//   chatController chatController = new chatController(getApplicationContext()); pour l'appeler
-public class chatController {
+//   ChatController ChatController = new ChatController(getApplicationContext()); pour l'appeler
+public class ChatController {
     private Context context;
 
-    public chatController(Context context) throws IOException {
+    public ChatController(Context context) throws IOException {
         this.context = context;
     }
 
@@ -140,5 +144,21 @@ public Local getMessagesReceivedSentLocal() throws IOException {
         return localForConversations;
     }
 
+    public void addLocalSentMessage(String id,String texte) throws IOException {
+
+        Local local = getMessagesReceivedSentLocal();
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            String formattedDateTime = now.format(formatter);
+           local.getSent_messages().add(new SentMessage(id,texte, formattedDateTime,"null"));
+        }
+        ReceivedSentLocalDaoImpl.writeToJsonFile(context,local);
+
+       String string =  ReceivedSentLocalDaoImpl.readInternalFile(context,"Local.json");
+        System.out.println(string);
+    }
 
 }

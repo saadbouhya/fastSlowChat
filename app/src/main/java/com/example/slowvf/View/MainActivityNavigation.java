@@ -8,9 +8,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.slowvf.Controller.ChatController;
+import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
 import com.example.slowvf.R;
 import com.example.slowvf.databinding.ActivityMainNavigationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
 
 public class MainActivityNavigation extends AppCompatActivity {
 
@@ -32,6 +36,15 @@ public class MainActivityNavigation extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+
+        try {
+            ReceivedSentLocalDaoImpl.createFileOnInternalStorage(getApplicationContext());
+            ReceivedSentLocalDaoImpl.readInternalFile(getApplicationContext(),"Local.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.example.slowvf.Controller.chatController;
+import com.example.slowvf.Controller.ChatController;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.CustomAdapterReceived;
 
@@ -32,9 +32,9 @@ public class ReceivedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        chatController chatController = null;
+        ChatController chatController = null;
         try {
-            chatController = new chatController(getContext());
+            chatController = new ChatController(getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
