@@ -1,121 +1,162 @@
 package com.example.slowvf.Exchange;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.os.Build;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
-@Data
-@AllArgsConstructor
 public class BluetoothController {
-    private static final int REQUEST_BLUETOOTH_PERMISSIONS = 1;
+
+    private static final UUID APP_UUID = UUID.randomUUID();
+    private BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice device;
+    private BluetoothSocket socket;
+    private InputStream inputStream;
+    private OutputStream outputStream;
+    private Handler handler;
     private AppCompatActivity activity;
 
-// l'utilisation de java.util.stream de java nécessite une version d'android api > 27
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void ScanNearby(List<BluetoothItem> bluetoothDevices){
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        checkBluetoothPermission();
+    public BluetoothController() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        handler = new Handler();
+    }
+    public BluetoothController(AppCompatActivity activity){
+        this();
+        this.activity = activity;
+    }
 
-        if (bluetoothAdapter == null) {
-
-        } else {
-            if (!bluetoothAdapter.isEnabled()) {
-                // Bluetooth is not enabled on the device
-                // bluetoothAdapter.enable();
-            } else {
-
-                // Change the current device discovery name
-                bluetoothAdapter.setName(getUserPseudo());
-                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300); // 5 minutes
-                activity.startActivity(discoverableIntent);
-
-                // Get nearby Bluetooth devices
-                Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-                Set<BluetoothDevice> nearbyDevices = new HashSet<>();
-
-                if (bluetoothAdapter.isDiscovering()) {
-                    bluetoothAdapter.cancelDiscovery();
-                }
-
-                bluetoothAdapter.startDiscovery();
-                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                activity.registerReceiver(new BroadcastReceiver() {
-                    public void onReceive(Context context, Intent intent) {
-                        String action = intent.getAction();
-                        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                            if (!pairedDevices.contains(device)) {
-                                nearbyDevices.add(device);
-                            }
-                        }
+    public void connectToDevice(String address) {
+        device = bluetoothAdapter.getRemoteDevice(address);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
                     }
-                }, filter);
-                Function<BluetoothDevice, BluetoothItem> deviceToItem = device ->
-                    new BluetoothItem(device.getName(), device.getAddress());
-                bluetoothDevices = pairedDevices.stream().map(deviceToItem).collect(Collectors.toList());
+                    socket = device.createRfcommSocketToServiceRecord(APP_UUID);
+                    socket.connect();
+                    inputStream = socket.getInputStream();
+                    outputStream = socket.getOutputStream();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onDeviceConnected();
+                        }
+                    });
+                } catch (IOException e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onConnectionError();
+                        }
+                    });
+                    e.printStackTrace();
+                }
             }
+        }).start();
+        sendMessage("coucou");
+        startReceivingMessages();
+
+    }
+
+    public void sendMessage(final String message) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    outputStream.write(message.getBytes());
+                    outputStream.flush();
+                } catch (IOException e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onSendError();
+                        }
+                    });
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void startReceivingMessages() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] buffer = new byte[1024];
+                int bytes;
+
+                while (true) {
+                    try {
+                        bytes = inputStream.read(buffer);
+                        final String message = new String(buffer, 0, bytes);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onMessageReceived(message);
+                            }
+                        });
+                    } catch (IOException e) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                onReceiveError();
+                            }
+                        });
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void stopReceivingMessages() {
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-
     }
 
-
-
-    public void checkBluetoothPermission(){
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED) {
-            // Bluetooth permissions are granted
-            // Start scanning for Bluetooth devices
-        } else {
-            // Bluetooth permissions are not granted, request them from the user
-            ActivityCompat.requestPermissions(activity, new String[] {
-                    Manifest.permission.BLUETOOTH,
-                    Manifest.permission.BLUETOOTH_ADMIN
-            }, REQUEST_BLUETOOTH_PERMISSIONS);
-        }
-
+    // Override these methods to handle connection events
+    public void onDeviceConnected() {
+        // Do something when the device is connected
     }
 
-
-
-    public List<BluetoothItem> getDevices( ){
-
-
-        List<BluetoothItem> nearbyItems = new ArrayList<>();
-
-        return nearbyItems;
-
+    public void onConnectionError() {
+        // Do something when there is an error connecting to the device
     }
 
-    /**
-     * To replace with the real method when the local file's DAO is officent
-     * */
-    private String getUserPseudo(){
-        return "Pierre";
+    // Override these methods to handle message sending events
+    public void onSendError() {
+        // Do something when there is an error sending a message
+    }
+
+    // Override these methods to handle message receiving events
+    public void onMessageReceived(String message) {
+        // Do something with the received message
+    }
+
+    public void onReceiveError() {
+        // Do something when there is an error receiving a message
     }
 }
