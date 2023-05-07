@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:background="@color/background"
-    tools:context=".Exchange.Exchange">
+    tools:context=".View.Exchange.Exchange">
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
