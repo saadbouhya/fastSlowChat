@@ -16,7 +16,7 @@ import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
 
 public class AddEditContact extends AppCompatActivity {
-    private EditText EditTextId, EditTextLastName, EditTextFirstName;
+    private EditText editTextId, editTextLastName, editTextFirstName;
     private Button buttonSaveContact;
     private String id, lastName, firstName;
     ActionBar actionBar;
@@ -38,9 +38,9 @@ public class AddEditContact extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
 
        // Init view
-       EditTextId = findViewById(R.id.EditTextId);
-       EditTextLastName = findViewById(R.id.EditTextLastName);
-       EditTextFirstName = findViewById(R.id.EditTextFirstName);
+       editTextId = findViewById(R.id.EditTextId);
+       editTextLastName = findViewById(R.id.EditTextLastName);
+       editTextFirstName = findViewById(R.id.EditTextFirstName);
        buttonSaveContact = findViewById(R.id.ButtonSaveContact);
 
        // Get intent data
@@ -55,17 +55,25 @@ public class AddEditContact extends AppCompatActivity {
             firstName = intent.getStringExtra("firstName");
             oldContact = new Contact(id, lastName, firstName);
 
-            EditTextId.setText(id);
-            EditTextLastName.setText(lastName);
-            EditTextFirstName.setText(firstName);
+            editTextId.setText(id);
+            editTextLastName.setText(lastName);
+            editTextFirstName.setText(firstName);
         }
 
        buttonSaveContact.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               saveData();
-               Intent intent = new Intent(AddEditContact.this, Contacts.class);
-               startActivity(intent);
+               if (editTextId.getText().toString().isEmpty()) {
+                   editTextId.setError("Ce champ est obligatoire.");
+               } else if (editTextLastName.getText().toString().isEmpty()) {
+                   editTextLastName.setError("Ce champ est obligatoire.");
+               } else if (editTextFirstName.getText().toString().isEmpty()) {
+                   editTextFirstName.setError("Ce champ est obligatoire.");
+               } else {
+                   saveData();
+                   Intent intent = new Intent(AddEditContact.this, Contacts.class);
+                   startActivity(intent);
+               }
            }
        });
 
@@ -73,9 +81,9 @@ public class AddEditContact extends AppCompatActivity {
     }
 
     private void saveData() {
-        String id = EditTextId.getText().toString();
-        String lastName = EditTextLastName.getText().toString();
-        String firstName = EditTextFirstName.getText().toString();
+        String id = editTextId.getText().toString();
+        String lastName = editTextLastName.getText().toString();
+        String firstName = editTextFirstName.getText().toString();
         newContact = new Contact(id, lastName, firstName);
 
 
