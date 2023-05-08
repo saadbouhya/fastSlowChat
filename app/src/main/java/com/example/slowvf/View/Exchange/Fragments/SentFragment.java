@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Fragments;
+package com.example.slowvf.View.Exchange.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,24 +9,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.example.slowvf.Controller.ChatController;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Adapters.CustomAdapterReceived;
+import com.example.slowvf.View.Adapters.CustomAdapterSent;
 
 import java.io.IOException;
 
 
-public class ReceivedFragment extends Fragment {
+public class SentFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    public ReceivedFragment() throws IOException {}
+    public SentFragment(){}
 
-    public static ReceivedFragment newInstance() throws IOException {
-        return (new ReceivedFragment());
+    public static SentFragment newInstance() {
+        return (new SentFragment());
     }
 
     @Override
@@ -38,23 +37,20 @@ public class ReceivedFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        View view = inflater.inflate(R.layout.fragment_received, container, false);
-
-        recyclerView = view.findViewById(R.id.recyclerView);
+        View view =  inflater.inflate(R.layout.fragment_sent, container, false);
+        recyclerView = view.findViewById(R.id.recyclerViewEmis);
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-            mAdapter = new CustomAdapterReceived(chatController.getMessagesReceivedSentLocal());
-            System.out.println(chatController.getUniqueIdSendersAndReceivers());
-            chatController.getLastMessagesForUniqueSendersAndReceivers();
+            mAdapter = new CustomAdapterSent(chatController.getMessagesReceivedSentLocal());
         } catch (IOException e) {
             e.printStackTrace();
         }
         recyclerView.setAdapter(mAdapter);
 
         return view;
+
     }
 }

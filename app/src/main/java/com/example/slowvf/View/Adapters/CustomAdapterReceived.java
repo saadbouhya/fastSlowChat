@@ -1,14 +1,19 @@
 package com.example.slowvf.View.Adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.Model.Local;
+import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Chat.conversation.MessageDetailActivity;
+import com.example.slowvf.View.Chat.conversation.MessageListActivity;
 
 public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterReceived.ViewHolder> {
 
@@ -61,7 +66,26 @@ public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterRec
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.received_sent_item, viewGroup, false);
+        LinearLayout linearLayout = view.findViewById(R.id.linear_layout_sent_received);
 
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView nom = view.findViewById(R.id.textView);
+                TextView id = view.findViewById(R.id.textView2);
+                TextView dateWriting = view.findViewById(R.id.textView7);
+                TextView dateReceived = view.findViewById(R.id.textView4);
+                TextView texte = view.findViewById(R.id.textView3);
+                LocalForMessage local = new LocalForMessage(nom.getText().toString(),id.getText().toString(),texte.getText().toString(),dateWriting.getText().toString(),dateReceived.getText().toString());
+                String text = id.getText().toString();
+
+                System.out.println(text);
+                Intent myIntent = new Intent(view.getContext(), MessageDetailActivity.class);
+                myIntent.putExtra("keyString", "received");
+                myIntent.putExtra("key", local);
+                view.getContext().startActivity(myIntent);
+            }
+        });
         return new ViewHolder(view);
     }
 

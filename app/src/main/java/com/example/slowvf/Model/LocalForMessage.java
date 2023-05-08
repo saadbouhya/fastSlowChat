@@ -1,6 +1,8 @@
 package com.example.slowvf.Model;
 
-public class LocalForMessage {
+import java.io.Serializable;
+
+public class LocalForMessage implements Serializable {
 
     private final String name;
     private final String id;

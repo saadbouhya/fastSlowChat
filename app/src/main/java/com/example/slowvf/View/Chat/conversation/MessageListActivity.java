@@ -44,7 +44,7 @@ public class MessageListActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(value);
 
-        ConversationReader messageReader = new ConversationReader(value,this);
+
         try {
             List<LocalForConversation> localForConversations = chatController.getMessagesBySenderIdOrReceiverId(value);
             mMessageRecycler = (RecyclerView) findViewById(R.id.recycler_gchat);

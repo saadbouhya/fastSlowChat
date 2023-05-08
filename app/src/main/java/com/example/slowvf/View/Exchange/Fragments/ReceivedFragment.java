@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Fragments;
+package com.example.slowvf.View.Exchange.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,23 +9,24 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.example.slowvf.Controller.ChatController;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Adapters.CustomAdapterSent;
+import com.example.slowvf.View.Adapters.CustomAdapterReceived;
 
 import java.io.IOException;
 
 
-public class SentFragment extends Fragment {
+public class ReceivedFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    public SentFragment(){}
+    public ReceivedFragment() throws IOException {}
 
-    public static SentFragment newInstance() {
-        return (new SentFragment());
+    public static ReceivedFragment newInstance() throws IOException {
+        return (new ReceivedFragment());
     }
 
     @Override
@@ -37,20 +38,23 @@ public class SentFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        View view =  inflater.inflate(R.layout.fragment_sent, container, false);
-        recyclerView = view.findViewById(R.id.recyclerViewEmis);
+
+        View view = inflater.inflate(R.layout.fragment_received, container, false);
+
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
         try {
-            mAdapter = new CustomAdapterSent(chatController.getMessagesReceivedSentLocal());
+            mAdapter = new CustomAdapterReceived(chatController.getMessagesReceivedSentLocal());
+            System.out.println(chatController.getUniqueIdSendersAndReceivers());
+            chatController.getLastMessagesForUniqueSendersAndReceivers();
         } catch (IOException e) {
             e.printStackTrace();
         }
         recyclerView.setAdapter(mAdapter);
 
         return view;
-
     }
 }
