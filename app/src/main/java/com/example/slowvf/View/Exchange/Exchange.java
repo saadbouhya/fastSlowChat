@@ -1,9 +1,11 @@
 package com.example.slowvf.View.Exchange;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -75,8 +77,16 @@ public class Exchange extends AppCompatActivity {
 
         // Check if Bluetooth is enabled on the device
         if (!bluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Bluetooth is not enabled. Do you want to enable it?")
+                    .setCancelable(false)
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
 
         // Check if the app has location permission
@@ -97,14 +107,7 @@ public class Exchange extends AppCompatActivity {
                 bluetoothDevices.clear();
 
                 // Scan for nearby Bluetooth devices
-                if (ActivityCompat.checkSelfPermission(Exchange.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if (!checkBluetoothPermission()) {
                     return;
                 }
                 Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -143,5 +146,28 @@ public class Exchange extends AppCompatActivity {
             }
         }
     }
+
+
+
+    public boolean checkBluetoothPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Bluetooth permission is not granted, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH},
+                    REQUEST_ENABLE_BT);
+            return false; // Return here to prevent the scan from starting until the user grants the permission
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Location permission is not granted, request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+            return false; // Return here to prevent the scan from starting until the user grants the permission
+        } else {
+            return true;
+        }
+    }
+
 
 }
