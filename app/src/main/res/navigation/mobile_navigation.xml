@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_echange"
-        android:name="com.example.slowvf.View.ui.echange.EchangeFragment"
+        android:name="com.example.slowvf.View.Exchange.Exchange"
         android:label="@string/title_echange"
-        tools:layout="@layout/fragment_echange" />
+        tools:layout="@layout/activity_exchange" />
 
     <fragment
         android:id="@+id/navigation_carte"

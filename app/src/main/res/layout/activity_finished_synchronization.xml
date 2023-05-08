@@ -1,41 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="?android:attr/colorBackground"
     android:gravity="top|center"
-    android:orientation="vertical">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/background"
-        android:elevation="6dp"
-        android:layout_marginBottom="30dp"
-
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
-        <ImageButton
-            android:id="@+id/back_synchro"
-            android:background="@color/background"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/back_icon"
-            android:layout_marginEnd="10dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="Synchronisation"
-            android:textSize="25dp"/>
-    </androidx.appcompat.widget.Toolbar>
-
+    android:orientation="vertical"
+    android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"
+    android:layout_marginTop="15dp">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Transferts et sélection des localForConversations terminés "
-        android:textColor="@color/white"
+        android:textColor="?attr/colorOnBackground"
         android:layout_gravity="left"
         android:layout_marginLeft="20dp"
         tools:layout_editor_absoluteY="137dp" />
@@ -47,8 +26,10 @@
             android:id="@+id/imageView"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            app:tint="?attr/colorOnPrimary"
+            android:src="@drawable/bluetooth_connected_icon"
             android:background="@drawable/circulare_shape"
-            android:src="@drawable/bluetooth_icon"
+            app:backgroundTint="?attr/colorPrimary"
             android:layout_margin="10dp"
             tools:layout_editor_absoluteX="20dp"
             tools:layout_editor_absoluteY="138dp" />
@@ -61,7 +42,7 @@
             android:layout_toEndOf="@+id/imageView"
             android:paddingBottom="16dp"
             android:gravity="left"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnBackground"
             android:textSize="20sp" />
     </RelativeLayout>
     <TextView
@@ -69,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Statistiques liées à l'échange"
-        android:textColor="@color/purple_200"
+        android:textColor="?attr/colorPrimary"
         android:paddingLeft="20dp"
         android:paddingTop="20dp"
         android:layout_gravity="left"/>
@@ -90,19 +71,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Messages envoyés : "
-                android:textColor="@color/white" />
+                android:textColor="?attr/colorOnBackground" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Messages reçus :"
-                android:textColor="@color/white" />
+                android:textColor="?attr/colorOnBackground" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Message"
-                android:textColor="@color/white" />
+                android:textColor="?attr/colorOnBackground" />
         </LinearLayout>
 
         <LinearLayout
@@ -116,19 +97,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="12"
-                android:textColor="@color/white" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5"
-                android:textColor="@color/white" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textColor="@color/white" />
+                android:textColor="?attr/colorPrimary" />
         </LinearLayout>
     </LinearLayout>
     <TextView
@@ -139,7 +120,7 @@
         android:paddingTop="20dp"
         android:paddingLeft="30dp"
         android:text="Statistiques globales"
-        android:textColor="@color/purple_200" />
+        android:textColor="?attr/colorPrimary" />
     <TextView
         android:id="@+id/global_stats"
         android:layout_width="wrap_content"
@@ -148,7 +129,7 @@
         \nêtre reçus.
         \nCet appareil est porteur de 25 accusés de réception.
         \nTrouver d'autres trucs"
-        android:textColor="@color/white"/>
+        android:textColor="?attr/colorOnBackground"/>
 
     <Button
         android:id="@+id/fin_synch"
@@ -157,6 +138,7 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/button_radius"
         android:text="Terminer"
+        android:backgroundTint="?attr/colorPrimary"
         android:textAllCaps="false" />
 
 

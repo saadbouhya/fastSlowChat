@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class BluetoothItem implements Serializable {
     String name;
     String macAddress;
-
 }

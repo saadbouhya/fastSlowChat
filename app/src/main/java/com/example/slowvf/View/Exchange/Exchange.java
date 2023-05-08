@@ -1,22 +1,24 @@
 package com.example.slowvf.View.Exchange;
-
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.ExchangeAdapter;
+import com.example.slowvf.View.Adapters.MypagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Exchange extends AppCompatActivity {
+public class Exchange extends Fragment {
     private final static String emptyList = "Cliquer sur le bouton scan pour chercher les appareils à proximité";
     private final static String nonEmptyList ="Choisir un appareil pour échanger vos données";
     private RecyclerView exchangeView;
@@ -25,18 +27,16 @@ public class Exchange extends AppCompatActivity {
     private List<BluetoothItem> bluetoothDevices = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exchange);
-
-        exchangeView = findViewById(R.id.exchangeView);
-        exchangeLayoutManager = new LinearLayoutManager(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.activity_exchange, container, false);
+        exchangeView = rootView.findViewById(R.id.exchange_view);
+        exchangeLayoutManager = new LinearLayoutManager(getContext());
         exchangeAdapter = new ExchangeAdapter(bluetoothDevices);
         exchangeView.setLayoutManager(exchangeLayoutManager);
         exchangeView.setAdapter(exchangeAdapter);
 
-        TextView instructionView = findViewById(R.id.instruction_view);
-        Button scanButton = findViewById(R.id.scan_button);
+        TextView instructionView = rootView.findViewById(R.id.instruction_view);
+        Button scanButton = rootView.findViewById(R.id.scan_button);
 
         // Hide the RecyclerView and show the empty view initially
         exchangeView.setVisibility(View.GONE);
@@ -62,6 +62,7 @@ public class Exchange extends AppCompatActivity {
                 }
             }
         });
+        return rootView;
     }
 
     private void populateBluetoothDevices() {

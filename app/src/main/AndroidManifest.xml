@@ -63,7 +63,8 @@
         </activity>
         <activity
             android:name=".View.Exchange.Synchronization"
-            android:exported="false" >
+            android:exported="false"
+            android:parentActivityName=".View.Exchange.Exchange">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

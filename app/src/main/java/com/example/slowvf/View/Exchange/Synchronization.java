@@ -1,5 +1,6 @@
 package com.example.slowvf.View.Exchange;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -27,17 +28,24 @@ public class Synchronization extends AppCompatActivity {
         setContentView(R.layout.activity_synchronization);
         progressBar = findViewById(R.id.progressBar);
         Intent intent = getIntent();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("Synchronisation");
+
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");
         TextView deviceNameTextView = findViewById(R.id.device_name_textview);
         deviceNameTextView.setText(selectedDevice.getName());
-
+/*
         ImageButton backButton = findViewById(R.id.back_synchro);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish(); // closes the current activity and returns to the previous one
             }
-        });
+        });*/
+
+
 
         Button nextSynch = findViewById(R.id.next_synch);
         nextSynch.setOnClickListener(new View.OnClickListener() {
@@ -48,5 +56,6 @@ public class Synchronization extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 }

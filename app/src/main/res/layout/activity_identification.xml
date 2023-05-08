@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/identification_background"
-        android:text="INSCRIPTION" />
+        android:text="Inscription" />
 
     <Button
         android:id="@+id/import_data"

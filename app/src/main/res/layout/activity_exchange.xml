@@ -8,23 +8,13 @@
 
     <LinearLayout
         android:id="@+id/header"
-        android:background="@color/background"
+        android:background="?android:attr/colorBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="right">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="@color/black"
-            android:text="Échange"
-            android:padding="4dp"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
+        android:gravity="right"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp">
 
         <Button
             android:id="@+id/scan_button"
@@ -32,8 +22,10 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/button_radius"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
             android:drawableLeft="@drawable/refresh_icon"
+            android:drawableTint="?attr/colorOnPrimary"
             android:text="Scan"
             android:textSize="17dp" />
         <TextView
@@ -41,12 +33,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textColor="@color/purple_200"
+            android:textColor="?attr/colorOnBackground"
             android:textSize="18sp"
             android:layout_marginBottom="20dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/exchangeView"
+            android:id="@+id/exchange_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -60,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Visible en tant que Pierre"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorOnBackground"
             android:textSize="18sp"
             android:layout_gravity="left"
             android:layout_marginTop="10dp"
