@@ -1,0 +1,87 @@
+{
+  "id_local": "5E:FF:56:A2:AF:15walid14-04-2023",
+  "sent_messages": [
+    {
+      "id_receiver": "5E:FF:56:A2:AF:15theo19-04-2023",
+      "texte": "Bonjour Theo, comment vas-tu ?",
+      "date_writing": "2022-01-01 10:00:00",
+      "date_received": "null (si pas encore reçu)"
+    },
+    {
+      "id_receiver": "5E:FF:56:A2:AF:15Paul16-04-2023",
+      "texte": "aussi merci!",
+      "date_writing": "2022-01-01 10:05:00",
+      "date_received": "2023-01-01 10:20:00"
+    },
+    {
+      "id_receiver": "5E:FF:56:A2:AF:15MIAM16-04-2023",
+      "texte": "YOLOOOOOOO",
+      "date_writing": "2050-01-01 10:05:00",
+      "date_received": "2060-01-01 10:20:00"
+    },
+    {
+      "id_receiver": "5E:FF:56:A2:AF:15Yoda16-04-2023",
+      "texte": "J'aime les licornes",
+      "date_writing": "2022-01-01 10:05:00",
+      "date_received": "2023-01-01 10:20:00"
+    },
+    {
+      "id_receiver": "5E:FF:56:A2:AF:15kevin16-04-2023",
+      "texte": "OULALALA",
+      "date_writing": "2022-01-01 10:05:00",
+      "date_received": "2023-01-01 10:20:00"
+    },
+    {
+      "id_receiver": "5E:FF:56:A2:AF:15kevin16-04-2023",
+      "texte": "J'adore le sel",
+      "date_writing": "2022-01-01 10:05:00",
+      "date_received": "2023-01-01 10:20:00"
+    }
+
+  ],
+  "received_messages": [
+    {
+      "id_sender": "5E:FF:56:A2:AF:15Jean16-04-2023",
+      "texte": "Bonjour Walid, ça va bien. Et toi ?",
+      "date_writing": "2021-01-01 10:01:00",
+      "date_received": "2026-01-01 10:20:00"
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15Mouad16-04-2023",
+      "texte": "Merci Naruto.",
+      "date_writing": "2026-01-01 10:01:00",
+      "date_received": "2027-01-01 10:20:00"
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15Moulad16-04-2023",
+      "texte": "MOULA MOULA",
+      "date_writing": "2025-01-01 10:01:00",
+      "date_received": "2030-01-01 10:20:00"
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15Yoda16-04-2023",
+      "texte": "Force tu as",
+      "date_writing": "2022-01-01 10:01:00",
+      "date_received": "2023-03-01 10:20:00"
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15Mouad16-04-2023",
+      "texte": "Merci Naruto.",
+      "date_writing": "2022-01-01 10:01:00",
+      "date_received": "2023-05-14 10:20:00"
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15Yoda16-04-2023",
+      "texte": "Manger tu dois",
+      "date_writing": "2022-01-01 10:01:00",
+      "date_received": "2030-01-01 10:20:00"
+    },
+    {
+      "id_sender": "5E:FF:56:A2:AF:15MIAM16-04-2023",
+      "texte": "Merci beaucoup",
+      "date_writing": "2022-01-01 10:01:00",
+      "date_received": "2023-01-01 10:20:00"
+    }
+  ],
+  "size_file" : 50
+}
