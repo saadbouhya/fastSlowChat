@@ -59,9 +59,12 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
 
 
     }
-
     public CustomAdapterSent(Local dataSet) {
         localDataSet = dataSet;
+    }
+    public void updateData(Local dataSet) {
+        localDataSet = dataSet;
+        notifyDataSetChanged();
     }
 
     @Override

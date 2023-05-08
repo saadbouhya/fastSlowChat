@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.Controller.ChatController;
+import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.CustomAdapterSent;
 import com.example.slowvf.View.Adapters.MessageListAdapter;
 
 import java.io.IOException;
@@ -58,6 +60,7 @@ public class MessageListActivity extends AppCompatActivity {
         EditText messageEditText = findViewById(R.id.edit_gchat_message);
         ImageButton sendButton = findViewById(R.id.button_gchat_send);
         ChatController finalChatController = chatController;
+
         sendButton.setOnClickListener(view -> {
             // Récupération du texte tapé dans l'EditText
             String message = messageEditText.getText().toString();
@@ -68,9 +71,14 @@ public class MessageListActivity extends AppCompatActivity {
                 List<LocalForConversation> localForConversations = finalChatController.getMessagesBySenderIdOrReceiverId(value);
                 mMessageAdapter.setmLocalForConversationList(localForConversations);
                 mMessageAdapter.notifyDataSetChanged();
+              //  CustomAdapterSent customAdapterSent = new CustomAdapterSent(finalChatController.getMessagesReceivedSentLocal());
+               // customAdapterSent.notifyDataSetChanged();
+                Local test = finalChatController.getMessagesReceivedSentLocal();
+                System.out.println(test);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             // Effacer le texte dans l'EditText après l'envoi
             messageEditText.setText("");
         });

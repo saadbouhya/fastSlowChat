@@ -19,8 +19,9 @@ import java.io.IOException;
 public class SentFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private CustomAdapterSent mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private ChatController chatController;
 
     public SentFragment(){}
 
@@ -31,7 +32,7 @@ public class SentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ChatController chatController = null;
+        chatController = null;
         try {
             chatController = new ChatController(getContext());
         } catch (IOException e) {
@@ -53,4 +54,20 @@ public class SentFragment extends Fragment {
         return view;
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        ChatController chatController = null;
+        try {
+            chatController = new ChatController(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            mAdapter.updateData(chatController.getMessagesReceivedSentLocal());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
