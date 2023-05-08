@@ -1,5 +1,6 @@
 package com.example.slowvf.Controller;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 
 import com.example.slowvf.Dao.IdentificationDao;
@@ -21,9 +22,8 @@ public class IdentificationController {
     }
 
     private String getMacAdresse(){
-        //BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        // je ne peux pas tester avec un emulateur le bluetooth
-        return "58:AD:65:98:SQ";
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return bluetoothAdapter.getAddress();
     }
     private String getActualDate(){
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
