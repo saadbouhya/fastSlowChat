@@ -32,7 +32,7 @@ public class MessageDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         ChatController chatController = null;
         try {
-            chatController = new ChatController(this);
+            chatController = new ChatController(getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -19,7 +19,7 @@ import java.io.IOException;
 public class ChatFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private CustomAdapterChat mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public ChatFragment(){}
    // private String[] myDataset = {"Théo", "Pierre", "Louis","Saad", "Walid", "Baptiste","Mouad", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis"};
@@ -51,5 +51,22 @@ public class ChatFragment extends Fragment {
 
         return view;
 
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ChatController chatController = null;
+        try {
+            chatController = new ChatController(getContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            mAdapter.updateData(chatController.getLastMessagesForUniqueSendersAndReceivers());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

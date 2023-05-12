@@ -55,6 +55,9 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         localDataSet = dataSet;
     }
 
+    public CustomAdapterChat() {
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
@@ -76,7 +79,10 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
 
         return new ViewHolder(view);
     }
-
+    public void updateData(List<LocalForMessage> dataSet) {
+        localDataSet = dataSet;
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         String text = localDataSet.get(position).getMessage();

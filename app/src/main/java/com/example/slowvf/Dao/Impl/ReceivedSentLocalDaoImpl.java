@@ -7,6 +7,7 @@ import com.example.slowvf.Model.Local;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,10 +17,16 @@ public class ReceivedSentLocalDaoImpl implements receivedSentLocalDao {
 
     public static Local localfile(Context context) throws IOException {
         FileInputStream fis = context.openFileInput("Local.json");
-        InputStreamReader inputStreamReader = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        fis.close();
 
         Gson gson = new Gson();
-        Local messageInfo = gson.fromJson(inputStreamReader, Local.class);
+        Local messageInfo = gson.fromJson(stringBuilder.toString(), Local.class);
 
         return messageInfo;
     }
@@ -80,12 +87,12 @@ public class ReceivedSentLocalDaoImpl implements receivedSentLocalDao {
                 "      \"id_sender\": \"5E:FF:56:A2:AF:15Jean16-04-2023\",\n" +
                 "      \"texte\": \"Bonjour Walid, ça va bien. Et toi ?\",\n" +
                 "      \"date_writing\": \"2021-01-01 10:01:00\",\n" +
-                "      \"date_received\": \"2026-01-01 10:20:00\"\n" +
+                "      \"date_received\": \"2021-01-01 10:20:00\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "      \"id_sender\": \"5E:FF:56:A2:AF:15Mouad16-04-2023\",\n" +
                 "      \"texte\": \"Merci Naruto.\",\n" +
-                "      \"date_writing\": \"2026-01-01 10:01:00\",\n" +
+                "      \"date_writing\": \"2020-01-01 10:01:00\",\n" +
                 "      \"date_received\": \"2027-01-01 10:20:00\"\n" +
                 "    },\n" +
                 "    {\n" +
@@ -122,7 +129,9 @@ public class ReceivedSentLocalDaoImpl implements receivedSentLocalDao {
                 "  \"size_file\" : 50\n" +
                 "}" ;
 
-        FileOutputStream outputStream;
+        File file = new File(context.getFilesDir(), fileName);
+        if (!file.exists()) {
+            FileOutputStream outputStream;
         try {
             outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
             outputStream.write(fileContent.getBytes());
@@ -130,7 +139,7 @@ public class ReceivedSentLocalDaoImpl implements receivedSentLocalDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }}
 
     public static String readInternalFile(Context context, String filename) throws IOException {
         FileInputStream fis = context.openFileInput(filename);

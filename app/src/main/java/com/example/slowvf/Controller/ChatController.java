@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,14 +111,14 @@ public Local getMessagesReceivedSentLocal() throws IOException {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             sortedSentMessages = local.getSent_messages().stream()
                     .filter(sentMessage -> sentMessage.getId_receiver().equals(id))
-                    .sorted(Comparator.comparing(SentMessage::getDate_writing))
+                    .sorted(Comparator.comparing(SentMessage::getDate_writing).reversed())
                     .collect(Collectors.toList());
         }
         List<ReceivedMessage> sortedReceivedMessages = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             sortedReceivedMessages = local.getReceived_messages().stream()
                     .filter(receivedMessage -> receivedMessage.getId_sender().equals(id))
-                    .sorted(Comparator.comparing(ReceivedMessage::getDate_received))
+                    .sorted(Comparator.comparing(ReceivedMessage::getDate_writing).reversed())
                     .collect(Collectors.toList());
         }
 
@@ -140,9 +141,11 @@ public Local getMessagesReceivedSentLocal() throws IOException {
             localForConversation.setDate_received(receivedMessage.getDate_received());
             localForConversations.add(localForConversation);
         }
-
+Collections.reverse(localForConversations);
         return localForConversations;
     }
+
+
 
     public void addLocalSentMessage(String id,String texte) throws IOException {
 
@@ -151,7 +154,7 @@ public Local getMessagesReceivedSentLocal() throws IOException {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime now = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedDateTime = now.format(formatter);
            local.getSent_messages().add(new SentMessage(id,texte, formattedDateTime,"null"));
         }

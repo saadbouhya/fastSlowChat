@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.example.slowvf.Controller.ChatController;
 import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.CustomAdapterChat;
 import com.example.slowvf.View.Adapters.CustomAdapterSent;
 import com.example.slowvf.View.Adapters.MessageListAdapter;
 
@@ -31,7 +33,7 @@ public class MessageListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         ChatController chatController = null;
         try {
-            chatController = new ChatController(this);
+            chatController = new ChatController(getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,17 +66,24 @@ public class MessageListActivity extends AppCompatActivity {
         sendButton.setOnClickListener(view -> {
             // Récupération du texte tapé dans l'EditText
             String message = messageEditText.getText().toString();
-            System.out.println(message);
+            if (message.isEmpty()) {
+                // Afficher un pop-up si le message est vide
+                Toast.makeText(getApplicationContext(), "Le message ne peut pas être vide", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // Envoyer le message ici (utiliser chatController ou tout autre moyen nécessaire)
             try {
                 finalChatController.addLocalSentMessage(value,message);
                 List<LocalForConversation> localForConversations = finalChatController.getMessagesBySenderIdOrReceiverId(value);
                 mMessageAdapter.setmLocalForConversationList(localForConversations);
                 mMessageAdapter.notifyDataSetChanged();
-              //  CustomAdapterSent customAdapterSent = new CustomAdapterSent(finalChatController.getMessagesReceivedSentLocal());
-               // customAdapterSent.notifyDataSetChanged();
-                Local test = finalChatController.getMessagesReceivedSentLocal();
-                System.out.println(test);
+                CustomAdapterChat customAdapterChat = new CustomAdapterChat();
+                customAdapterChat.updateData(finalChatController.getLastMessagesForUniqueSendersAndReceivers());
+                CustomAdapterSent customAdapterSent = new CustomAdapterSent();
+                customAdapterSent.updateDataSent(finalChatController.getMessagesReceivedSentLocal());
+                mMessageRecycler.smoothScrollToPosition(localForConversations.size() - 1);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -82,6 +91,7 @@ public class MessageListActivity extends AppCompatActivity {
             // Effacer le texte dans l'EditText après l'envoi
             messageEditText.setText("");
         });
+
 
     }
 }

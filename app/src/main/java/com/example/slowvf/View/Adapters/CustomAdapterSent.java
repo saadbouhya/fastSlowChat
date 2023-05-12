@@ -62,9 +62,12 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
     public CustomAdapterSent(Local dataSet) {
         localDataSet = dataSet;
     }
-    public void updateData(Local dataSet) {
+    public void updateDataSent(Local dataSet) {
         localDataSet = dataSet;
         notifyDataSetChanged();
+    }
+
+    public CustomAdapterSent() {
     }
 
     @Override
@@ -96,19 +99,26 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        String text = localDataSet.getSent_messages().get(position).getTexte();
-        String id = localDataSet.getSent_messages().get(position).getId_receiver();
-        String date_writing = localDataSet.getSent_messages().get(position).getDate_writing();
-        String date_received = localDataSet.getSent_messages().get(position).getDate_received();
+        int index = localDataSet.getSent_messages().size() - 1 - position;
+        String text = localDataSet.getSent_messages().get(index).getTexte();
+        String id = localDataSet.getSent_messages().get(index).getId_receiver();
+        String date_writing = localDataSet.getSent_messages().get(index).getDate_writing();
+        String date_received = localDataSet.getSent_messages().get(index).getDate_received();
 
         String pseudo = "Pseudo(voir contact)";
 
         viewHolder.getMessage().setText(text);
         viewHolder.getId().setText(id);
         viewHolder.getDate_writing().setText(date_writing.substring(0, 10));
-        viewHolder.getDate_received().setText(date_received.substring(0, 10));
+        if (date_received.equals("null")) {
+            viewHolder.getDate_received().setText(date_received);
+        }
+        else {
+            viewHolder.getDate_received().setText(date_received.substring(0, 10));
+        }
         viewHolder.getName().setText(pseudo);
     }
+
 
     @Override
     public int getItemCount() {

@@ -54,20 +54,6 @@ public class SentFragment extends Fragment {
         return view;
 
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        ChatController chatController = null;
-        try {
-            chatController = new ChatController(getContext());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            mAdapter.updateData(chatController.getMessagesReceivedSentLocal());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
 }
