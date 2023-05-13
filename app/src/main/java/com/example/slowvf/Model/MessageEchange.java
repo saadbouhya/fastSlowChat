@@ -7,6 +7,14 @@ public class MessageEchange {
     private String message_text;
     private String date_received;
 
+    public MessageEchange(String id_sender, String id_receiver, String date_writing, String message_text, String date_received) {
+        this.id_sender = id_sender;
+        this.id_receiver = id_receiver;
+        this.date_writing = date_writing;
+        this.message_text = message_text;
+        this.date_received = date_received;
+    }
+
     public String getId_sender() {
         return id_sender;
     }

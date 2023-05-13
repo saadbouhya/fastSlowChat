@@ -8,7 +8,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.slowvf.Controller.ChatController;
+import com.example.slowvf.Dao.Impl.ReceivedSentEchangelDaoImpl;
 import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
 import com.example.slowvf.R;
 import com.example.slowvf.databinding.ActivityMainNavigationBinding;
@@ -41,6 +41,8 @@ public class MainActivityNavigation extends AppCompatActivity {
         try {
             ReceivedSentLocalDaoImpl.createFileOnInternalStorage(getApplicationContext());
             ReceivedSentLocalDaoImpl.readInternalFile(getApplicationContext(),"Local.json");
+            ReceivedSentEchangelDaoImpl.createFileOnInternalStorage(getApplicationContext());
+            ReceivedSentEchangelDaoImpl.readInternalFile(getApplicationContext(),"Echange.json");
         } catch (IOException e) {
             e.printStackTrace();
         }

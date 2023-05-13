@@ -3,10 +3,13 @@ package com.example.slowvf.Controller;
 import android.content.Context;
 import android.os.Build;
 
+import com.example.slowvf.Dao.Impl.ReceivedSentEchangelDaoImpl;
 import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
+import com.example.slowvf.Model.Echange;
 import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.Model.LocalForMessage;
+import com.example.slowvf.Model.MessageEchange;
 import com.example.slowvf.Model.ReceivedMessage;
 import com.example.slowvf.Model.SentMessage;
 
@@ -36,6 +39,11 @@ public Local getMessagesReceivedSentLocal() throws IOException {
 
         return ReceivedSentLocalDaoImpl.localfile(context);
 }
+
+    public Echange getMessagesEchange() throws IOException {
+
+        return ReceivedSentEchangelDaoImpl.echangeFile(context);
+    }
 
     public List<String> getUniqueIdSendersAndReceivers() throws IOException {
         Set<String> sendersAndReceivers = new HashSet<>();
@@ -161,6 +169,23 @@ Collections.reverse(localForConversations);
         ReceivedSentLocalDaoImpl.writeToJsonFile(context,local);
 
        String string =  ReceivedSentLocalDaoImpl.readInternalFile(context,"Local.json");
+        System.out.println(string);
+    }
+
+    public void addEchangeMessage(String id,String texte) throws IOException {
+
+        Echange echange = getMessagesEchange();
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = now.format(formatter);
+            echange.getMessages().add(new MessageEchange("mettre id du sender",id, formattedDateTime,texte,"null"));
+        }
+        ReceivedSentEchangelDaoImpl.writeToJsonFile(context,echange);
+
+        String string =  ReceivedSentLocalDaoImpl.readInternalFile(context,"Echange.json");
         System.out.println(string);
     }
 

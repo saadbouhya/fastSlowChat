@@ -75,6 +75,7 @@ public class MessageListActivity extends AppCompatActivity {
             // Envoyer le message ici (utiliser chatController ou tout autre moyen nécessaire)
             try {
                 finalChatController.addLocalSentMessage(value,message);
+                finalChatController.addEchangeMessage(value,message);
                 List<LocalForConversation> localForConversations = finalChatController.getMessagesBySenderIdOrReceiverId(value);
                 mMessageAdapter.setmLocalForConversationList(localForConversations);
                 mMessageAdapter.notifyDataSetChanged();
