@@ -32,9 +32,9 @@ public class SentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        chatController = null;
+        ChatController chatController = null;
         try {
-            chatController = new ChatController(getContext());
+            chatController = ChatController.getInstance(getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

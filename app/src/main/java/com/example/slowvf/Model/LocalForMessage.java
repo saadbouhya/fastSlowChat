@@ -7,19 +7,15 @@ public class LocalForMessage implements Serializable {
     private final String name;
     private final String id;
     private final String message;
-    private final String date_writing;
-    private final String date_received;
+    private final String dateWriting;
+    private final String dateReceived;
 
-    public LocalForMessage(String name, String id, String message, String date_writing,String date_received) {
+    public LocalForMessage(String name, String id, String message, String dateWriting, String dateReceived) {
         this.name = name;
         this.id = id;
         this.message = message;
-        this.date_writing = date_writing;
-        this.date_received = date_received;
-    }
-
-    public String getDate_received() {
-        return date_received;
+        this.dateWriting = dateWriting;
+        this.dateReceived = dateReceived;
     }
 
     public String getName2() {
@@ -34,7 +30,7 @@ public class LocalForMessage implements Serializable {
         return message;
     }
 
-    public String getDate_writing() {
-        return date_writing;
+    public String getDateWriting() {
+        return dateWriting;
     }
 }

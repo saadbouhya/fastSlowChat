@@ -1,24 +1,24 @@
 package com.example.slowvf.Model;
 
 public class ReceivedMessage {
-    private String id_sender;
+    private String idSender;
     private String texte;
-    private String date_writing;
-    private String date_received;
+    private String dateWriting;
+    private String dateReceived;
 
-    public ReceivedMessage(String id_sender, String texte, String date_writing, String date_received) {
-        this.id_sender = id_sender;
+    public ReceivedMessage(String idSender, String texte, String dateWriting, String dateReceived) {
+        this.idSender = idSender;
         this.texte = texte;
-        this.date_writing = date_writing;
-        this.date_received = date_received;
+        this.dateWriting = dateWriting;
+        this.dateReceived = dateReceived;
     }
 
-    public String getId_sender() {
-        return id_sender;
+    public String getIdSender() {
+        return idSender;
     }
 
-    public void setId_sender(String id_sender) {
-        this.id_sender = id_sender;
+    public void setIdSender(String idSender) {
+        this.idSender = idSender;
     }
 
     public String getTexte() {
@@ -29,19 +29,19 @@ public class ReceivedMessage {
         this.texte = texte;
     }
 
-    public String getDate_writing() {
-        return date_writing;
+    public String getDateWriting() {
+        return dateWriting;
     }
 
-    public void setDate_writing(String date_writing) {
-        this.date_writing = date_writing;
+    public void setDateWriting(String dateWriting) {
+        this.dateWriting = dateWriting;
     }
 
-    public String getDate_received() {
-        return date_received;
+    public String getDateReceived() {
+        return dateReceived;
     }
 
-    public void setDate_received(String date_received) {
-        this.date_received = date_received;
+    public void setDateReceived(String dateReceived) {
+        this.dateReceived = dateReceived;
     }
 }

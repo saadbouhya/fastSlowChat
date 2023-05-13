@@ -19,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,11 +29,18 @@ import java.util.stream.Collectors;
 //   ChatController ChatController = new ChatController(getApplicationContext()); pour l'appeler
 public class ChatController {
     private Context context;
-
+private static ChatController chatController;
     public ChatController(Context context) throws IOException {
         this.context = context;
     }
 
+    // Méthode statique pour récupérer l'instance unique de la classe
+    public static ChatController getInstance(Context context) throws IOException {
+        if(chatController == null) {
+            chatController = new ChatController(context);
+        }
+        return chatController;
+    }
 public Local getMessagesReceivedSentLocal() throws IOException {
 
         return ReceivedSentLocalDaoImpl.localfile(context);
@@ -48,12 +54,12 @@ public Local getMessagesReceivedSentLocal() throws IOException {
     public List<String> getUniqueIdSendersAndReceivers() throws IOException {
         Set<String> sendersAndReceivers = new HashSet<>();
         Local local = getMessagesReceivedSentLocal();
-        for (SentMessage sentMessage : local.getSent_messages()) {
-            sendersAndReceivers.add(sentMessage.getId_receiver());
+        for (SentMessage sentMessage : local.getSentMessages()) {
+            sendersAndReceivers.add(sentMessage.getIdReceiver());
         }
 
-        for (ReceivedMessage receivedMessage : local.getReceived_messages()) {
-            sendersAndReceivers.add(receivedMessage.getId_sender());
+        for (ReceivedMessage receivedMessage : local.getReceivedMessages()) {
+            sendersAndReceivers.add(receivedMessage.getIdSender());
         }
 
         return new ArrayList<>(sendersAndReceivers);
@@ -71,10 +77,10 @@ public Local getMessagesReceivedSentLocal() throws IOException {
         Map<String, String> lastDatesMap = new HashMap<>();
 
         // Itération à travers les sent_messages de Local
-        for (SentMessage sentMessage : local.getSent_messages()) {
-            String id_receiver = sentMessage.getId_receiver();
+        for (SentMessage sentMessage : local.getSentMessages()) {
+            String id_receiver = sentMessage.getIdReceiver();
             String message = sentMessage.getTexte();
-            String date = sentMessage.getDate_writing();
+            String date = sentMessage.getDateWriting();
 
             // Si l'id_receiver est dans la liste des id_sender et id_receiver uniques
             if (uniqueSendersAndReceivers.contains(id_receiver)) {
@@ -87,10 +93,10 @@ public Local getMessagesReceivedSentLocal() throws IOException {
         }
 
         // Itération à travers les received_messages de Local
-        for (ReceivedMessage receivedMessage : local.getReceived_messages()) {
-            String id_sender = receivedMessage.getId_sender();
+        for (ReceivedMessage receivedMessage : local.getReceivedMessages()) {
+            String id_sender = receivedMessage.getIdSender();
             String message = receivedMessage.getTexte();
-            String date = receivedMessage.getDate_writing();
+            String date = receivedMessage.getDateWriting();
 
             // Si l'id_sender est dans la liste des id_sender et id_receiver uniques
             if (uniqueSendersAndReceivers.contains(id_sender)) {
@@ -117,36 +123,36 @@ public Local getMessagesReceivedSentLocal() throws IOException {
         Local local = getMessagesReceivedSentLocal();
         List<SentMessage> sortedSentMessages = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            sortedSentMessages = local.getSent_messages().stream()
-                    .filter(sentMessage -> sentMessage.getId_receiver().equals(id))
-                    .sorted(Comparator.comparing(SentMessage::getDate_writing).reversed())
+            sortedSentMessages = local.getSentMessages().stream()
+                    .filter(sentMessage -> sentMessage.getIdReceiver().equals(id))
+                    .sorted(Comparator.comparing(SentMessage::getDateWriting).reversed())
                     .collect(Collectors.toList());
         }
         List<ReceivedMessage> sortedReceivedMessages = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            sortedReceivedMessages = local.getReceived_messages().stream()
-                    .filter(receivedMessage -> receivedMessage.getId_sender().equals(id))
-                    .sorted(Comparator.comparing(ReceivedMessage::getDate_writing).reversed())
+            sortedReceivedMessages = local.getReceivedMessages().stream()
+                    .filter(receivedMessage -> receivedMessage.getIdSender().equals(id))
+                    .sorted(Comparator.comparing(ReceivedMessage::getDateWriting).reversed())
                     .collect(Collectors.toList());
         }
 
         for (SentMessage sentMessage : sortedSentMessages) {
             LocalForConversation localForConversation = new LocalForConversation();
             localForConversation.setContenu(sentMessage.getTexte());
-            localForConversation.setAuteur(local.getId_local());
-            localForConversation.setDestinataire(sentMessage.getId_receiver());
-            localForConversation.setDate_writing(sentMessage.getDate_writing());
-            localForConversation.setDate_received(sentMessage.getDate_received());
+            localForConversation.setAuteur(local.getIdLocal());
+            localForConversation.setDestinataire(sentMessage.getIdReceiver());
+            localForConversation.setDateWriting(sentMessage.getDateWriting());
+            localForConversation.setDateReceived(sentMessage.getDateReceived());
             localForConversations.add(localForConversation);
         }
 
         for (ReceivedMessage receivedMessage : sortedReceivedMessages) {
             LocalForConversation localForConversation = new LocalForConversation();
             localForConversation.setContenu(receivedMessage.getTexte());
-            localForConversation.setAuteur(receivedMessage.getId_sender());
-            localForConversation.setDestinataire(local.getId_local());
-            localForConversation.setDate_writing(receivedMessage.getDate_writing());
-            localForConversation.setDate_received(receivedMessage.getDate_received());
+            localForConversation.setAuteur(receivedMessage.getIdSender());
+            localForConversation.setDestinataire(local.getIdLocal());
+            localForConversation.setDateWriting(receivedMessage.getDateWriting());
+            localForConversation.setDateReceived(receivedMessage.getDateReceived());
             localForConversations.add(localForConversation);
         }
 Collections.reverse(localForConversations);
@@ -164,7 +170,7 @@ Collections.reverse(localForConversations);
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedDateTime = now.format(formatter);
-           local.getSent_messages().add(new SentMessage(id,texte, formattedDateTime,"null"));
+           local.getSentMessages().add(new SentMessage(id,texte, formattedDateTime,"null"));
         }
         ReceivedSentLocalDaoImpl.writeToJsonFile(context,local);
 
@@ -175,13 +181,13 @@ Collections.reverse(localForConversations);
     public void addEchangeMessage(String id,String texte) throws IOException {
 
         Echange echange = getMessagesEchange();
-
+        Local local = getMessagesReceivedSentLocal();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedDateTime = now.format(formatter);
-            echange.getMessages().add(new MessageEchange("mettre id du sender",id, formattedDateTime,texte,"null"));
+            echange.getMessages().add(new MessageEchange(local.getIdLocal(),id, formattedDateTime,texte,"null"));
         }
         ReceivedSentEchangelDaoImpl.writeToJsonFile(context,echange);
 

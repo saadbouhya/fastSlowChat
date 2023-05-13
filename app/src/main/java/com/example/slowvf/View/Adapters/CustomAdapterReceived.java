@@ -13,7 +13,6 @@ import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Chat.conversation.MessageDetailActivity;
-import com.example.slowvf.View.Chat.conversation.MessageListActivity;
 
 public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterReceived.ViewHolder> {
 
@@ -91,10 +90,10 @@ public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterRec
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        String text = localDataSet.getReceived_messages().get(position).getTexte();
-        String id = localDataSet.getReceived_messages().get(position).getId_sender();
-        String date_writing = localDataSet.getReceived_messages().get(position).getDate_writing();
-        String date_received = localDataSet.getReceived_messages().get(position).getDate_received();
+        String text = localDataSet.getReceivedMessages().get(position).getTexte();
+        String id = localDataSet.getReceivedMessages().get(position).getIdSender();
+        String date_writing = localDataSet.getReceivedMessages().get(position).getDateWriting();
+        String date_received = localDataSet.getReceivedMessages().get(position).getDateReceived();
 
         String pseudo = "Pseudo(voir contact)";
 
@@ -107,6 +106,6 @@ public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterRec
 
     @Override
     public int getItemCount() {
-        return localDataSet.getReceived_messages().size();
+        return localDataSet.getReceivedMessages().size();
     }
 }

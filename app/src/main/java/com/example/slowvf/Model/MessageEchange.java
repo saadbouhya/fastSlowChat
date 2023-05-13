@@ -1,57 +1,57 @@
 package com.example.slowvf.Model;
 
 public class MessageEchange {
-    private String id_sender;
-    private String id_receiver;
-    private String date_writing;
-    private String message_text;
-    private String date_received;
+    private String idSender;
+    private String idReceiver;
+    private String dateWriting;
+    private String messageText;
+    private String dateReceived;
 
-    public MessageEchange(String id_sender, String id_receiver, String date_writing, String message_text, String date_received) {
-        this.id_sender = id_sender;
-        this.id_receiver = id_receiver;
-        this.date_writing = date_writing;
-        this.message_text = message_text;
-        this.date_received = date_received;
+    public MessageEchange(String idSender, String idReceiver, String dateWriting, String messageText, String dateReceived) {
+        this.idSender = idSender;
+        this.idReceiver = idReceiver;
+        this.dateWriting = dateWriting;
+        this.messageText = messageText;
+        this.dateReceived = dateReceived;
     }
 
-    public String getId_sender() {
-        return id_sender;
+    public String getIdSender() {
+        return idSender;
     }
 
-    public void setId_sender(String id_sender) {
-        this.id_sender = id_sender;
+    public void setIdSender(String idSender) {
+        this.idSender = idSender;
     }
 
-    public String getId_receiver() {
-        return id_receiver;
+    public String getIdReceiver() {
+        return idReceiver;
     }
 
-    public void setId_receiver(String id_receiver) {
-        this.id_receiver = id_receiver;
+    public void setIdReceiver(String idReceiver) {
+        this.idReceiver = idReceiver;
     }
 
-    public String getDate_writing() {
-        return date_writing;
+    public String getDateWriting() {
+        return dateWriting;
     }
 
-    public void setDate_writing(String date_writing) {
-        this.date_writing = date_writing;
+    public void setDateWriting(String dateWriting) {
+        this.dateWriting = dateWriting;
     }
 
-    public String getMessage_text() {
-        return message_text;
+    public String getMessageText() {
+        return messageText;
     }
 
-    public void setMessage_text(String message_text) {
-        this.message_text = message_text;
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
     }
 
-    public String getDate_received() {
-        return date_received;
+    public String getDateReceived() {
+        return dateReceived;
     }
 
-    public void setDate_received(String date_received) {
-        this.date_received = date_received;
+    public void setDateReceived(String dateReceived) {
+        this.dateReceived = dateReceived;
     }
 }

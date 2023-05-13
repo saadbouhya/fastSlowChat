@@ -24,18 +24,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class MessageDetailActivity extends AppCompatActivity {
-    private RecyclerView mMessageRecycler;
-    private MessageListAdapter mMessageAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ChatController chatController = null;
-        try {
-            chatController = new ChatController(getApplicationContext());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_new_message);
@@ -54,6 +45,10 @@ public class MessageDetailActivity extends AppCompatActivity {
 
 
         LocalForMessage local = (LocalForMessage)intent.getSerializableExtra("key");
+
+        if (local.getId().equals("Inconnu")){
+            button.setText("Ajouter aux contacts");
+        }
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Message");

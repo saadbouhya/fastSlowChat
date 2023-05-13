@@ -99,11 +99,11 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        int index = localDataSet.getSent_messages().size() - 1 - position;
-        String text = localDataSet.getSent_messages().get(index).getTexte();
-        String id = localDataSet.getSent_messages().get(index).getId_receiver();
-        String date_writing = localDataSet.getSent_messages().get(index).getDate_writing();
-        String date_received = localDataSet.getSent_messages().get(index).getDate_received();
+        int index = localDataSet.getSentMessages().size() - 1 - position;
+        String text = localDataSet.getSentMessages().get(index).getTexte();
+        String id = localDataSet.getSentMessages().get(index).getIdReceiver();
+        String date_writing = localDataSet.getSentMessages().get(index).getDateWriting();
+        String date_received = localDataSet.getSentMessages().get(index).getDateReceived();
 
         String pseudo = "Pseudo(voir contact)";
 
@@ -122,6 +122,6 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
 
     @Override
     public int getItemCount() {
-        return localDataSet.getSent_messages().size();
+        return localDataSet.getSentMessages().size();
     }
 }

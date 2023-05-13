@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Chat.conversation.MessageListActivity;
@@ -87,7 +86,7 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         String text = localDataSet.get(position).getMessage();
         String id = localDataSet.get(position).getId();
-        String date_writing = localDataSet.get(position).getDate_writing();
+        String date_writing = localDataSet.get(position).getDateWriting();
 
         String pseudo = "Pseudo";
 

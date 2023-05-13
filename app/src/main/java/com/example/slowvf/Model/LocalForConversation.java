@@ -5,18 +5,18 @@ public class LocalForConversation {
     private String auteur;
     private String destinataire;
 
-    private String date_received;
-    private String date_writing;
+    private String dateReceived;
+    private String dateWriting;
 
     public LocalForConversation() {}
 
     // Constructeur
-    public LocalForConversation(String contenu, String auteur, String destinataire, String date_received, String date_writing) {
+    public LocalForConversation(String contenu, String auteur, String destinataire, String dateReceived, String dateWriting) {
         this.contenu = contenu;
         this.auteur = auteur;
         this.destinataire = destinataire;
-        this.date_received = date_received;
-        this.date_writing = date_writing;
+        this.dateReceived = dateReceived;
+        this.dateWriting = dateWriting;
     }
 
     // Getters et setters
@@ -36,27 +36,23 @@ public class LocalForConversation {
         this.auteur = auteur;
     }
 
-    public String getDestinataire() {
-        return destinataire;
-    }
-
     public void setDestinataire(String destinataire) {
         this.destinataire = destinataire;
     }
 
-    public String getDate_received() {
-        return date_received;
+    public String getDateReceived() {
+        return dateReceived;
     }
 
-    public void setDate_received(String date_received) {
-        this.date_received = date_received;
+    public void setDateReceived(String dateReceived) {
+        this.dateReceived = dateReceived;
     }
 
-    public String getDate_writing() {
-        return date_writing;
+    public String getDateWriting() {
+        return dateWriting;
     }
 
-    public void setDate_writing(String date_writing) {
-        this.date_writing = date_writing;
+    public void setDateWriting(String dateWriting) {
+        this.dateWriting = dateWriting;
     }
 }

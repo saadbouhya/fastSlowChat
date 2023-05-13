@@ -33,7 +33,7 @@ public class ChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         ChatController chatController = null;
         try {
-            chatController = new ChatController(getContext());
+            chatController = ChatController.getInstance(getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,7 +59,7 @@ public class ChatFragment extends Fragment {
         super.onResume();
         ChatController chatController = null;
         try {
-            chatController = new ChatController(getContext());
+            chatController = ChatController.getInstance(getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

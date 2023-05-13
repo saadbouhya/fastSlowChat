@@ -3,47 +3,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Local {
-    private String id_local;
-    private List<SentMessage> sent_messages;
-    private List<ReceivedMessage> received_messages;
-    private String size_file;
+    private String idLocal;
+    private List<SentMessage> sentMessages;
+    private List<ReceivedMessage> receivedMessages;
+    private String sizeFile;
 
-    public Local(String id_local,String size_file) {
-        this.id_local = id_local;
-        this.sent_messages = new ArrayList<>();
-        this.received_messages = new ArrayList<>();
-        this.size_file = size_file;
+    public Local(String idLocal,String sizeFile) {
+        this.idLocal = idLocal;
+        this.sentMessages = new ArrayList<>();
+        this.receivedMessages = new ArrayList<>();
+        this.sizeFile = sizeFile;
     }
 
-    public String getSize_file() {
-        return size_file;
+    public String getIdLocal() {
+        return idLocal;
     }
 
-    public void setSize_file(String size_file) {
-        this.size_file = size_file;
+    public List<SentMessage> getSentMessages() {
+        return sentMessages;
     }
 
-    public String getId_local() {
-        return id_local;
+    public List<ReceivedMessage> getReceivedMessages() {
+        return receivedMessages;
     }
 
-    public void setId_local(String id_local) {
-        this.id_local = id_local;
-    }
-
-    public List<SentMessage> getSent_messages() {
-        return sent_messages;
-    }
-
-    public void setSent_messages(List<SentMessage> sent_messages) {
-        this.sent_messages = sent_messages;
-    }
-
-    public List<ReceivedMessage> getReceived_messages() {
-        return received_messages;
-    }
-
-    public void setReceived_messages(List<ReceivedMessage> received_messages) {
-        this.received_messages = received_messages;
-    }
 }

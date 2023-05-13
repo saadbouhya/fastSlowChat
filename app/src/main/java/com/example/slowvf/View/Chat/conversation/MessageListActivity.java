@@ -33,7 +33,7 @@ public class MessageListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         ChatController chatController = null;
         try {
-            chatController = new ChatController(getApplicationContext());
+            chatController = ChatController.getInstance(getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,8 +61,9 @@ public class MessageListActivity extends AppCompatActivity {
 
         EditText messageEditText = findViewById(R.id.edit_gchat_message);
         ImageButton sendButton = findViewById(R.id.button_gchat_send);
-        ChatController finalChatController = chatController;
 
+
+        ChatController finalChatController = chatController;
         sendButton.setOnClickListener(view -> {
             // Récupération du texte tapé dans l'EditText
             String message = messageEditText.getText().toString();

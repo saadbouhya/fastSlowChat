@@ -3,6 +3,7 @@ package com.example.slowvf.Dao.Impl;
 import android.content.Context;
 
 
+import com.example.slowvf.Dao.receivedSentEchangelDao;
 import com.example.slowvf.Model.Echange;
 import com.google.gson.Gson;
 
@@ -13,7 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ReceivedSentEchangelDaoImpl {
+public class ReceivedSentEchangelDaoImpl implements receivedSentEchangelDao {
 
     public static Echange echangeFile(Context context) throws IOException {
         FileInputStream fis = context.openFileInput("Echange.json");
@@ -44,25 +45,25 @@ public class ReceivedSentEchangelDaoImpl {
         String fileContent = "{\n" +
                 "  \"messages\": [\n" +
                 "    {\n" +
-                "      \"id_sender\": \"5E:FF:56:A2:AF:15yopi14-04-2023\",\n" +
-                "      \"id_receiver\": \"5E:FF:56:A2:AF:15malo14-04-2023\",\n" +
-                "      \"date_writing\": \"2023-04-22 10:00:00\",\n" +
-                "      \"message_text\": \"Bonjour, comment vas-tu ?\",\n" +
-                "      \"date_received\": \"null (si pas encore reçu)\"\n" +
+                "      \"idSender\": \"5E:FF:56:A2:AF:15yopi14-04-2023\",\n" +
+                "      \"idReceiver\": \"5E:FF:56:A2:AF:15malo14-04-2023\",\n" +
+                "      \"dateWriting\": \"2023-04-22 10:00:00\",\n" +
+                "      \"messageText\": \"Bonjour, comment vas-tu ?\",\n" +
+                "      \"dateReceived\": \"null (si pas encore reçu)\"\n" +
                 "    },\n" +
                 "    {\n" +
-                "      \"id_sender\": \"5E:FF:56:A2:AF:15pierre14-04-2023\",\n" +
-                "      \"id_receiver\": \"5E:FF:56:A2:AF:15paul14-04-2023\",\n" +
-                "      \"date_writing\": \"2023-04-22 10:05:00\",\n" +
-                "      \"message_text\": \"Je vais bien, merci. Et toi ?\",\n" +
-                "      \"date_received\": \"null (si pas encore reçu)\"\n" +
+                "      \"idSender\": \"5E:FF:56:A2:AF:15pierre14-04-2023\",\n" +
+                "      \"idReceiver\": \"5E:FF:56:A2:AF:15paul14-04-2023\",\n" +
+                "      \"dateWriting\": \"2023-04-22 10:05:00\",\n" +
+                "      \"messageText\": \"Je vais bien, merci. Et toi ?\",\n" +
+                "      \"dateReceived\": \"null (si pas encore reçu)\"\n" +
                 "    },\n" +
                 "    {\n" +
-                "      \"id_sender\": \"5E:FF:56:A2:AF:15yolo14-04-2023\",\n" +
-                "      \"id_receiver\": \"5E:FF:56:A2:AF:15naruto14-04-2023\",\n" +
-                "      \"date_writing\": \"2023-04-22 10:10:00\",\n" +
-                "      \"message_text\": \"Je vais bien aussi, merci.\",\n" +
-                "      \"date_received\": \"null (si pas encore reçu)\"\n" +
+                "      \"idSender\": \"5E:FF:56:A2:AF:15yolo14-04-2023\",\n" +
+                "      \"idReceiver\": \"5E:FF:56:A2:AF:15naruto14-04-2023\",\n" +
+                "      \"dateWriting\": \"2023-04-22 10:10:00\",\n" +
+                "      \"messageText\": \"Je vais bien aussi, merci.\",\n" +
+                "      \"dateReceived\": \"null (si pas encore reçu)\"\n" +
                 "    }\n" +
                 "  ]\n" +
                 "}" ;
