@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.slowvf.R;
+import com.example.slowvf.View.Contact.Contacts;
 import com.example.slowvf.View.MainActivityNavigation;
 
 public class IdentificationActivity extends AppCompatActivity {
@@ -29,7 +30,7 @@ public class IdentificationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Code à exécuter lorsque l'utilisateur clique sur le bouton "Inscription"
-                Intent intent = new Intent(IdentificationActivity.this, MainActivityNavigation.class);
+                Intent intent = new Intent(IdentificationActivity.this, Contacts.class);
                 startActivity(intent);
             }
         });

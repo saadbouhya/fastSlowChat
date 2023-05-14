@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.TextView;
 
+import com.example.slowvf.Controller.ContactController;
 import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.AdapterContact;
@@ -22,6 +23,7 @@ public class Contacts extends AppCompatActivity {
     private RecyclerView recyclerViewContacts;
     private ArrayList<Contact> contacts;
     private AdapterContact adapterContact;
+    private ContactController contactController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,8 @@ public class Contacts extends AppCompatActivity {
             }
         });
 
-        contacts = getData();
+        contactController = new ContactController(Contacts.this);
+        contacts = contactController.findAll(Contacts.this);
         adapterContact = new AdapterContact(contacts);
         LinearLayoutManager lm = new LinearLayoutManager(this);
         recyclerViewContacts.setLayoutManager(lm);
@@ -70,64 +73,29 @@ public class Contacts extends AppCompatActivity {
     }
 
     private void loadData() {
-        RecyclerView.Adapter adapterContact = new AdapterContact(getData());
+        RecyclerView.Adapter adapterContact = new AdapterContact(contactController.findAll(Contacts.this));
         LinearLayoutManager lm = new LinearLayoutManager(this);
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
     }
 
-    //@Override
-    //protected void onResume() {
-    //    super.onResume();
-    //    loadData();
-    //}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+    }
 
     private void filter(String text) {
-       ArrayList<Contact> filteredList = new ArrayList<>();
+        ArrayList<Contact> filteredList = new ArrayList<>();
 
-       for (Contact contact : contacts) {
-           if (String.format("%s %s", contact.getLastName(), contact.getFirstName()).toLowerCase().contains(text.toLowerCase()) ) {
-               filteredList.add(contact);
-           }
-       }
+        for (Contact contact : contacts) {
+            if (String.format("%s %s", contact.getLastName(), contact.getFirstName()).toLowerCase().contains(text.toLowerCase()) ) {
+                filteredList.add(contact);
+            }
+        }
 
-       adapterContact.filterList(filteredList);
+        adapterContact.filterList(filteredList);
+        recyclerViewContacts.setAdapter(adapterContact);
     }
 
-    private ArrayList<Contact> getData() {
-        ArrayList<Contact> contacts = new ArrayList<>();
-
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Sadik", "Mouad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Duchamps", "Théo"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bortolloti", "Bastite"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Doe", "John"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-        contacts.add(new Contact("00-B0-D0-63-C2-26glitch26032023", "Bouhya", "Saad"));
-
-
-        return contacts;
-    }
 }
