@@ -10,9 +10,17 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
+import com.example.slowvf.Model.MessageEchange;
+import com.example.slowvf.View.Exchange.Exchange;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class BluetoothController {
@@ -25,6 +33,7 @@ public class BluetoothController {
     private OutputStream outputStream;
     private Handler handler;
     private AppCompatActivity activity;
+    ExchangeDaoImpl exchangeDao = new ExchangeDaoImpl();
 
     public BluetoothController() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -42,13 +51,6 @@ public class BluetoothController {
             public void run() {
                 try {
                     if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
                     socket = device.createRfcommSocketToServiceRecord(APP_UUID);
@@ -59,6 +61,18 @@ public class BluetoothController {
                         @Override
                         public void run() {
                             onDeviceConnected();
+                        }
+                    });
+
+                    // Send all messages
+                    sendAllMessages();
+
+                    // Receive messages
+                    List<MessageEchange> receivedMessages = startReceivingMessages();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onMessagesReceived(receivedMessages);
                         }
                     });
                 } catch (IOException e) {
@@ -72,18 +86,26 @@ public class BluetoothController {
                 }
             }
         }).start();
-        sendMessage("coucou");
+        sendAllMessages();
         startReceivingMessages();
 
     }
 
-    public void sendMessage(final String message) {
+    public void sendAllMessages() {
+        List<MessageEchange> exchangeMessages = exchangeDao.getExchangeMessages(activity);
+        List<MessageEchange> localMessages = exchangeDao.getLocalMessages(activity);
+        List<MessageEchange> allMessages = new ArrayList<>();
+        allMessages.addAll(exchangeMessages);
+        allMessages.addAll(localMessages);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    outputStream.write(message.getBytes());
-                    outputStream.flush();
+                    for (MessageEchange message : allMessages) {
+                        outputStream.write(message.toString().getBytes());
+                        outputStream.flush();
+                    }
                 } catch (IOException e) {
                     handler.post(new Runnable() {
                         @Override
@@ -97,7 +119,8 @@ public class BluetoothController {
         }).start();
     }
 
-    public void startReceivingMessages() {
+    public List<MessageEchange> startReceivingMessages() {
+        List<MessageEchange> receivedMessages = new ArrayList<>();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,9 +134,13 @@ public class BluetoothController {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                onMessageReceived(message);
+                                // do  nothing
                             }
                         });
+
+                        // Parse the received message and add it to the list of received messages
+                        MessageEchange receivedMessage = parseMessage(message);
+                        receivedMessages.add(receivedMessage);
                     } catch (IOException e) {
                         handler.post(new Runnable() {
                             @Override
@@ -127,7 +154,10 @@ public class BluetoothController {
                 }
             }
         }).start();
+
+        return receivedMessages;
     }
+
 
     public void stopReceivingMessages() {
         try {
@@ -152,11 +182,60 @@ public class BluetoothController {
     }
 
     // Override these methods to handle message receiving events
-    public void onMessageReceived(String message) {
-        // Do something with the received message
+    public void onMessagesReceived(List<MessageEchange> messages) {
+        String currentUser = getUserId();
+        for (MessageEchange message : messages){
+            if(message.getIdReceiver() == currentUser){
+                if (!exchangeDao.messageExist(activity,message, true)) {
+                    LocalDateTime now = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        now = LocalDateTime.now();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        String formattedDateTime = now.format(formatter);
+                        message.setDateReceived(formattedDateTime);
+                        exchangeDao.updateMessage(activity,message,true);
+                    }
+
+                }
+            } else if (message.getIdSender() == currentUser) {
+                if (message.getDateReceived() != null){
+                    if (exchangeDao.messageExist(activity, message, false)){
+                        exchangeDao.deleteMessage(activity, message, true);
+                        exchangeDao.addMessage(activity, message, false);
+                    }
+                }
+
+            } else if (exchangeDao.messageExist(activity, message, false)){
+                exchangeDao.updateMessage(activity, message, false);
+            } else {
+                exchangeDao.addMessage(activity, message, false);
+            }
+        }
     }
 
     public void onReceiveError() {
         // Do something when there is an error receiving a message
     }
+
+    private MessageEchange parseMessage(String message) {
+        // Split the message string into individual components
+        String[] components = message.split(";");
+
+        // Extract the relevant information from the components
+        String idSender = components[0];
+        String idReceiver = components[1];
+        String dateWriting = components[2];
+        String messageText = components[3];
+        String dateReceived = components[4];
+
+        // Create a new MessageEchange object with the extracted information
+        MessageEchange parsedMessage = new MessageEchange(idSender, idReceiver, dateWriting, messageText, dateReceived);
+
+        return parsedMessage;
+    }
+
+    private String getUserId(){
+        return "id";
+    }
+
 }

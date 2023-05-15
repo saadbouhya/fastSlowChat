@@ -24,6 +24,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class ExchangeDaoImpl implements ExchangeDao {
 
     private static final String ECHANGE_FILE = "Echange.json";
@@ -98,6 +101,12 @@ public class ExchangeDaoImpl implements ExchangeDao {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteMessage(Context context, MessageEchange message, boolean isLocal) {
+        List<MessageEchange> messages = isLocal ? getLocalMessages(context) : getExchangeMessages(context);
+        messages.remove(message);
+        writeMessagesToFile(context, messages, isLocal);
     }
 
 

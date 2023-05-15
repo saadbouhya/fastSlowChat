@@ -101,8 +101,6 @@ public class Exchange extends AppCompatActivity {
                 progressDialog = new ProgressDialog(Exchange.this);
                 progressDialog.setMessage("Waiting for Bluetooth devices...");
                 progressDialog.setCancelable(false);
-                progressDialog.show();
-
                 // Clear the list of Bluetooth devices
                 bluetoothDevices.clear();
 
@@ -110,6 +108,7 @@ public class Exchange extends AppCompatActivity {
                 if (!checkBluetoothPermission()) {
                     return;
                 }
+                progressDialog.show();
                 Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
                 for (BluetoothDevice device : pairedDevices) {
                     bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
