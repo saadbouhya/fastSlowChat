@@ -1,32 +1,27 @@
 package com.example.slowvf.View.Chat.conversation;
-
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
-
 import com.example.slowvf.R;
 
 public class NewMessageActivity extends AppCompatActivity {
 
-    private ConstraintLayout cardLayout;
-    private AnimatorSet slideUpAnimator;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setContentView(R.layout.fragment_message_received);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
         Intent intent = getIntent();
 
@@ -34,33 +29,39 @@ public class NewMessageActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle("Nouveau message");
 
-        cardLayout = findViewById(R.id.card_layout);
-        slideUpAnimator = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.slide_up);
+        // Obtenez une référence à votre layout ConstraintLayout
+        ConstraintLayout constraintLayout = findViewById(R.id.cardContainer);
 
-        View rootView = findViewById(android.R.id.content);
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            private final Rect r = new Rect();
+        // Obtenez une référence à la racine du layout
+        ViewGroup rootView = findViewById(android.R.id.content);
 
-            @Override
-            public void onGlobalLayout() {
-                rootView.getWindowVisibleDisplayFrame(r);
-                int screenHeight = rootView.getRootView().getHeight();
-                int keypadHeight = screenHeight - r.bottom;
+        // Créez une transition automatique avec une durée spécifiée
+        AutoTransition autoTransition = new AutoTransition();
+        autoTransition.setDuration(500); // Définissez la durée de l'animation en millisecondes
 
-                if (keypadHeight > screenHeight * 0.15) {
-                    // Keyboard is visible
-                    if (!slideUpAnimator.isRunning() && cardLayout.getTranslationY() == 0) {
-                        slideUpAnimator.setTarget(cardLayout);
-                        slideUpAnimator.start();
-                    }
-                } else {
-                    // Keyboard is hidden
-                    if (!slideUpAnimator.isRunning() && cardLayout.getTranslationY() < 0) {
-                        cardLayout.setTranslationY(0);
-                    }
-                }
+        // Écoutez les événements de changement de clavier
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect r = new Rect();
+            rootView.getWindowVisibleDisplayFrame(r);
+            int screenHeight = rootView.getRootView().getHeight();
+
+            // Calculez la hauteur visible du contenu de l'écran
+            int visibleHeight = screenHeight - r.bottom;
+
+            // Effectuez la transition d'animation en fonction de la hauteur visible
+            TransitionManager.beginDelayedTransition(constraintLayout, autoTransition);
+            ConstraintSet constraintSet = new ConstraintSet();
+            constraintSet.clone(constraintLayout);
+
+            if (visibleHeight > screenHeight / 3) {
+                // Le clavier est visible, ajustez la position de votre layout ici
+                constraintSet.setVerticalBias(R.id.card_layout, 0.3f);
+            } else {
+                // Le clavier est caché, réinitialisez la position de votre layout ici
+                constraintSet.setVerticalBias(R.id.card_layout, 0.5f);
             }
-        });
 
+            constraintSet.applyTo(constraintLayout);
+        });
     }
 }

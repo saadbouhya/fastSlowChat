@@ -50,6 +50,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
+    implementation 'androidx.transition:transition:1.4.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
