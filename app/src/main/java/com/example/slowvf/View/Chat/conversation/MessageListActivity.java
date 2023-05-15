@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.Controller.ChatController;
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.R;
@@ -46,7 +48,12 @@ public class MessageListActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(value);
+
+        ContactController contactController = new ContactController(getApplicationContext());
+        Contact contact = contactController.find(value,getApplicationContext());
+        if (contact!= null){
+            actionBar.setTitle(contact.getFirstName()+" "+contact.getLastName());
+        } else actionBar.setTitle(value);
 
 
         try {

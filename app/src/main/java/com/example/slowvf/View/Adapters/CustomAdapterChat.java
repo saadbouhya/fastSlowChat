@@ -1,5 +1,6 @@
 package com.example.slowvf.View.Adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Chat.conversation.MessageListActivity;
@@ -18,6 +21,7 @@ import java.util.List;
 public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.ViewHolder> {
 
     private List<LocalForMessage> localDataSet;
+    private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
@@ -62,6 +66,7 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.chat_item, viewGroup, false);
         LinearLayout linearLayout = view.findViewById(R.id.linear_layout_chat);
+        context = viewGroup.getContext();
 
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,11 +94,14 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         String date_writing = localDataSet.get(position).getDateWriting();
 
         String pseudo = "Pseudo";
-
+        ContactController contactController = new ContactController(context);
+        Contact contact = contactController.find(id,context);
+        if (contact!= null){
+            viewHolder.getName().setText(contact.getFirstName()+" "+contact.getLastName());
+        } else viewHolder.getName().setText(pseudo);
         viewHolder.getMessage().setText(text);
         viewHolder.getId().setText(id);
         viewHolder.getDate_writing().setText(date_writing.substring(0, 10));
-        viewHolder.getName().setText(pseudo);
 
 
     }

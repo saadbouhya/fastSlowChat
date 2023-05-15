@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.R;
 
@@ -120,12 +122,16 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(LocalForConversation localForConversation) {
+            ContactController contactController = new ContactController(mContext);
+            Contact contact = contactController.find(localForConversation.getAuteur(),mContext);
+            if (contact!= null){
+                nameText.setText(contact.getFirstName()+" "+contact.getLastName());
+            } else nameText.setText(localForConversation.getAuteur());
             messageText.setText(localForConversation.getContenu());
 
             // Format the stored timestamp into a readable String using method.
             timeText.setText(localForConversation.getDateReceived());
             timeText2.setText(localForConversation.getDateWriting());
-            nameText.setText(localForConversation.getAuteur());
         }
     }
 }

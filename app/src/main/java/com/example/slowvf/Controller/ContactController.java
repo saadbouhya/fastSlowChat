@@ -27,8 +27,8 @@ public class ContactController {
         contactDao.delete(context, contactToDelete);
     }
 
-    public Contact find(Contact contactToFind, Context context) {
-        String id = contactToFind.getId();
+    public Contact find(String contactToFind, Context context) {
+        String id = contactToFind;
 
         return contactDao.find(context, id);
     }

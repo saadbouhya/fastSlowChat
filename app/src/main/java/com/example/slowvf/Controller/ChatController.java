@@ -42,7 +42,6 @@ private static ChatController chatController;
         return chatController;
     }
 public Local getMessagesReceivedSentLocal() throws IOException {
-
         return ReceivedSentLocalDaoImpl.localfile(context);
 }
 
