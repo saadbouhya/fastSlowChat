@@ -5,11 +5,16 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.slowvf.View.Adapters.MypagerAdapter;
 import com.example.slowvf.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class MainActivityChat extends AppCompatActivity {
 

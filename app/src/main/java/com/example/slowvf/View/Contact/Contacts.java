@@ -2,6 +2,7 @@ package com.example.slowvf.View.Contact;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,6 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.slowvf.Model.Contact;
@@ -18,30 +22,26 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class Contacts extends AppCompatActivity {
+public class Contacts extends Fragment {
     private RecyclerView recyclerViewContacts;
     private ArrayList<Contact> contacts;
     private AdapterContact adapterContact;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts);
 
-        ActionBar actionBar = getSupportActionBar();
+        View rootView = inflater.inflate(R.layout.activity_contacts, container, false);
 
-        assert actionBar != null;
-        actionBar.setTitle("Contacts");
-
-        FloatingActionButton buttonAddContact = findViewById(R.id.buttonAddContact);
-        TextView search = findViewById(R.id.search);
-        recyclerViewContacts = findViewById(R.id.recyclerViewContacts);
+        FloatingActionButton buttonAddContact = rootView.findViewById(R.id.buttonAddContact);
+        TextView search = rootView.findViewById(R.id.search);
+        recyclerViewContacts = rootView.findViewById(R.id.recyclerViewContacts);
 
         recyclerViewContacts.setHasFixedSize(true);
 
         buttonAddContact.setOnClickListener(v -> {
             // move to new activity to add contact
-            Intent intent = new Intent(Contacts.this, AddEditContact.class);
+            Intent intent = new Intent(getActivity(), AddEditContact.class);
             startActivity(intent);
         });
 
@@ -64,14 +64,16 @@ public class Contacts extends AppCompatActivity {
 
         contacts = getData();
         adapterContact = new AdapterContact(contacts);
-        LinearLayoutManager lm = new LinearLayoutManager(this);
+        LinearLayoutManager lm = new LinearLayoutManager(getContext());
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
+
+        return rootView;
     }
 
     private void loadData() {
         RecyclerView.Adapter adapterContact = new AdapterContact(getData());
-        LinearLayoutManager lm = new LinearLayoutManager(this);
+        LinearLayoutManager lm = new LinearLayoutManager(getContext());
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
     }

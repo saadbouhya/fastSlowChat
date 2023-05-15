@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="?android:attr/colorBackground"
     tools:context=".View.Contact.ContactDetails">
 
     <TextView
@@ -19,7 +19,7 @@
         android:layout_marginEnd="5dp"
         android:layout_marginTop="5dp"
         android:padding="5dp"
-        android:textColor="@color/button"/>
+        android:textColor="?attr/colorPrimary"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,7 +36,7 @@
 
                 <TextView
                     android:text="Identifiant"
-                    android:textColor="@color/button"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
                     android:textSize="14sp"/>
 
@@ -47,7 +47,7 @@
                     android:id="@+id/id"
                     android:text="00-B0-D0-63-C2-26glitch26032023"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/colorOnBackground"
                     android:layout_marginTop="2dp"
                     android:textStyle="bold"/>
 
@@ -57,7 +57,7 @@
                 <TextView
                     android:text="Nom"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/button"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
                     android:textSize="14sp"/>
 
@@ -68,7 +68,7 @@
                     android:id="@+id/lastName"
                     android:text="Bouhya"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/colorOnBackground"
                     android:layout_marginTop="2dp"
                     android:textStyle="bold"/>
 
@@ -78,7 +78,7 @@
                 <TextView
                     android:text="Prénom"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/button"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
                     android:textSize="14sp"/>
 
@@ -89,7 +89,7 @@
                     android:id="@+id/firstName"
                     android:text="Saad"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/colorOnBackground"
                     android:layout_marginTop="2dp"
                     android:textStyle="bold"/>
 
@@ -101,7 +101,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Envoyer msg"
-            android:backgroundTint="@color/button"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
             android:layout_marginHorizontal="50dp"/>
         <Button
             android:id="@+id/deleteContact"
@@ -109,7 +110,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Supprimer"
-            android:backgroundTint="@color/button"
+            android:backgroundTint="?attr/colorPrimary"
+            android:textColor="?attr/colorOnPrimary"
             android:layout_marginHorizontal="50dp"/>
 
 

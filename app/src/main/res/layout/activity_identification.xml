@@ -4,11 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#292929">
+    android:layout_margin="10dp"
+    android:background="?android:attr/colorBackground">
 
     <TextView
         android:text="FastSlowChat"
-        android:textColor="#BB86FC"
+        android:textColor="?attr/colorPrimary"
         android:textStyle="italic"
         android:textSize="24sp"
         android:layout_width="match_parent"
@@ -23,12 +24,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginBottom="100dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         >
 
     <TextView
         android:id="@+id/textViewPseudoLabel"
         android:text="Pseudo : "
-        android:textColor="#BB86FC"
+        android:textColor="?attr/colorPrimary"
         android:textSize="16sp"
         android:layout_marginLeft="20dp"
         android:layout_width="match_parent"
@@ -45,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
         android:layout_marginRight="40dp"
-        android:background="@drawable/edittext_background"
+        android:background="?android:attr/colorBackground"
         android:padding="12dp"
         android:textColorHint="@android:color/darker_gray"
         android:hint="xxxxx"
@@ -81,7 +84,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
-        android:layout_marginTop="20dp"
         >
 
         <ImageView

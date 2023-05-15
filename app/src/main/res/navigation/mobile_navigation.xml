@@ -25,9 +25,9 @@
 
     <fragment
         android:id="@+id/navigation_contacts"
-        android:name="com.example.slowvf.View.ui.contacts.ContactsFragment"
+        android:name="com.example.slowvf.View.Contact.Contacts"
         android:label="@string/title_contacts"
-        tools:layout="@layout/fragment_contacts" />
+        tools:layout="@layout/activity_contacts" />
 
     <fragment
         android:id="@+id/navigation_reglages"

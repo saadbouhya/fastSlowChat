@@ -31,7 +31,7 @@ public class Exchange extends Fragment {
         View rootView = inflater.inflate(R.layout.activity_exchange, container, false);
         exchangeView = rootView.findViewById(R.id.exchange_view);
         exchangeLayoutManager = new LinearLayoutManager(getContext());
-        exchangeAdapter = new ExchangeAdapter(bluetoothDevices);
+        exchangeAdapter = new ExchangeAdapter(bluetoothDevices, getContext());
         exchangeView.setLayoutManager(exchangeLayoutManager);
         exchangeView.setAdapter(exchangeAdapter);
 

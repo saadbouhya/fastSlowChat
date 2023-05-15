@@ -4,15 +4,19 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import android.graphics.drawable.ColorDrawable;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +30,11 @@ import java.util.List;
 
 public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.ExchangeViewHolder> {
     private List<BluetoothItem> bluetoothDevices;
+    private Context context;
 
-    public ExchangeAdapter(List<BluetoothItem> devices) {
+    public ExchangeAdapter(List<BluetoothItem> devices, Context context) {
         bluetoothDevices = devices;
+        this.context = context;
     }
 
     @NonNull
@@ -53,16 +59,32 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
                 View.OnClickListener closeListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        // Obtention des attributs du thème
+                        TypedArray themeAttributes = context.getTheme().obtainStyledAttributes(R.style.Theme_SlowVF,
+                                new int[]{android.R.attr.colorBackground, com.google.android.material.R.attr.colorOnBackground, com.google.android.material.R.attr.colorPrimary});
+
+// Récupération des valeurs des attributs
+                        int colorBackgroundValue = themeAttributes.getColor(0, 0);
+                        int colorOnBackgroundValue = themeAttributes.getColor(1, 0);
+                        int colorPrimaryValue = themeAttributes.getColor(2, 0);
+
                         // Dismiss the popup when the Close button is clicked
                         alertDialog.dismiss();
                         AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(),R.style.MyAlertDialogTheme);
-                        builder.setTitle("Demande déclinée");
+
+                        SpannableString titre = new SpannableString("Demande déclinée");
+                        titre.setSpan(new ForegroundColorSpan(colorOnBackgroundValue), 0, titre.length(), 0);
+                        builder.setTitle(titre);
 
                         // Set the dialog message to the device name and MAC address
                         SpannableString message = new SpannableString("Demande de synchronisation declinée");
-                        message.setSpan(new ForegroundColorSpan(Color.WHITE), 0, message.length(), 0);
+                        message.setSpan(new ForegroundColorSpan(colorOnBackgroundValue), 0, message.length(), 0);
                         builder.setMessage(message);
-                        builder.setNegativeButton("Fermer", new DialogInterface.OnClickListener() {
+
+                        SpannableString boutton = new SpannableString("Fermer");
+                        boutton.setSpan(new ForegroundColorSpan(colorPrimaryValue), 0, boutton.length(), 0);
+                        builder.setNegativeButton(boutton, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // Do something when Close button is clicked
@@ -71,7 +93,7 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
 
                         // Show the dialog
                         AlertDialog dialog = builder.create();
-                        dialog.getWindow().setBackgroundDrawableResource(R.color.background);
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(colorBackgroundValue));
                         dialog.show();
                     }
                 };

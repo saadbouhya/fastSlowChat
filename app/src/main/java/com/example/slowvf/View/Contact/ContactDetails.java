@@ -24,19 +24,18 @@ public class ContactDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_details);
 
-        actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setTitle("Contact");
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-
         // get data from intent contacts
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         lastName = intent.getStringExtra("lastName");
         firstName = intent.getStringExtra("firstName");
 
+        actionBar = getSupportActionBar();
+
+        assert actionBar != null;
+        actionBar.setTitle(firstName);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         textViewId = findViewById(R.id.id);
         textViewLastName = findViewById(R.id.lastName);

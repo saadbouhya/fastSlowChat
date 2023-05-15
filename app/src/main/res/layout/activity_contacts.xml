@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="?android:attr/colorBackground"
     tools:context=".View.Contact.Contacts">
 
     <EditText
@@ -15,8 +15,8 @@
         android:padding="5dp"
         android:hint="Chercher un contact"
         android:inputType="textShortMessage"
-        android:textColor="@color/black"
-        android:background="@color/white" />
+        android:textColor="?attr/colorOnBackground"
+        android:background="?android:attr/colorBackground" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewContacts"
@@ -34,12 +34,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        app:backgroundTint="@color/button"
-        android:src="@drawable/plus_icon"
-        app:tint="@color/background"
-        android:elevation="5dp"
-        app:pressedTranslationZ="10dp"
-        android:contentDescription="Add a new contact" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="45dp"
+        android:backgroundTint="?attr/colorPrimary"
+        app:tint="?attr/colorOnPrimary"
+        android:src="@drawable/ic_baseline_add_24" />
 
 </RelativeLayout>
