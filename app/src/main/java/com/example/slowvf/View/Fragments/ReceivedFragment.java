@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Exchange.Fragments;
+package com.example.slowvf.View.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

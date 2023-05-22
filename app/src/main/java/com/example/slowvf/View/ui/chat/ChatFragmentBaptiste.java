@@ -1,5 +1,6 @@
 package com.example.slowvf.View.ui.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.MypagerAdapter;
+import com.example.slowvf.View.Chat.conversation.NewMessageActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -36,6 +39,15 @@ public class ChatFragmentBaptiste extends Fragment {
                     tab.setText(tabTitles[position]);
                 }
         ).attach();
+
+        FloatingActionButton newConversation = root.findViewById(R.id.new_conversation_button);
+        newConversation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(view.getContext(), NewMessageActivity.class);
+                view.getContext().startActivity(myIntent);
+            }
+        });
 
         return root;
     }
