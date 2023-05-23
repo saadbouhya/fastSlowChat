@@ -59,7 +59,6 @@ public class MessageDetailActivity extends AppCompatActivity {
             }
             else {
                 intent.set(new Intent(view.getContext(), NewMessageActivity.class));
-                //intent.putExtra("information", "Valeur de l'information à envoyer");
             }
             view.getContext().startActivity(intent.get());
         });
