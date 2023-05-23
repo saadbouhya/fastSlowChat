@@ -86,13 +86,10 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
                 TextView dateWriting = view.findViewById(R.id.textView7);
                 TextView dateReceived = view.findViewById(R.id.textView4);
                 TextView texte = view.findViewById(R.id.textView3);
-                LocalForMessage local = new LocalForMessage(nom.getText().toString(),id.getText().toString(),texte.getText().toString(),dateWriting.getText().toString(),dateReceived.getText().toString());
-                String text = id.getText().toString();
-
-                System.out.println(text);
+                LocalForMessage informationsMessage = new LocalForMessage(nom.getText().toString(),id.getText().toString(),texte.getText().toString(),dateWriting.getText().toString(),dateReceived.getText().toString());
                 Intent myIntent = new Intent(view.getContext(), MessageDetailActivity.class);
                 myIntent.putExtra("keyString", "sent");
-                myIntent.putExtra("key", local); //Optional parameters
+                myIntent.putExtra("key", informationsMessage); //Optional parameters
                 view.getContext().startActivity(myIntent);
             }
         });

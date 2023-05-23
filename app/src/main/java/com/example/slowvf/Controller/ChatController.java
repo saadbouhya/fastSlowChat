@@ -26,11 +26,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//   ChatController ChatController = new ChatController(getApplicationContext()); pour l'appeler
 public class ChatController {
-    private Context context;
+private Context context;
 private static ChatController chatController;
-    public ChatController(Context context) throws IOException {
+
+    public ChatController(Context context) {
         this.context = context;
     }
 
@@ -41,9 +41,18 @@ private static ChatController chatController;
         }
         return chatController;
     }
-public Local getMessagesReceivedSentLocal() throws IOException {
-        return ReceivedSentLocalDaoImpl.localfile(context);
-}
+
+    public Local getMessagesReceivedSentLocal() throws IOException {
+        return ReceivedSentLocalDaoImpl.localFile(context);
+    }
+    public void createFileOnInternalStorage() throws IOException {
+         ReceivedSentLocalDaoImpl.createFileOnInternalStorage(context);
+    }
+    public String readInternalFile(String fileName) throws IOException {
+        return ReceivedSentLocalDaoImpl.readInternalFile(context,fileName);
+    }
+
+
 
     public Echange getMessagesEchange() throws IOException {
 
@@ -53,6 +62,7 @@ public Local getMessagesReceivedSentLocal() throws IOException {
     public List<String> getUniqueIdSendersAndReceivers() throws IOException {
         Set<String> sendersAndReceivers = new HashSet<>();
         Local local = getMessagesReceivedSentLocal();
+        if (local != null) {
         for (SentMessage sentMessage : local.getSentMessages()) {
             sendersAndReceivers.add(sentMessage.getIdReceiver());
         }
@@ -61,7 +71,8 @@ public Local getMessagesReceivedSentLocal() throws IOException {
             sendersAndReceivers.add(receivedMessage.getIdSender());
         }
 
-        return new ArrayList<>(sendersAndReceivers);
+        return new ArrayList<>(sendersAndReceivers);}
+        else throw new IOException("localFile is null");
     }
 
     public List<LocalForMessage> getLastMessagesForUniqueSendersAndReceivers() throws IOException {

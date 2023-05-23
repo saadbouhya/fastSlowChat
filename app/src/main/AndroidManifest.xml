@@ -34,7 +34,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".View.Chat.conversation.MessageListActivity"
+            android:name=".View.Chat.conversation.ConversationActivity"
             android:exported="true"
             android:label="@string/app_name">
 

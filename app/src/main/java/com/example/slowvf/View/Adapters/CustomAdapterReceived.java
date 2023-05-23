@@ -80,9 +80,6 @@ public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterRec
                 TextView dateReceived = view.findViewById(R.id.textView4);
                 TextView texte = view.findViewById(R.id.textView3);
                 LocalForMessage local = new LocalForMessage(nom.getText().toString(),id.getText().toString(),texte.getText().toString(),dateWriting.getText().toString(),dateReceived.getText().toString());
-                String text = id.getText().toString();
-
-                System.out.println(text);
                 Intent myIntent = new Intent(view.getContext(), MessageDetailActivity.class);
                 myIntent.putExtra("keyString", "received");
                 myIntent.putExtra("key", local);

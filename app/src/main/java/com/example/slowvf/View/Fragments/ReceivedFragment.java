@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Exchange.Fragments;
+package com.example.slowvf.View.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -48,8 +48,6 @@ public class ReceivedFragment extends Fragment {
 
         try {
             mAdapter = new CustomAdapterReceived(chatController.getMessagesReceivedSentLocal());
-            System.out.println(chatController.getUniqueIdSendersAndReceivers());
-            chatController.getLastMessagesForUniqueSendersAndReceivers();
         } catch (IOException e) {
             e.printStackTrace();
         }

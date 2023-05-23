@@ -57,7 +57,7 @@ public class MessageDetailActivity extends AppCompatActivity {
         TextView id = findViewById(R.id.message_id);
         TextView texte = findViewById(R.id.message_content);
 
-        nom.setText(local.getName2());
+        nom.setText(local.getNameProfil());
         id.setText(local.getId());
         texte.setText(local.getMessage());
 

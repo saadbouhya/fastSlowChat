@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 
 public class ReceivedSentLocalDaoImpl implements receivedSentLocalDao {
 
-    public static Local localfile(Context context) throws IOException {
+    public static Local localFile(Context context) throws IOException {
         FileInputStream fis = context.openFileInput("Local.json");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis));
         StringBuilder stringBuilder = new StringBuilder();

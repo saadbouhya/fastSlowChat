@@ -1,4 +1,4 @@
-package com.example.slowvf.View.Exchange.Fragments;
+package com.example.slowvf.View.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,7 +22,6 @@ public class ChatFragment extends Fragment {
     private CustomAdapterChat mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     public ChatFragment(){}
-   // private String[] myDataset = {"Théo", "Pierre", "Louis","Saad", "Walid", "Baptiste","Mouad", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis","Théo", "Pierre", "Louis"};
 
     public static ChatFragment newInstance() {
         return (new ChatFragment());

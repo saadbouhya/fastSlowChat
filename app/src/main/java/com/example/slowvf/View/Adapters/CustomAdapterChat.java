@@ -14,7 +14,7 @@ import com.example.slowvf.Controller.ContactController;
 import com.example.slowvf.Model.Contact;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Chat.conversation.MessageListActivity;
+import com.example.slowvf.View.Chat.conversation.ConversationActivity;
 
 import java.util.List;
 
@@ -74,8 +74,7 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
                 TextView myEditText = view.findViewById(R.id.textView4);
                 String text = myEditText.getText().toString();
 
-                System.out.println(text);
-                Intent myIntent = new Intent(view.getContext(), MessageListActivity.class);
+                Intent myIntent = new Intent(view.getContext(), ConversationActivity.class);
                 myIntent.putExtra("key", text); //Optional parameters
                 view.getContext().startActivity(myIntent);
             }
@@ -102,7 +101,6 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         viewHolder.getMessage().setText(text);
         viewHolder.getId().setText(id);
         viewHolder.getDate_writing().setText(date_writing.substring(0, 10));
-
 
     }
 

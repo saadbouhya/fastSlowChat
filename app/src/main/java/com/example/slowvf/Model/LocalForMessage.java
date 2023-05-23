@@ -18,7 +18,7 @@ public class LocalForMessage implements Serializable {
         this.dateReceived = dateReceived;
     }
 
-    public String getName2() {
+    public String getNameProfil() {
         return name;
     }
 

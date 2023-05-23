@@ -8,6 +8,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.slowvf.Controller.ChatController;
 import com.example.slowvf.Controller.ContactController;
 import com.example.slowvf.Dao.Impl.ReceivedSentEchangelDaoImpl;
 import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
@@ -42,13 +43,17 @@ public class MainActivityNavigation extends AppCompatActivity {
 
 
         try {
-            ReceivedSentLocalDaoImpl.createFileOnInternalStorage(getApplicationContext());
-            ReceivedSentLocalDaoImpl.readInternalFile(getApplicationContext(),"Local.json");
-            ReceivedSentEchangelDaoImpl.createFileOnInternalStorage(getApplicationContext());
-            ReceivedSentEchangelDaoImpl.readInternalFile(getApplicationContext(),"Echange.json");
-           ContactController contactController = new ContactController(getApplicationContext());
-            Contact contact = new Contact("5E:FF:56:A2:AF:15Mouad16-04-2023", "D. Monkey", "Mouad");
-            contactController.create(contact,getApplicationContext());
+            ChatController chatController;
+                chatController = ChatController.getInstance(getApplicationContext());
+
+
+            chatController.createFileOnInternalStorage();
+            chatController.readInternalFile("Local.json");
+            chatController.createFileOnInternalStorage();
+            chatController.readInternalFile("Echange.json");
+          // ContactController contactController = new ContactController(getApplicationContext());
+          //  Contact contact = new Contact("5E:FF:56:A2:AF:15Mouad16-04-2023", "D. Monkey", "Mouad");
+          //  contactController.create(contact,getApplicationContext());
 
         } catch (IOException e) {
             e.printStackTrace();
