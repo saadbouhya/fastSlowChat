@@ -55,17 +55,18 @@ public class MessageListActivity extends AppCompatActivity {
             actionBar.setTitle(contact.getFirstName()+" "+contact.getLastName());
         } else actionBar.setTitle(value);
 
-
+        List<LocalForConversation> localForConversations;
         try {
-            List<LocalForConversation> localForConversations = chatController.getMessagesBySenderIdOrReceiverId(value);
+            localForConversations = chatController.getMessagesBySenderIdOrReceiverId(value);
             mMessageRecycler = (RecyclerView) findViewById(R.id.recycler_gchat);
             mMessageAdapter = new MessageListAdapter(this, localForConversations, value);
+            mMessageRecycler.smoothScrollToPosition(localForConversations.size() - 1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
         mMessageRecycler.setAdapter(mMessageAdapter);
-
+        mMessageRecycler.smoothScrollToPosition(localForConversations.size() - 1);
         EditText messageEditText = findViewById(R.id.edit_gchat_message);
         ImageButton sendButton = findViewById(R.id.button_gchat_send);
 
@@ -84,14 +85,14 @@ public class MessageListActivity extends AppCompatActivity {
             try {
                 finalChatController.addLocalSentMessage(value,message);
                 finalChatController.addEchangeMessage(value,message);
-                List<LocalForConversation> localForConversations = finalChatController.getMessagesBySenderIdOrReceiverId(value);
-                mMessageAdapter.setmLocalForConversationList(localForConversations);
+                List<LocalForConversation> localForConversations2 = finalChatController.getMessagesBySenderIdOrReceiverId(value);
+                mMessageAdapter.setmLocalForConversationList(localForConversations2);
                 mMessageAdapter.notifyDataSetChanged();
                 CustomAdapterChat customAdapterChat = new CustomAdapterChat();
                 customAdapterChat.updateData(finalChatController.getLastMessagesForUniqueSendersAndReceivers());
                 CustomAdapterSent customAdapterSent = new CustomAdapterSent();
                 customAdapterSent.updateDataSent(finalChatController.getMessagesReceivedSentLocal());
-                mMessageRecycler.smoothScrollToPosition(localForConversations.size() - 1);
+                mMessageRecycler.smoothScrollToPosition(localForConversations2.size() - 1);
 
             } catch (IOException e) {
                 e.printStackTrace();
