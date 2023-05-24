@@ -44,16 +44,12 @@ public class MainActivityNavigation extends AppCompatActivity {
 
         try {
             ChatController chatController;
-                chatController = ChatController.getInstance(getApplicationContext());
-
+            chatController = ChatController.getInstance(getApplicationContext());
 
             chatController.createFileOnInternalStorage();
             chatController.readInternalFile("Local.json");
             chatController.createFileOnInternalStorage();
             chatController.readInternalFile("Echange.json");
-          // ContactController contactController = new ContactController(getApplicationContext());
-          //  Contact contact = new Contact("5E:FF:56:A2:AF:15Mouad16-04-2023", "D. Monkey", "Mouad");
-          //  contactController.create(contact,getApplicationContext());
 
         } catch (IOException e) {
             e.printStackTrace();

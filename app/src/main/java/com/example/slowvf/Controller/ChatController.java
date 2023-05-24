@@ -146,24 +146,28 @@ private static ChatController chatController;
                     .collect(Collectors.toList());
         }
 
-        for (SentMessage sentMessage : sortedSentMessages) {
-            LocalForConversation localForConversation = new LocalForConversation();
-            localForConversation.setContenu(sentMessage.getTexte());
-            localForConversation.setAuteur(local.getIdLocal());
-            localForConversation.setDestinataire(sentMessage.getIdReceiver());
-            localForConversation.setDateWriting(sentMessage.getDateWriting());
-            localForConversation.setDateReceived(sentMessage.getDateReceived());
-            localForConversations.add(localForConversation);
+        if(sortedSentMessages != null) {
+            for (SentMessage sentMessage : sortedSentMessages) {
+                LocalForConversation localForConversation = new LocalForConversation();
+                localForConversation.setContenu(sentMessage.getTexte());
+                localForConversation.setAuteur(local.getIdLocal());
+                localForConversation.setDestinataire(sentMessage.getIdReceiver());
+                localForConversation.setDateWriting(sentMessage.getDateWriting());
+                localForConversation.setDateReceived(sentMessage.getDateReceived());
+                localForConversations.add(localForConversation);
+            }
         }
 
-        for (ReceivedMessage receivedMessage : sortedReceivedMessages) {
-            LocalForConversation localForConversation = new LocalForConversation();
-            localForConversation.setContenu(receivedMessage.getTexte());
-            localForConversation.setAuteur(receivedMessage.getIdSender());
-            localForConversation.setDestinataire(local.getIdLocal());
-            localForConversation.setDateWriting(receivedMessage.getDateWriting());
-            localForConversation.setDateReceived(receivedMessage.getDateReceived());
-            localForConversations.add(localForConversation);
+        if(sortedReceivedMessages != null) {
+            for (ReceivedMessage receivedMessage : sortedReceivedMessages) {
+                LocalForConversation localForConversation = new LocalForConversation();
+                localForConversation.setContenu(receivedMessage.getTexte());
+                localForConversation.setAuteur(receivedMessage.getIdSender());
+                localForConversation.setDestinataire(local.getIdLocal());
+                localForConversation.setDateWriting(receivedMessage.getDateWriting());
+                localForConversation.setDateReceived(receivedMessage.getDateReceived());
+                localForConversations.add(localForConversation);
+            }
         }
 Collections.reverse(localForConversations);
         return localForConversations;
