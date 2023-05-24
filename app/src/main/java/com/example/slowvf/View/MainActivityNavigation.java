@@ -3,14 +3,25 @@ package com.example.slowvf.View;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.slowvf.Controller.ChatController;
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Dao.Impl.ReceivedSentEchangelDaoImpl;
+import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Contact.ContactDetails;
+import com.example.slowvf.View.Contact.Contacts;
 import com.example.slowvf.databinding.ActivityMainNavigationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.IOException;
 
 public class MainActivityNavigation extends AppCompatActivity {
 
@@ -32,6 +43,35 @@ public class MainActivityNavigation extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+
+        try {
+            ChatController chatController;
+            chatController = ChatController.getInstance(getApplicationContext());
+
+            chatController.createFileOnInternalStorage();
+            chatController.readInternalFile("Local.json");
+            chatController.createFileOnInternalStorage();
+            chatController.readInternalFile("Echange.json");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Récupérer l'identifiant du fragment à afficher
+        String fragmentId = getIntent().getStringExtra("contactId");
+
+        // Passer au fragment spécifié
+        if (fragmentId != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            Contacts fragment = new Contacts();
+            fragmentTransaction.replace(R.id.nav_host_fragment_activity_main, fragment, fragmentId);
+
+            fragmentTransaction.commit();
+        }
+
     }
 
 }

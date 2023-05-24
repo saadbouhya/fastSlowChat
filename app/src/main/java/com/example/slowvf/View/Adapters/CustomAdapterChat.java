@@ -1,5 +1,6 @@
 package com.example.slowvf.View.Adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +10,18 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Chat.conversation.ConversationActivity;
 
 import java.util.List;
 
 public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.ViewHolder> {
 
     private List<LocalForMessage> localDataSet;
+    private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView name;
@@ -53,11 +58,15 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         localDataSet = dataSet;
     }
 
+    public CustomAdapterChat() {
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.chat_item, viewGroup, false);
         LinearLayout linearLayout = view.findViewById(R.id.linear_layout_chat);
+        context = viewGroup.getContext();
 
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,29 +74,33 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
                 TextView myEditText = view.findViewById(R.id.textView4);
                 String text = myEditText.getText().toString();
 
-                System.out.println(text);
-          //      Intent myIntent = new Intent(view.getContext(), MessageListActivity.class);
-            //    myIntent.putExtra("key", text); //Optional parameters
-             //   view.getContext().startActivity(myIntent);
+                Intent myIntent = new Intent(view.getContext(), ConversationActivity.class);
+                myIntent.putExtra("key", text); //Optional parameters
+                view.getContext().startActivity(myIntent);
             }
         });
 
         return new ViewHolder(view);
     }
-
+    public void updateData(List<LocalForMessage> dataSet) {
+        localDataSet = dataSet;
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         String text = localDataSet.get(position).getMessage();
         String id = localDataSet.get(position).getId();
-        String date_writing = localDataSet.get(position).getDate_writing();
+        String date_writing = localDataSet.get(position).getDateWriting();
 
         String pseudo = "Pseudo";
-
+        ContactController contactController = new ContactController(context);
+        Contact contact = contactController.find(id,context);
+        if (contact!= null){
+            viewHolder.getName().setText(contact.getFirstName()+" "+contact.getLastName());
+        } else viewHolder.getName().setText(pseudo);
         viewHolder.getMessage().setText(text);
         viewHolder.getId().setText(id);
         viewHolder.getDate_writing().setText(date_writing.substring(0, 10));
-        viewHolder.getName().setText(pseudo);
-
 
     }
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Controller.ChatController;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.CustomAdapterSent;
 
@@ -18,8 +19,9 @@ import java.io.IOException;
 public class SentFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private CustomAdapterSent mAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private ChatController chatController;
 
     public SentFragment(){}
 
@@ -30,9 +32,9 @@ public class SentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        chatController chatController = null;
+        ChatController chatController = null;
         try {
-            chatController = new chatController(getContext());
+            chatController = ChatController.getInstance(getContext());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,4 +54,6 @@ public class SentFragment extends Fragment {
         return view;
 
     }
+
+
 }

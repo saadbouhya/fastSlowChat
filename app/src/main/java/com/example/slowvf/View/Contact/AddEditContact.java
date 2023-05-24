@@ -11,13 +11,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.slowvf.Controller.ContactController;
+import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
+import com.example.slowvf.View.MainActivityNavigation;
 
 public class AddEditContact extends AppCompatActivity {
-    private EditText EditTextId, EditTextLastName, EditTextFirstName;
+    private EditText editTextId, editTextLastName, editTextFirstName;
     private Button buttonSaveContact;
     private String id, lastName, firstName;
     ActionBar actionBar;
+    private ContactController contactController;
+    private Contact newContact;
+    private Contact oldContact;
+    Boolean isEditMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +38,15 @@ public class AddEditContact extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-       // Init view
-       EditTextId = findViewById(R.id.EditTextId);
-       EditTextLastName = findViewById(R.id.EditTextLastName);
-       EditTextFirstName = findViewById(R.id.EditTextFirstName);
-       buttonSaveContact = findViewById(R.id.ButtonSaveContact);
+        // Init view
+        editTextId = findViewById(R.id.EditTextId);
+        editTextLastName = findViewById(R.id.EditTextLastName);
+        editTextFirstName = findViewById(R.id.EditTextFirstName);
+        buttonSaveContact = findViewById(R.id.ButtonSaveContact);
 
-       // Get intent data
+        // Get intent data
         Intent intent = getIntent();
-        Boolean isEditMode = intent.getBooleanExtra("isEditMode", false);
+        isEditMode = intent.getBooleanExtra("isEditMode", false);
 
         if (isEditMode) {
             actionBar.setTitle("Modifier Contact");
@@ -47,28 +54,48 @@ public class AddEditContact extends AppCompatActivity {
             id = intent.getStringExtra("id");
             lastName = intent.getStringExtra("lastName");
             firstName = intent.getStringExtra("firstName");
+            oldContact = new Contact(id, lastName, firstName);
 
-            EditTextId.setText(id);
-            EditTextLastName.setText(lastName);
-            EditTextFirstName.setText(firstName);
+            editTextId.setText(id);
+            editTextLastName.setText(lastName);
+            editTextFirstName.setText(firstName);
         }
 
-       buttonSaveContact.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               saveData();
-           }
-       });
+        buttonSaveContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editTextId.getText().toString().isEmpty()) {
+                    editTextId.setError("Ce champ est obligatoire.");
+                } else if (editTextLastName.getText().toString().isEmpty()) {
+                    editTextLastName.setError("Ce champ est obligatoire.");
+                } else if (editTextFirstName.getText().toString().isEmpty()) {
+                    editTextFirstName.setError("Ce champ est obligatoire.");
+                } else {
+                    saveData();
+                    Intent intent = new Intent(AddEditContact.this, MainActivityNavigation.class);
+                    // Récupérer l'identifiant du fragment à afficher
+                    intent.putExtra("contactId", "contactPrincipal");
+                    startActivity(intent);
+                }
+            }
+        });
+
+        contactController = new ContactController(AddEditContact.this);
     }
 
     private void saveData() {
-        String id = EditTextId.getText().toString();
-        String lastName = EditTextLastName.getText().toString();
-        String firstName = EditTextFirstName.getText().toString();
+        String id = editTextId.getText().toString();
+        String lastName = editTextLastName.getText().toString();
+        String firstName = editTextFirstName.getText().toString();
+        newContact = new Contact(id, lastName, firstName);
+
 
         if (!id.isEmpty() || !lastName.isEmpty() || !firstName.isEmpty()) {
             // save
-
+            if (!isEditMode)
+                contactController.create(newContact, AddEditContact.this);
+            else
+                contactController.update(oldContact, newContact, AddEditContact.this);
         } else {
             Toast.makeText(getApplicationContext(), "Champs non complétés", Toast.LENGTH_SHORT).show();
         }
