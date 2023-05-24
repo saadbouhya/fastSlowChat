@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Controller.chatController;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.CustomAdapterSent;
 

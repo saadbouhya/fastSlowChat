@@ -9,10 +9,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Model.Local;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Chat.conversation.MessageListActivity;
 
 import java.util.List;
 
@@ -68,9 +66,9 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
                 String text = myEditText.getText().toString();
 
                 System.out.println(text);
-                Intent myIntent = new Intent(view.getContext(), MessageListActivity.class);
-                myIntent.putExtra("key", text); //Optional parameters
-                view.getContext().startActivity(myIntent);
+          //      Intent myIntent = new Intent(view.getContext(), MessageListActivity.class);
+            //    myIntent.putExtra("key", text); //Optional parameters
+             //   view.getContext().startActivity(myIntent);
             }
         });
 
