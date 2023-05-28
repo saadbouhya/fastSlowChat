@@ -5,23 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.slowvf.Controller.ChatController;
-import com.example.slowvf.Model.LocalForConversation;
 import com.example.slowvf.Model.LocalForMessage;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Adapters.MessageListAdapter;
+import com.example.slowvf.View.Contact.AddEditContact;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MessageDetailActivity extends AppCompatActivity {
 
@@ -31,9 +24,9 @@ public class MessageDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_new_message);
 
-        Intent intent = getIntent();
+        AtomicReference<Intent> intent = new AtomicReference<>(getIntent());
 
-        String keyString = intent.getStringExtra("keyString");
+        String keyString = intent.get().getStringExtra("keyString");
         Button button = findViewById(R.id.reply_button);
 
         if (keyString != null) {
@@ -44,7 +37,7 @@ public class MessageDetailActivity extends AppCompatActivity {
         }
 
 
-        LocalForMessage local = (LocalForMessage)intent.getSerializableExtra("key");
+        LocalForMessage local = (LocalForMessage) intent.get().getSerializableExtra("key");
 
         if (local.getId().equals("Inconnu")){
             button.setText("Ajouter aux contacts");
@@ -60,7 +53,15 @@ public class MessageDetailActivity extends AppCompatActivity {
         nom.setText(local.getNameProfil());
         id.setText(local.getId());
         texte.setText(local.getMessage());
-
+        button.setOnClickListener(view -> {
+            if (button.getText().equals("Ajouter aux contacts")) {
+            intent.set(new Intent(view.getContext(), AddEditContact.class));
+            }
+            else {
+                intent.set(new Intent(view.getContext(), NewMessageActivity.class));
+            }
+            view.getContext().startActivity(intent.get());
+        });
 
     }
 }

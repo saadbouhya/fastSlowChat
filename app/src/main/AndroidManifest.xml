@@ -27,6 +27,16 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".View.Chat.conversation.NewMessageActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".View.MainActivityNavigation" />
+
+        </activity>
+        <activity
             android:name=".View.MainActivityNavigation"
             android:exported="false">
             <meta-data

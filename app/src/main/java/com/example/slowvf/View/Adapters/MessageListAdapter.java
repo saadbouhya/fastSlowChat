@@ -33,6 +33,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         correspondant = inCorrespondant;
     }
 
+
     public void setmLocalForConversationList(List<LocalForConversation> mLocalForConversationList) {
         this.mLocalForConversationList = mLocalForConversationList;
     }
