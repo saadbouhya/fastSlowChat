@@ -107,12 +107,18 @@ public class NewMessageActivity extends AppCompatActivity {
         AutoCompleteTextView searchBar = findViewById(R.id.search_bar);
         Button sendButton = findViewById(R.id.envoyer);
         Button annulerButton = findViewById(R.id.annuler);
+        String nomContact = null;
+        nomContact = intent.getStringExtra("nomContact");
+        if (nomContact != null){
+            searchBar.setText(nomContact);
+            nomContact = null;
+        }
 
         ChatController finalChatController = chatController;
         sendButton.setOnClickListener(view -> {
             // Récupération du texte tapé dans l'EditText
             String message = messageEditText.getText().toString();
-//A FAIRE verifier que le contact est valide
+
             String value = null;
             for (Contact contact : contacts) {
                 if (contact.getFirstName().concat(" ").concat(contact.getLastName()).equals(searchBar.getText().toString())) {
@@ -132,17 +138,6 @@ public class NewMessageActivity extends AppCompatActivity {
             try {
                 finalChatController.addLocalSentMessage(value, message);
                 finalChatController.addEchangeMessage(value, message);
-                List<LocalForConversation> localForConversations = finalChatController.getMessagesBySenderIdOrReceiverId(value);
-                /* A checker mais normalement c'est good car l'update se fait automatiquement surrement car au moment du clique sur
-                la fleche retour ensuite nous recréons nos fragment et donc allons chercher de nouveau les valeurs dans les oncreate
-
-                // mMessageAdapter.setmLocalForConversationList(localForConversations);
-                //  mMessageAdapter.notifyDataSetChanged();
-                CustomAdapterChat customAdapterChat = new CustomAdapterChat();
-                customAdapterChat.updateData(finalChatController.getLastMessagesForUniqueSendersAndReceivers());
-                CustomAdapterSent customAdapterSent = new CustomAdapterSent();
-                customAdapterSent.updateDataSent(finalChatController.getMessagesReceivedSentLocal());
-*/
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -39,7 +39,7 @@ public class MessageDetailActivity extends AppCompatActivity {
 
         LocalForMessage local = (LocalForMessage) intent.get().getSerializableExtra("key");
 
-        if (local.getId().equals("Inconnu")){
+        if (local.getNameProfil().equals("Inconnu")){
             button.setText("Ajouter aux contacts");
         }
         ActionBar actionBar = getSupportActionBar();
@@ -53,14 +53,19 @@ public class MessageDetailActivity extends AppCompatActivity {
         nom.setText(local.getNameProfil());
         id.setText(local.getId());
         texte.setText(local.getMessage());
+        final String myValue = "Ma valeur personnalisée";
+
         button.setOnClickListener(view -> {
+            Intent intentNew;
             if (button.getText().equals("Ajouter aux contacts")) {
-            intent.set(new Intent(view.getContext(), AddEditContact.class));
+                intentNew = new Intent(view.getContext(), AddEditContact.class);
+                intentNew.putExtra("idAdd", id.getText().toString());
+            } else {
+                intentNew = new Intent(view.getContext(), NewMessageActivity.class);
+                intentNew.putExtra("nomContact", nom.getText().toString());
             }
-            else {
-                intent.set(new Intent(view.getContext(), NewMessageActivity.class));
-            }
-            view.getContext().startActivity(intent.get());
+
+            view.getContext().startActivity(intentNew);
         });
 
     }

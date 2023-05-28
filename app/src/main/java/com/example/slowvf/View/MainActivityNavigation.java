@@ -11,12 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.slowvf.Controller.ChatController;
-import com.example.slowvf.Controller.ContactController;
-import com.example.slowvf.Dao.Impl.ReceivedSentEchangelDaoImpl;
-import com.example.slowvf.Dao.Impl.ReceivedSentLocalDaoImpl;
-import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Contact.ContactDetails;
 import com.example.slowvf.View.Contact.Contacts;
 import com.example.slowvf.databinding.ActivityMainNavigationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,12 +43,8 @@ public class MainActivityNavigation extends AppCompatActivity {
         try {
             ChatController chatController;
             chatController = ChatController.getInstance(getApplicationContext());
-
             chatController.createFileLocalOnInternalStorage();
-           // chatController.readInternalFile("Local.json");
             chatController.createFileEchangeOnInternalStorage();
-            //chatController.readInternalFile("Echange.json");
-
         } catch (IOException e) {
             e.printStackTrace();
         }

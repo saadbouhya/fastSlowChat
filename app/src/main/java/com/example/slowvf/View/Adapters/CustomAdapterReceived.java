@@ -95,8 +95,7 @@ public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterRec
         String id = localDataSet.getReceivedMessages().get(position).getIdSender();
         String date_writing = localDataSet.getReceivedMessages().get(position).getDateWriting();
         String date_received = localDataSet.getReceivedMessages().get(position).getDateReceived();
-        //ContactController contactController = new ContactController();
-        String pseudo = "Pseudo(voir contact)";
+        String pseudo = "Inconnu";
         ContactController contactController = new ContactController(context);
         Contact contact = contactController.find(id,context);
         if (contact!= null){

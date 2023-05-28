@@ -47,6 +47,12 @@ public class AddEditContact extends AppCompatActivity {
         // Get intent data
         Intent intent = getIntent();
         isEditMode = intent.getBooleanExtra("isEditMode", false);
+        String idAdd = null;
+        idAdd = intent.getStringExtra("idAdd");
+        if (idAdd != null) {
+            editTextId.setText(idAdd);
+            idAdd = null;
+        }
 
         if (isEditMode) {
             actionBar.setTitle("Modifier Contact");
@@ -75,6 +81,9 @@ public class AddEditContact extends AppCompatActivity {
                     Intent intent = new Intent(AddEditContact.this, MainActivityNavigation.class);
                     // Récupérer l'identifiant du fragment à afficher
                     intent.putExtra("contactId", "contactPrincipal");
+                    editTextId.setText("");
+                    editTextLastName.setText("");
+                    editTextFirstName.setText("");
                     startActivity(intent);
                 }
             }
