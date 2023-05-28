@@ -49,10 +49,10 @@ public class MainActivityNavigation extends AppCompatActivity {
             ChatController chatController;
             chatController = ChatController.getInstance(getApplicationContext());
 
-            chatController.createFileOnInternalStorage();
-            chatController.readInternalFile("Local.json");
-            chatController.createFileOnInternalStorage();
-            chatController.readInternalFile("Echange.json");
+            chatController.createFileLocalOnInternalStorage();
+           // chatController.readInternalFile("Local.json");
+            chatController.createFileEchangeOnInternalStorage();
+            //chatController.readInternalFile("Echange.json");
 
         } catch (IOException e) {
             e.printStackTrace();

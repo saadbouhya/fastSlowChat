@@ -40,7 +40,7 @@ public class ReceivedSentEchangelDaoImpl implements receivedSentEchangelDao {
         fileOutputStream.close();
     }
 
-    public static void createFileOnInternalStorage(Context context) throws IOException {
+    public static void createFileEchangeOnInternalStorage(Context context) throws IOException {
         String fileName = "Echange.json";
         String fileContent = "{\n" +
                 "  \"messages\": [\n" +
