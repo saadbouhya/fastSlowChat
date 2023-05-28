@@ -123,10 +123,11 @@ public class NewMessageActivity extends AppCompatActivity {
             for (Contact contact : contacts) {
                 if (contact.getFirstName().concat(" ").concat(contact.getLastName()).equals(searchBar.getText().toString())) {
                     value = contact.getId();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Le contact n'existe pas", Toast.LENGTH_SHORT).show();
-                    return;
                 }
+            }
+            if (value == null ){
+                Toast.makeText(getApplicationContext(), "Le contact n'existe pas", Toast.LENGTH_SHORT).show();
+                return;
             }
             if (message.isEmpty()) {
                 // Afficher un pop-up si le message est vide
