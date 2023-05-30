@@ -1,5 +1,7 @@
 package com.example.slowvf.View.Contact;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -29,6 +31,18 @@ public class Contacts extends Fragment {
     private AdapterContact adapterContact;
     private ContactController contactController;
 
+    private final ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    // Refresh the contact list
+                    contacts = contactController.findAll(getContext());
+                    adapterContact = new AdapterContact(contacts);
+                    recyclerViewContacts.setAdapter(adapterContact);
+                }
+            }
+    );
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +58,7 @@ public class Contacts extends Fragment {
         buttonAddContact.setOnClickListener(v -> {
             // move to new activity to add contact
             Intent intent = new Intent(getActivity(), AddEditContact.class);
-            startActivity(intent);
+            launcher.launch(intent);
         });
 
         search.addTextChangedListener(new TextWatcher() {

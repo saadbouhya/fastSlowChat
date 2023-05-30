@@ -78,13 +78,10 @@ public class AddEditContact extends AppCompatActivity {
                     editTextFirstName.setError("Ce champ est obligatoire.");
                 } else {
                     saveData();
-                    Intent intent = new Intent(AddEditContact.this, MainActivityNavigation.class);
-                    // Récupérer l'identifiant du fragment à afficher
-                    intent.putExtra("contactId", "contactPrincipal");
-                    editTextId.setText("");
-                    editTextLastName.setText("");
-                    editTextFirstName.setText("");
-                    startActivity(intent);
+
+                    // Set the result code and finish the activity
+                    setResult(AppCompatActivity.RESULT_OK);
+                    finish();
                 }
             }
         });
@@ -109,6 +106,7 @@ public class AddEditContact extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Champs non complétés", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
