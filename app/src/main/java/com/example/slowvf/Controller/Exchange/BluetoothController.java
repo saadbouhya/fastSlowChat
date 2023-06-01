@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -22,10 +23,12 @@ import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
 import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.Model.MessageEchange;
 import com.example.slowvf.View.Exchange.Exchange;
+import com.example.slowvf.View.Exchange.Synchronization;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,10 +37,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class BluetoothController {
+import lombok.Data;
+
+@Data
+public class BluetoothController implements Serializable {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
+    private static final long TIMEOUT_DELAY_MS = 10000; // 10 seconds
+    private static final String REQUEST_MESSAGE= "SLOW_CHAT_CONNECTION_REQUEST";
+    private static final String ACCEPT_MESSAGE= "SLOW_CHAT_CONNECTION_ACCEPT";
+    private static final String REFUSE_MESSAGE= "SLOW_CHAT_CONNECTION_REFUSE";
+
+
 
     private static final UUID APP_UUID = UUID.randomUUID();
     private BluetoothAdapter bluetoothAdapter;
@@ -46,20 +58,97 @@ public class BluetoothController {
     private InputStream inputStream;
     private OutputStream outputStream;
     private Handler handler;
-    private AppCompatActivity activity;
+    private Exchange activity;
     ExchangeDaoImpl exchangeDao = new ExchangeDaoImpl();
+    private Runnable timeoutRunnable;
+    private Thread messageThread;
+    private boolean listeningForMessages = false;
 
     public BluetoothController() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         handler = new Handler();
+        timeoutRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Handle the timeout event
+                // For example, show a pop-up indicating that the other device didn't respond
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle("Timeout");
+                builder.setMessage("The other device did not respond in time.");
+                builder.setPositiveButton("OK", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        };
+
+        messageThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (listeningForMessages) {
+                    try {
+                        byte[] buffer = new byte[1024];
+                        int bytes = inputStream.read(buffer);
+                        final String message = new String(buffer, 0, bytes);
+                        final String deviceAddress = device.getAddress();
+                        final String deviceName = device.getName();
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (message.contains(REQUEST_MESSAGE)){
+                                    handler.removeCallbacks(timeoutRunnable);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                                    builder.setTitle("Connection Request");
+                                    builder.setMessage("Do you accept the connection request from device " + deviceName + "?");
+                                    builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress));
+                                            secondaryConnection(deviceAddress);
+                                        }
+                                    });
+                                    builder.setNegativeButton("Refuse", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            sendRefuseMessage(deviceAddress);
+                                        }
+                                    });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+
+                                } else if (message.contains(ACCEPT_MESSAGE)) {
+                                    String deviceName = message.substring(ACCEPT_MESSAGE.length());
+                                    activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress));
+                                    primalConnection(deviceAddress);
+
+                                } else if (message.contains(REFUSE_MESSAGE)) {
+                                    handler.removeCallbacks(timeoutRunnable);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                                    builder.setTitle("Connection Refused");
+                                    builder.setMessage("The device has refused the connection.");
+                                    builder.setPositiveButton("OK", null);
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
+                            }
+                        });
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        startListeningForMessages();
     }
-    public BluetoothController(AppCompatActivity activity){
+
+    public BluetoothController(Exchange activity) {
         this();
         this.activity = activity;
     }
 
 
-    public void ScanNearby(List<BluetoothItem> bluetoothItems){
+    public void ScanNearby(List<BluetoothItem> bluetoothItems) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetoothAdapter == null) {
@@ -73,6 +162,7 @@ public class BluetoothController {
                     });
             AlertDialog alert = builder.create();
             alert.show();
+            return;
         } else {
             if (!bluetoothAdapter.isEnabled()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -85,10 +175,11 @@ public class BluetoothController {
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+                return;
             } else {
                 if (checkBluetoothPermission()) {
-                        // Get nearby Bluetooth devices
-                        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+                    // Get nearby Bluetooth devices
+                    Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
                     Set<BluetoothDevice> nearbyDevices = new HashSet<>();
 
                     if (bluetoothAdapter.isDiscovering()) {
@@ -109,9 +200,11 @@ public class BluetoothController {
                         }
                     }, filter);
 
-                    bluetoothItems.clear();
                     for (BluetoothDevice nearbyDevice : nearbyDevices) {
-                        bluetoothItems.add(new BluetoothItem(nearbyDevice.getName(), nearbyDevice.getAddress()));
+                        BluetoothItem item = new BluetoothItem(nearbyDevice.getName(), nearbyDevice.getAddress());
+                        if (item.getName() != null && !item.getName().isEmpty() && !bluetoothItems.contains(item)) {
+                            bluetoothItems.add(item);
+                        }
                     }
                 }
             }
@@ -121,51 +214,39 @@ public class BluetoothController {
     }
 
 
-    public void connectToDevice(String address) {
+
+    public void communConnection(String address){
         device = bluetoothAdapter.getRemoteDevice(address);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    socket = device.createRfcommSocketToServiceRecord(APP_UUID);
-                    socket.connect();
-                    inputStream = socket.getInputStream();
-                    outputStream = socket.getOutputStream();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onDeviceConnected();
-                        }
-                    });
+        stopListeningForMessages();
+        checkBluetoothPermission();
+        try {
+            socket = device.createRfcommSocketToServiceRecord(APP_UUID);
+            socket.connect();
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-                    // Send all messages
-                    sendAllMessages();
+    }
 
-                    // Receive messages
-                    List<MessageEchange> receivedMessages = startReceivingMessages();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onMessagesReceived(receivedMessages);
-                        }
-                    });
-                } catch (IOException e) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onConnectionError();
-                        }
-                    });
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public void primalConnection(String address){
+        communConnection(address);
         sendAllMessages();
-        startReceivingMessages();
+        List<MessageEchange> receivedMessages = startReceivingMessages();
+        onMessagesReceived(receivedMessages);
+        stopReceivingMessages();
+        startListeningForMessages();
 
+    }
+
+    public void secondaryConnection(String address){
+        communConnection(address);
+        List<MessageEchange> receivedMessages = startReceivingMessages();
+        sendAllMessages();
+        onMessagesReceived(receivedMessages);
+        stopReceivingMessages();
+        startListeningForMessages();
     }
 
     public void sendAllMessages() {
@@ -244,14 +325,6 @@ public class BluetoothController {
         }
     }
 
-    // Override these methods to handle connection events
-    public void onDeviceConnected() {
-        // Do something when the device is connected
-    }
-
-    public void onConnectionError() {
-        // Do something when there is an error connecting to the device
-    }
 
     // Override these methods to handle message sending events
     public void onSendError() {
@@ -261,28 +334,28 @@ public class BluetoothController {
     // Override these methods to handle message receiving events
     public void onMessagesReceived(List<MessageEchange> messages) {
         String currentUser = getUserId();
-        for (MessageEchange message : messages){
-            if(message.getIdReceiver() == currentUser){
-                if (!exchangeDao.messageExist(activity,message, true)) {
+        for (MessageEchange message : messages) {
+            if (message.getIdReceiver() == currentUser) {
+                if (!exchangeDao.messageExist(activity, message, true)) {
                     LocalDateTime now = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         now = LocalDateTime.now();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         String formattedDateTime = now.format(formatter);
                         message.setDateReceived(formattedDateTime);
-                        exchangeDao.updateMessage(activity,message,true);
+                        exchangeDao.updateMessage(activity, message, true);
                     }
 
                 }
             } else if (message.getIdSender() == currentUser) {
-                if (message.getDateReceived() != null){
-                    if (exchangeDao.messageExist(activity, message, false)){
+                if (message.getDateReceived() != null) {
+                    if (exchangeDao.messageExist(activity, message, false)) {
                         exchangeDao.deleteMessage(activity, message, true);
                         exchangeDao.addMessage(activity, message, false);
                     }
                 }
 
-            } else if (exchangeDao.messageExist(activity, message, false)){
+            } else if (exchangeDao.messageExist(activity, message, false)) {
                 exchangeDao.updateMessage(activity, message, false);
             } else {
                 exchangeDao.addMessage(activity, message, false);
@@ -320,20 +393,105 @@ public class BluetoothController {
                     new String[]{Manifest.permission.BLUETOOTH},
                     REQUEST_ENABLE_BT);
             return false; // Return here to prevent the scan from starting until the user grants the permission
-        } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Location permission is not granted, request it
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
-            return false; // Return here to prevent the scan from starting until the user grants the permission
-        } else {
-            return true;
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Location permission is not granted, request it
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_LOCATION_PERMISSION);
+                return false; // Return here to prevent the scan from starting until the user grants the permission
+            } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Location permission is not granted, request it
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT},
+                        REQUEST_ENABLE_BT);
+                return false; // Return here to prevent the scan from starting until the user grants the permission
+            } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_SCAN)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Location permission is not granted, request it
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT},
+                        REQUEST_ENABLE_BT);
+                return false; // Return here to prevent the scan from starting until the user grants the permission
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Location permission is not granted, request it
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUEST_LOCATION_PERMISSION);
+                return false; // Return here to prevent the scan from starting until the user grants the permission
+            } else if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_ADMIN)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Location permission is not granted, request it
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.BLUETOOTH_ADMIN},
+                        REQUEST_ENABLE_BT);
+                return false; // Return here to prevent the scan from starting until the user grants the permission
+            }
+        }
+        return true;
     }
+
+
+
+    public void sendHelloMessage(String deviceAddress) {
+        // Find the BluetoothDevice object for the specified address
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+
+        // Create and send the "SlowChatHello" message
+        String helloMessage = "SlowChatHello";
+        sendMessage(device, helloMessage);
+
+        // Start the timeout countdown
+        handler.postDelayed(timeoutRunnable, TIMEOUT_DELAY_MS);
+    }
+
+    public void sendMessage(BluetoothDevice device, String message) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    checkBluetoothPermission();
+                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(APP_UUID);
+                    socket.connect();
+                    OutputStream outputStream = socket.getOutputStream();
+                    outputStream.write(message.getBytes());
+                    outputStream.flush();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    public void sendRefuseMessage(String deviceAddress) {
+        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+        String refuseMessage = "SLOW_CHAT_CONNECTION_REFUSE";
+        sendMessage(device, refuseMessage);
+    }
+
 
     private String getUserId(){
         return "id";
     }
+
+    public void startListeningForMessages() {
+        if (socket != null && inputStream != null) {
+            listeningForMessages = true;
+        }
+        messageThread.start();
+    }
+
+    public void stopListeningForMessages() {
+        listeningForMessages = false;
+    }
+
+
 
 }
