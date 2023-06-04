@@ -42,38 +42,11 @@ public class ReceivedSentEchangelDaoImpl implements receivedSentEchangelDao {
 
     public static void createFileEchangeOnInternalStorage(Context context) throws IOException {
         String fileName = "Echange.json";
-        String fileContent = "{\n" +
-                "  \"messages\": [\n" +
-                "    {\n" +
-                "      \"idSender\": \"5E:FF:56:A2:AF:15yopi14-04-2023\",\n" +
-                "      \"idReceiver\": \"5E:FF:56:A2:AF:15malo14-04-2023\",\n" +
-                "      \"dateWriting\": \"2023-04-22 10:00:00\",\n" +
-                "      \"messageText\": \"Bonjour, comment vas-tu ?\",\n" +
-                "      \"dateReceived\": \"null (si pas encore reçu)\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idSender\": \"5E:FF:56:A2:AF:15pierre14-04-2023\",\n" +
-                "      \"idReceiver\": \"5E:FF:56:A2:AF:15paul14-04-2023\",\n" +
-                "      \"dateWriting\": \"2023-04-22 10:05:00\",\n" +
-                "      \"messageText\": \"Je vais bien, merci. Et toi ?\",\n" +
-                "      \"dateReceived\": \"null (si pas encore reçu)\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"idSender\": \"5E:FF:56:A2:AF:15yolo14-04-2023\",\n" +
-                "      \"idReceiver\": \"5E:FF:56:A2:AF:15naruto14-04-2023\",\n" +
-                "      \"dateWriting\": \"2023-04-22 10:10:00\",\n" +
-                "      \"messageText\": \"Je vais bien aussi, merci.\",\n" +
-                "      \"dateReceived\": \"null (si pas encore reçu)\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}" ;
-
         File file = new File(context.getFilesDir(), fileName);
         if (!file.exists()) {
             FileOutputStream outputStream;
         try {
             outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            outputStream.write(fileContent.getBytes());
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();

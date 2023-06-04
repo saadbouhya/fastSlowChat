@@ -192,7 +192,6 @@ Collections.reverse(localForConversations);
         ReceivedSentLocalDaoImpl.writeToJsonFile(context,local);
 
        String string =  ReceivedSentLocalDaoImpl.readInternalFile(context,"Local.json");
-        System.out.println(string);
     }
 
     public void addEchangeMessage(String id,String texte) throws IOException {
@@ -209,7 +208,6 @@ Collections.reverse(localForConversations);
         ReceivedSentEchangelDaoImpl.writeToJsonFile(context,echange);
 
         String string =  ReceivedSentLocalDaoImpl.readInternalFile(context,"Echange.json");
-        System.out.println(string);
     }
 
 }

@@ -88,7 +88,6 @@ public class NewMessageActivity extends AppCompatActivity {
         });
 
         ArrayList<Contact> contacts = contactController.findAll(getApplicationContext());
-        // System.out.println(contacts);
         AutoCompleteTextView autoCompleteTextView = findViewById(R.id.search_bar);
 
         // Récupérez la liste des contacts (supposons que la variable "contacts" contienne la liste des contacts)
