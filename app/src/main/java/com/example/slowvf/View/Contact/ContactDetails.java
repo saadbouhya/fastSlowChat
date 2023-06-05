@@ -1,5 +1,7 @@
 package com.example.slowvf.View.Contact;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.example.slowvf.Controller.ContactController;
 import com.example.slowvf.Model.Contact;
 import com.example.slowvf.R;
+import com.example.slowvf.View.Adapters.AdapterContact;
 
 public class ContactDetails extends AppCompatActivity {
 
@@ -22,6 +25,24 @@ public class ContactDetails extends AppCompatActivity {
     ActionBar actionBar;
     private ContactController contactController;
     private Contact contact;
+
+    private ActivityResultLauncher<Intent> launcher2 = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                    Bundle data = result.getData().getExtras();
+                    if (data != null) {
+                        this.id = data.getString("id");
+                        this.lastName = data.getString("lastName");
+                        this.firstName = data.getString("firstName");
+                        loadDataById();
+                        // Set the result code and finish the activity
+                        setResult(AppCompatActivity.RESULT_OK);
+                    }
+                }
+            }
+    );
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +80,7 @@ public class ContactDetails extends AppCompatActivity {
 
             // Pass bool to define that it is for edit
             intentEditContact.putExtra("isEditMode", true);
-
-            startActivity(intentEditContact);
+            launcher2.launch(intentEditContact);
         });
 
         buttonDeleteContact.setOnClickListener(v -> {

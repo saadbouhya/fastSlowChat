@@ -37,7 +37,7 @@ public class Contacts extends Fragment {
                 if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
                     // Refresh the contact list
                     contacts = contactController.findAll(getContext());
-                    adapterContact = new AdapterContact(contacts);
+                    adapterContact = new AdapterContact(contacts,this.launcher);
                     recyclerViewContacts.setAdapter(adapterContact);
                 }
             }
@@ -80,7 +80,7 @@ public class Contacts extends Fragment {
 
         contactController = new ContactController(getContext());
         contacts = contactController.findAll(getContext());
-        adapterContact = new AdapterContact(contacts);
+        adapterContact = new AdapterContact(contacts,launcher);
         LinearLayoutManager lm = new LinearLayoutManager(getContext());
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
@@ -89,7 +89,7 @@ public class Contacts extends Fragment {
     }
 
     private void loadData() {
-        RecyclerView.Adapter adapterContact = new AdapterContact(contactController.findAll(getContext()));
+        RecyclerView.Adapter adapterContact = new AdapterContact(contactController.findAll(getContext()),launcher);
         LinearLayoutManager lm = new LinearLayoutManager(getContext());
         recyclerViewContacts.setLayoutManager(lm);
         recyclerViewContacts.setAdapter(adapterContact);
