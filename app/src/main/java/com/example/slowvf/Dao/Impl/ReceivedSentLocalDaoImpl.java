@@ -39,20 +39,6 @@ public class ReceivedSentLocalDaoImpl implements receivedSentLocalDao {
         fileOutputStream.close();
     }
 
-    public static void createFileOnInternalStorage(Context context) throws IOException {
-        String fileName = "Local.json";
-
-        File file = new File(context.getFilesDir(), fileName);
-        if (!file.exists()) {
-            FileOutputStream outputStream;
-        try {
-            outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }}
-
     public static String readInternalFile(Context context, String filename) throws IOException {
         FileInputStream fis = context.openFileInput(filename);
         InputStreamReader isr = new InputStreamReader(fis);

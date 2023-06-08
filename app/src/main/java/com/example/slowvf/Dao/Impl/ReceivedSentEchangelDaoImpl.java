@@ -42,11 +42,16 @@ public class ReceivedSentEchangelDaoImpl implements receivedSentEchangelDao {
 
     public static void createFileEchangeOnInternalStorage(Context context) throws IOException {
         String fileName = "Echange.json";
+        String fileContent = "{\n" +
+                "  \"messages\": [\n" +
+                "  ]\n" +
+                "}" ;
         File file = new File(context.getFilesDir(), fileName);
         if (!file.exists()) {
             FileOutputStream outputStream;
         try {
             outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            outputStream.write(fileContent.getBytes());
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -45,9 +45,6 @@ private static ChatController chatController;
     public Local getMessagesReceivedSentLocal() throws IOException {
         return ReceivedSentLocalDaoImpl.localFile(context);
     }
-    public void createFileLocalOnInternalStorage() throws IOException {
-         ReceivedSentLocalDaoImpl.createFileOnInternalStorage(context);
-    }
     public void createFileEchangeOnInternalStorage() throws IOException {
        ReceivedSentEchangelDaoImpl.createFileEchangeOnInternalStorage(context);
     }

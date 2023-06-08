@@ -43,7 +43,6 @@ public class MainActivityNavigation extends AppCompatActivity {
         try {
             ChatController chatController;
             chatController = ChatController.getInstance(getApplicationContext());
-            chatController.createFileLocalOnInternalStorage();
             chatController.createFileEchangeOnInternalStorage();
         } catch (IOException e) {
             e.printStackTrace();

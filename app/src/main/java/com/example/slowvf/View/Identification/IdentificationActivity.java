@@ -28,11 +28,9 @@ public class IdentificationActivity extends AppCompatActivity {
         Intent intent = new Intent(IdentificationActivity.this, MainActivityNavigation.class);
         if(identificationController.fileExists("Local.json",IdentificationActivity.this))
         {
-            System.out.println("test");
             startActivity(intent);
         }
         else {
-            System.out.println("test2");
             setContentView(R.layout.activity_identification);
 
             // Obtenir les références des vues dans le fichier de mise en page
