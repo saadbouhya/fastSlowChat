@@ -1,11 +1,13 @@
 package com.example.slowvf.View.Exchange;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -30,6 +32,7 @@ import com.example.slowvf.View.Adapters.ExchangeAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 
@@ -86,8 +89,9 @@ public class Exchange extends AppCompatActivity {
 
                     // Clear the list of Bluetooth devices
                     bluetoothDevices.clear();
+                    bluetoothController.startDiscovery();
 
-                    bluetoothController.ScanNearby(bluetoothDevices);
+
 
                     // Register a BroadcastReceiver to listen for scan results
                     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -96,16 +100,12 @@ public class Exchange extends AppCompatActivity {
                             String action = intent.getAction();
                             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                                if (!bluetoothDevices.contains(device)) {
-
-                                    if (ActivityCompat.checkSelfPermission(Exchange.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                                        ActivityCompat.requestPermissions(Exchange.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT},
-                                                REQUEST_ENABLE_BT);
-                                        return;
-                                    }
+                                if (!bluetoothDevices.contains(device) && device.getName() != null && device.getName() != "" ) {
                                     bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
                                 }
                             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+
+                                bluetoothController.stopDiscovery();
                                 refreshBluetoothList();
                                 // Dismiss the waiting dialog
                                 progressDialog.dismiss();
@@ -163,6 +163,20 @@ public class Exchange extends AppCompatActivity {
         intent.putExtra("bluetoothItem", bluetoothItem);
         intent.putExtra("bluetoothController", bluetoothController);
         startActivity(intent);
+    }
+
+    public void showDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(Exchange.this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton("Fermer", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position) {
+                dialogInterface.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }

@@ -146,36 +146,12 @@ public class BluetoothController implements Serializable {
         this();
         this.activity = activity;
     }
-
-
-    public void ScanNearby(List<BluetoothItem> bluetoothItems) {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+    public void startDiscovery() {
         if (bluetoothAdapter == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setMessage("Bluetooth is not supported on this device. This function is not available")
-                    .setCancelable(false)
-                    .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-            return;
+            activity.showDialog("No Bluetooth", "Bluetooth is not supported on this device. This function is not available");
         } else {
             if (!bluetoothAdapter.isEnabled()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage("Bluetooth is not enabled. Please enable it.")
-                        .setCancelable(false)
-                        .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-                return;
+                activity.showDialog("Bluetooth disabeled", "Bluetooth is not enabled. Please enable it");
             } else {
                 if (checkBluetoothPermission()) {
                     // Get nearby Bluetooth devices
@@ -185,34 +161,15 @@ public class BluetoothController implements Serializable {
                     if (bluetoothAdapter.isDiscovering()) {
                         bluetoothAdapter.cancelDiscovery();
                     }
-
                     bluetoothAdapter.startDiscovery();
-                    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                    activity.registerReceiver(new BroadcastReceiver() {
-                        public void onReceive(Context context, Intent intent) {
-                            String action = intent.getAction();
-                            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                                if (!pairedDevices.contains(device)) {
-                                    nearbyDevices.add(device);
-                                }
-                            }
-                        }
-                    }, filter);
-
-                    for (BluetoothDevice nearbyDevice : nearbyDevices) {
-                        BluetoothItem item = new BluetoothItem(nearbyDevice.getName(), nearbyDevice.getAddress());
-                        if (item.getName() != null && !item.getName().isEmpty() && !bluetoothItems.contains(item)) {
-                            bluetoothItems.add(item);
-                        }
-                    }
                 }
             }
         }
-
-
     }
 
+    public void stopDiscovery() {
+        bluetoothAdapter.cancelDiscovery();
+    }
 
 
     public void communConnection(String address){
@@ -394,7 +351,7 @@ public class BluetoothController implements Serializable {
                     REQUEST_ENABLE_BT);
             return false; // Return here to prevent the scan from starting until the user grants the permission
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O_MR1) {
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 // Location permission is not granted, request it
@@ -413,7 +370,7 @@ public class BluetoothController implements Serializable {
                     != PackageManager.PERMISSION_GRANTED) {
                 // Location permission is not granted, request it
                 ActivityCompat.requestPermissions(activity,
-                        new String[]{Manifest.permission.BLUETOOTH_CONNECT},
+                        new String[]{Manifest.permission.BLUETOOTH_SCAN},
                         REQUEST_ENABLE_BT);
                 return false; // Return here to prevent the scan from starting until the user grants the permission
             }
@@ -436,7 +393,6 @@ public class BluetoothController implements Serializable {
         }
         return true;
     }
-
 
 
     public void sendHelloMessage(String deviceAddress) {
