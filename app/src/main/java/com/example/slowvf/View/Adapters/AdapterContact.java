@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +22,7 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
     private ArrayList<Contact> contacts;
     private Context context;
 
+    private final ActivityResultLauncher<Intent> launcher;
 
     static class ContactViewHolder extends RecyclerView.ViewHolder {
         TextView id, fullName;
@@ -33,8 +35,9 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
         }
     }
 
-    public AdapterContact(ArrayList<Contact> contacts) {
+    public AdapterContact(ArrayList<Contact> contacts,ActivityResultLauncher<Intent> launcher) {
         this.contacts = contacts;
+        this.launcher = launcher;
     }
 
     @NonNull
@@ -61,7 +64,7 @@ public class AdapterContact extends RecyclerView.Adapter<AdapterContact.ContactV
             intent.putExtra("id", contact.getId());
             intent.putExtra("lastName", contact.getLastName());
             intent.putExtra("firstName", contact.getFirstName());
-            context.startActivity(intent);
+            launcher.launch(intent);
         });
     }
 

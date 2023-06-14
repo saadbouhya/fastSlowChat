@@ -77,14 +77,15 @@ public class AddEditContact extends AppCompatActivity {
                 } else if (editTextFirstName.getText().toString().isEmpty()) {
                     editTextFirstName.setError("Ce champ est obligatoire.");
                 } else {
-                    saveData();
-                    Intent intent = new Intent(AddEditContact.this, MainActivityNavigation.class);
-                    // Récupérer l'identifiant du fragment à afficher
-                    intent.putExtra("contactId", "contactPrincipal");
-                    editTextId.setText("");
-                    editTextLastName.setText("");
-                    editTextFirstName.setText("");
-                    startActivity(intent);
+                    Contact newContact = saveData();
+
+                    // Set the result code and finish the activity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("id",newContact.getId());
+                    resultIntent.putExtra("lastName",newContact.getLastName());
+                    resultIntent.putExtra("firstName",newContact.getFirstName());
+                    setResult(AppCompatActivity.RESULT_OK, resultIntent);
+                    finish();
                 }
             }
         });
@@ -92,7 +93,7 @@ public class AddEditContact extends AppCompatActivity {
         contactController = new ContactController(AddEditContact.this);
     }
 
-    private void saveData() {
+    private Contact saveData() {
         String id = editTextId.getText().toString();
         String lastName = editTextLastName.getText().toString();
         String firstName = editTextFirstName.getText().toString();
@@ -108,7 +109,9 @@ public class AddEditContact extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "Champs non complétés", Toast.LENGTH_SHORT).show();
         }
+        return newContact;
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
