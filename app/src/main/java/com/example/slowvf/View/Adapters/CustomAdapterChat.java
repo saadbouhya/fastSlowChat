@@ -92,7 +92,7 @@ public class CustomAdapterChat extends RecyclerView.Adapter<CustomAdapterChat.Vi
         String id = localDataSet.get(position).getId();
         String date_writing = localDataSet.get(position).getDateWriting();
 
-        String pseudo = "Pseudo";
+        String pseudo = "Inconnu";
         ContactController contactController = new ContactController(context);
         Contact contact = contactController.find(id,context);
         if (contact!= null){
