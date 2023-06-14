@@ -97,6 +97,7 @@ public class ContactDetails extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // if yes delete contact
                             contactController.delete(contact, ContactDetails.this);
+                            setResult(AppCompatActivity.RESULT_OK, new Intent());
                             ContactDetails.this.finish();
                         }
                     }).setNegativeButton("Non", new DialogInterface.OnClickListener() {
