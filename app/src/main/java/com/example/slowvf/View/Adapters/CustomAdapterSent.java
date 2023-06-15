@@ -104,7 +104,7 @@ public class CustomAdapterSent extends RecyclerView.Adapter<CustomAdapterSent.Vi
         String date_writing = localDataSet.getSentMessages().get(index).getDateWriting();
         String date_received = localDataSet.getSentMessages().get(index).getDateReceived();
 
-        String pseudo = "Pseudo(voir contact)";
+        String pseudo = "Inconnu";
         ContactController contactController = new ContactController(context);
         Contact contact = contactController.find(id,context);
         if (contact!= null){
