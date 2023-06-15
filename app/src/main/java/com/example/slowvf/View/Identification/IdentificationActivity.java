@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -37,7 +39,8 @@ public class IdentificationActivity extends AppCompatActivity {
             Button signupButton = findViewById(R.id.signup_button);
             Button importData = findViewById(R.id.import_data);
             EditText pseudo = findViewById(R.id.editTextPseudo);
-
+            signupButton.setEnabled(false);
+            importData.setEnabled(false);
             // Ajouter un écouteur de clic pour le bouton d'inscription
             signupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -47,6 +50,29 @@ public class IdentificationActivity extends AppCompatActivity {
                     }
                     identificationController.createUser(pseudo.getText().toString());
                     startActivity(intent);
+                }
+            });
+
+            pseudo.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if(s.length() == 0)
+                    {
+                        signupButton.setEnabled(false);
+                    }else
+                    {
+                        signupButton.setEnabled(true);
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
                 }
             });
 
