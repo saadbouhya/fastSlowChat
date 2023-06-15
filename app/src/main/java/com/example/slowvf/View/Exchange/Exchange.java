@@ -147,6 +147,15 @@ public class Exchange extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Ajoutez le code pour fermer le BluetoothServerSocket ici
+        if (bluetoothController != null) {
+            bluetoothController.closeSockets();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 

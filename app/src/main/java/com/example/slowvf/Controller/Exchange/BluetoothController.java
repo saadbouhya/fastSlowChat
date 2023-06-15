@@ -114,10 +114,10 @@ public class BluetoothController implements Serializable {
                                 if (receivedMessage.contains(REQUEST_MESSAGE)){
                                     handler.removeCallbacks(timeoutRunnable);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                    builder.setTitle("Connection Request");
-                                    builder.setMessage("Do you accept the connection request from device " + device.getName() + "?");
+                                    builder.setTitle("Demande de connexion reçue");
+                                    builder.setMessage("Acceptez vous la demande d'échange avec l'appareil " + device.getName() + "?");
 
-                                    builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                                    builder.setPositiveButton("Accepter", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
@@ -129,7 +129,7 @@ public class BluetoothController implements Serializable {
                                             }
                                         }
                                     });
-                                    builder.setNegativeButton("Refuse", new DialogInterface.OnClickListener() {
+                                    builder.setNegativeButton("Refuser", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             sendMessage(REFUSE_MESSAGE,socketAccepte);
@@ -240,6 +240,9 @@ public class BluetoothController implements Serializable {
 
     public void connectToDevice(String deviceAddress) throws IOException {
 
+        // Handle timeout expiration
+        isTimeoutExpired = false;
+
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
         bluetoothAdapter.cancelDiscovery();
         Log.d(TAG,"On essaie de se connecter à " + deviceAddress.toString() + " via UUID " + APP_UUID.toString());
@@ -249,12 +252,11 @@ public class BluetoothController implements Serializable {
             handler.postDelayed(timeoutRunnable, TIMEOUT_DELAY_MS);
             socket = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
             socket.connect();
+
             sendMessage(REQUEST_MESSAGE,socket);
             String answer = waitForMessageAndReturn();
 
             if (isTimeoutExpired) {
-                // Handle timeout expiration
-                isTimeoutExpired = false;
                 return; // Exit the method
             }
 
@@ -335,6 +337,23 @@ public class BluetoothController implements Serializable {
             e.printStackTrace();
         }
     }
+
+    public void closeSockets() {
+        try {
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
+            if (socket != null) {
+                socket.close();
+            }
+            handler.removeCallbacks(timeoutRunnable);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer l'erreur de fermeture du BluetoothServerSocket
+        }
+    }
+
+
 
     private String getUserId(){
         return "id";
