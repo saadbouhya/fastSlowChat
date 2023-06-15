@@ -1,5 +1,7 @@
 package com.example.slowvf.Model;
 
+import android.bluetooth.BluetoothDevice;
+
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +13,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BluetoothItem implements Serializable {
     String name;
+
+    public String getMacAddress() {
+        return macAddress;
+    }
+
+    public BluetoothDevice getDevice() {
+        return device;
+    }
+
     String macAddress;
+
+    BluetoothDevice device;
 
     @Override
     public boolean equals(Object o) {

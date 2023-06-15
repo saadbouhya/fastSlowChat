@@ -51,7 +51,7 @@ public class BluetoothController implements Serializable {
 
 
 
-    private static final UUID APP_UUID = UUID.randomUUID();
+    private static final UUID APP_UUID = UUID.fromString("688575AD-9126-4F1C-A82A-495DAE7D5D52");
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothDevice device;
     private BluetoothSocket socket;
@@ -103,7 +103,7 @@ public class BluetoothController implements Serializable {
                                     builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress));
+                                            activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress,device));
                                             secondaryConnection(deviceAddress);
                                         }
                                     });
@@ -118,7 +118,7 @@ public class BluetoothController implements Serializable {
 
                                 } else if (message.contains(ACCEPT_MESSAGE)) {
                                     String deviceName = message.substring(ACCEPT_MESSAGE.length());
-                                    activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress));
+                                    activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress,device));
                                     primalConnection(deviceAddress);
 
                                 } else if (message.contains(REFUSE_MESSAGE)) {

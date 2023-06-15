@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,6 +62,10 @@ public class Exchange extends AppCompatActivity {
 
         bluetoothController = new BluetoothController(this);
 
+        Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 0);
+        startActivity(discoverableIntent);
+
         setContentView(R.layout.activity_exchange);
 
         exchangeView = findViewById(R.id.exchangeView);
@@ -100,8 +105,17 @@ public class Exchange extends AppCompatActivity {
                             String action = intent.getAction();
                             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                                if (!bluetoothDevices.contains(device) && device.getName() != null && device.getName() != "" ) {
-                                    bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
+                                if (!TextUtils.isEmpty(device.getName())) {
+                                    boolean isDuplicate = false;
+                                    for (BluetoothItem bluetoothItem : bluetoothDevices) {
+                                        if (bluetoothItem.getMacAddress().equals(device.getAddress())) {
+                                            isDuplicate = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!isDuplicate) {
+                                        bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress(), device));
+                                    }
                                 }
                             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
 
