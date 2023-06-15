@@ -62,15 +62,17 @@ public class Exchange extends AppCompatActivity {
 
         bluetoothController = new BluetoothController(this);
 
-        Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 0);
-        startActivity(discoverableIntent);
 
+/*
+        Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
+        startActivity(discoverableIntent);
+*/
         setContentView(R.layout.activity_exchange);
 
         exchangeView = findViewById(R.id.exchangeView);
         exchangeLayoutManager = new LinearLayoutManager(this);
-        exchangeAdapter = new ExchangeAdapter(bluetoothDevices, bluetoothController);
+        exchangeAdapter = new ExchangeAdapter(bluetoothDevices, bluetoothController,this);
         exchangeView.setLayoutManager(exchangeLayoutManager);
         exchangeView.setAdapter(exchangeAdapter);
 
@@ -137,7 +139,11 @@ public class Exchange extends AppCompatActivity {
                 }
             }
         });
-
+        Set<BluetoothDevice> pairedDevices = bluetoothController.getBluetoothAdapter().getBondedDevices();
+        for (BluetoothDevice device : pairedDevices) {
+            bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress(), device));
+        }
+        refreshBluetoothList();
     }
 
     @Override

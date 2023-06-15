@@ -4,36 +4,27 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
-import com.example.slowvf.Model.BluetoothItem;
-import com.example.slowvf.Model.MessageEchange;
 import com.example.slowvf.View.Exchange.Exchange;
-import com.example.slowvf.View.Exchange.Synchronization;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,32 +35,42 @@ public class BluetoothController implements Serializable {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
-    private static final long TIMEOUT_DELAY_MS = 10000; // 10 seconds
-    private static final String REQUEST_MESSAGE= "SLOW_CHAT_CONNECTION_REQUEST";
-    private static final String ACCEPT_MESSAGE= "SLOW_CHAT_CONNECTION_ACCEPT";
-    private static final String REFUSE_MESSAGE= "SLOW_CHAT_CONNECTION_REFUSE";
-
+    private static final long TIMEOUT_DELAY_MS = 5000; // 10 seconds
+    private static final String REQUEST_MESSAGE = "SLOW_CHAT_CONNECTION_REQUEST";
+    private static final String ACCEPT_MESSAGE = "SLOW_CHAT_CONNECTION_ACCEPT";
+    private static final String REFUSE_MESSAGE = "SLOW_CHAT_CONNECTION_REFUSE";
 
 
     private static final UUID APP_UUID = UUID.fromString("688575AD-9126-4F1C-A82A-495DAE7D5D52");
+    private static final String serviceName = "FastSlowChat";
+    private static final String TAG = "ExchangeBt";
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothDevice device;
     private BluetoothSocket socket;
+    private BluetoothSocket socketAccepte;
+    private BluetoothServerSocket serverSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
     private Handler handler;
     private Exchange activity;
     ExchangeDaoImpl exchangeDao = new ExchangeDaoImpl();
     private Runnable timeoutRunnable;
-    private Thread messageThread;
-    private boolean listeningForMessages = false;
+    private Thread serverThread;
+    private volatile boolean isTimeoutExpired = false;
 
     public BluetoothController() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        try {
+            serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(serviceName, APP_UUID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         handler = new Handler();
         timeoutRunnable = new Runnable() {
             @Override
             public void run() {
+
                 // Handle the timeout event
                 // For example, show a pop-up indicating that the other device didn't respond
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -78,60 +79,75 @@ public class BluetoothController implements Serializable {
                 builder.setPositiveButton("OK", null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
+                Thread.currentThread().interrupt();
+                isTimeoutExpired = true;
             }
         };
 
-        messageThread = new Thread(new Runnable() {
+        serverThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (listeningForMessages) {
-                    try {
-                        byte[] buffer = new byte[1024];
-                        int bytes = inputStream.read(buffer);
-                        final String message = new String(buffer, 0, bytes);
-                        final String deviceAddress = device.getAddress();
-                        final String deviceName = device.getName();
 
-                        handler.post(new Runnable() {
+                while(true)
+                {
+                    try {
+                        // Attendre une connexion entrante (cette opération bloque l'exécution)
+                        socketAccepte = serverSocket.accept();
+                        Log.d(TAG, "Connexion acceptée !");
+
+                        device = socketAccepte.getRemoteDevice();
+
+                        InputStream inputStream = socketAccepte.getInputStream();
+                        socketAccepte.getOutputStream().flush();
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                        // Lecture du message reçu
+                        String receivedMessage = bufferedReader.readLine();
+                        Log.d(TAG, "Message reçu : " + receivedMessage);
+
+
+
+                        activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (message.contains(REQUEST_MESSAGE)){
+
+                                if (receivedMessage.contains(REQUEST_MESSAGE)){
                                     handler.removeCallbacks(timeoutRunnable);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                                     builder.setTitle("Connection Request");
-                                    builder.setMessage("Do you accept the connection request from device " + deviceName + "?");
+                                    builder.setMessage("Do you accept the connection request from device " + device.getName() + "?");
+
                                     builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress,device));
-                                            secondaryConnection(deviceAddress);
+                                            //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
+                                            sendMessage(ACCEPT_MESSAGE,socketAccepte);
+                                            try {
+                                                socketAccepte.close();
+                                            } catch (IOException e) {
+                                                throw new RuntimeException(e);
+                                            }
                                         }
                                     });
                                     builder.setNegativeButton("Refuse", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            sendRefuseMessage(deviceAddress);
+                                            sendMessage(REFUSE_MESSAGE,socketAccepte);
+                                            try {
+                                                socketAccepte.close();
+                                            } catch (IOException e) {
+                                                throw new RuntimeException(e);
+                                            }
                                         }
                                     });
-                                    AlertDialog dialog = builder.create();
-                                    dialog.show();
-
-                                } else if (message.contains(ACCEPT_MESSAGE)) {
-                                    String deviceName = message.substring(ACCEPT_MESSAGE.length());
-                                    activity.openSynchronization(new BluetoothItem(deviceName, deviceAddress,device));
-                                    primalConnection(deviceAddress);
-
-                                } else if (message.contains(REFUSE_MESSAGE)) {
-                                    handler.removeCallbacks(timeoutRunnable);
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                                    builder.setTitle("Connection Refused");
-                                    builder.setMessage("The device has refused the connection.");
-                                    builder.setPositiveButton("OK", null);
                                     AlertDialog dialog = builder.create();
                                     dialog.show();
                                 }
                             }
                         });
+
+                        //while(true);
+                        //socketAccepte.close();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -139,7 +155,7 @@ public class BluetoothController implements Serializable {
                 }
             }
         });
-        startListeningForMessages();
+        serverThread.start();
     }
 
     public BluetoothController(Exchange activity) {
@@ -155,7 +171,6 @@ public class BluetoothController implements Serializable {
             } else {
                 if (checkBluetoothPermission()) {
                     // Get nearby Bluetooth devices
-                    Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
                     Set<BluetoothDevice> nearbyDevices = new HashSet<>();
 
                     if (bluetoothAdapter.isDiscovering()) {
@@ -170,177 +185,6 @@ public class BluetoothController implements Serializable {
     public void stopDiscovery() {
         bluetoothAdapter.cancelDiscovery();
     }
-
-
-    public void communConnection(String address){
-        device = bluetoothAdapter.getRemoteDevice(address);
-        stopListeningForMessages();
-        checkBluetoothPermission();
-        try {
-            socket = device.createRfcommSocketToServiceRecord(APP_UUID);
-            socket.connect();
-            inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void primalConnection(String address){
-        communConnection(address);
-        sendAllMessages();
-        List<MessageEchange> receivedMessages = startReceivingMessages();
-        onMessagesReceived(receivedMessages);
-        stopReceivingMessages();
-        startListeningForMessages();
-
-    }
-
-    public void secondaryConnection(String address){
-        communConnection(address);
-        List<MessageEchange> receivedMessages = startReceivingMessages();
-        sendAllMessages();
-        onMessagesReceived(receivedMessages);
-        stopReceivingMessages();
-        startListeningForMessages();
-    }
-
-    public void sendAllMessages() {
-        List<MessageEchange> exchangeMessages = exchangeDao.getExchangeMessages(activity);
-        List<MessageEchange> localMessages = exchangeDao.getLocalMessages(activity);
-        List<MessageEchange> allMessages = new ArrayList<>();
-        allMessages.addAll(exchangeMessages);
-        allMessages.addAll(localMessages);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (MessageEchange message : allMessages) {
-                        outputStream.write(message.toString().getBytes());
-                        outputStream.flush();
-                    }
-                } catch (IOException e) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            onSendError();
-                        }
-                    });
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    public List<MessageEchange> startReceivingMessages() {
-        List<MessageEchange> receivedMessages = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                byte[] buffer = new byte[1024];
-                int bytes;
-
-                while (true) {
-                    try {
-                        bytes = inputStream.read(buffer);
-                        final String message = new String(buffer, 0, bytes);
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                // do  nothing
-                            }
-                        });
-
-                        // Parse the received message and add it to the list of received messages
-                        MessageEchange receivedMessage = parseMessage(message);
-                        receivedMessages.add(receivedMessage);
-                    } catch (IOException e) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                onReceiveError();
-                            }
-                        });
-                        e.printStackTrace();
-                        break;
-                    }
-                }
-            }
-        }).start();
-
-        return receivedMessages;
-    }
-
-
-    public void stopReceivingMessages() {
-        try {
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    // Override these methods to handle message sending events
-    public void onSendError() {
-        // Do something when there is an error sending a message
-    }
-
-    // Override these methods to handle message receiving events
-    public void onMessagesReceived(List<MessageEchange> messages) {
-        String currentUser = getUserId();
-        for (MessageEchange message : messages) {
-            if (message.getIdReceiver() == currentUser) {
-                if (!exchangeDao.messageExist(activity, message, true)) {
-                    LocalDateTime now = null;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        now = LocalDateTime.now();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        String formattedDateTime = now.format(formatter);
-                        message.setDateReceived(formattedDateTime);
-                        exchangeDao.updateMessage(activity, message, true);
-                    }
-
-                }
-            } else if (message.getIdSender() == currentUser) {
-                if (message.getDateReceived() != null) {
-                    if (exchangeDao.messageExist(activity, message, false)) {
-                        exchangeDao.deleteMessage(activity, message, true);
-                        exchangeDao.addMessage(activity, message, false);
-                    }
-                }
-
-            } else if (exchangeDao.messageExist(activity, message, false)) {
-                exchangeDao.updateMessage(activity, message, false);
-            } else {
-                exchangeDao.addMessage(activity, message, false);
-            }
-        }
-    }
-
-    public void onReceiveError() {
-        // Do something when there is an error receiving a message
-    }
-
-    private MessageEchange parseMessage(String message) {
-        // Split the message string into individual components
-        String[] components = message.split(";");
-
-        // Extract the relevant information from the components
-        String idSender = components[0];
-        String idReceiver = components[1];
-        String dateWriting = components[2];
-        String messageText = components[3];
-        String dateReceived = components[4];
-
-        // Create a new MessageEchange object with the extracted information
-        MessageEchange parsedMessage = new MessageEchange(idSender, idReceiver, dateWriting, messageText, dateReceived);
-
-        return parsedMessage;
-    }
-
 
     public boolean checkBluetoothPermission() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH)
@@ -394,60 +238,106 @@ public class BluetoothController implements Serializable {
         return true;
     }
 
+    public void connectToDevice(String deviceAddress) throws IOException {
 
-    public void sendHelloMessage(String deviceAddress) {
-        // Find the BluetoothDevice object for the specified address
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
+        bluetoothAdapter.cancelDiscovery();
+        Log.d(TAG,"On essaie de se connecter à " + deviceAddress.toString() + " via UUID " + APP_UUID.toString());
+        socket = null;
+        try {
+            // Start the timeout countdown
+            handler.postDelayed(timeoutRunnable, TIMEOUT_DELAY_MS);
+            socket = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
+            socket.connect();
+            sendMessage(REQUEST_MESSAGE,socket);
+            String answer = waitForMessageAndReturn();
 
-        // Create and send the "SlowChatHello" message
-        String helloMessage = "SlowChatHello";
-        sendMessage(device, helloMessage);
-
-        // Start the timeout countdown
-        handler.postDelayed(timeoutRunnable, TIMEOUT_DELAY_MS);
-    }
-
-    public void sendMessage(BluetoothDevice device, String message) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    checkBluetoothPermission();
-                    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(APP_UUID);
-                    socket.connect();
-                    OutputStream outputStream = socket.getOutputStream();
-                    outputStream.write(message.getBytes());
-                    outputStream.flush();
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (isTimeoutExpired) {
+                // Handle timeout expiration
+                isTimeoutExpired = false;
+                return; // Exit the method
             }
-        }).start();
-    }
-    public void sendRefuseMessage(String deviceAddress) {
-        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
-        String refuseMessage = "SLOW_CHAT_CONNECTION_REFUSE";
-        sendMessage(device, refuseMessage);
+
+            if (answer == null)
+            {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handler.removeCallbacks(timeoutRunnable);
+                        Toast.makeText(activity, "Connexion interrompue", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } else if (answer.contains(ACCEPT_MESSAGE)) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handler.removeCallbacks(timeoutRunnable);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        builder.setTitle("Connection Accepted");
+                        builder.setMessage("The device has accepted the connection !");
+                        builder.setPositiveButton("OK", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+
+            } else if (answer.contains(REFUSE_MESSAGE)) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handler.removeCallbacks(timeoutRunnable);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        builder.setTitle("Connection Refused");
+                        builder.setMessage("The device has refused the connection.");
+                        builder.setPositiveButton("OK", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Gérer l'erreur de connexion
+        }
     }
 
+
+    public String waitForMessageAndReturn() {
+
+        try {
+            InputStream inputStream = socket.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String message = bufferedReader.readLine();
+            return message;
+        } catch (IOException e) {
+            Log.e(TAG,"Exception waitForMessage");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void sendMessage(String message,BluetoothSocket destinataire) {
+
+        OutputStream outputStream;
+
+        try {
+            checkBluetoothPermission();
+            outputStream = destinataire.getOutputStream();
+            byte[] buffer = (message + "\n").getBytes();
+            outputStream.write(buffer);
+            //outputStream.flush();
+            //socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private String getUserId(){
         return "id";
     }
-
-    public void startListeningForMessages() {
-        if (socket != null && inputStream != null) {
-            listeningForMessages = true;
-        }
-        messageThread.start();
-    }
-
-    public void stopListeningForMessages() {
-        listeningForMessages = false;
-    }
-
-
 
 }
