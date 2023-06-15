@@ -44,6 +44,7 @@ public class IdentificationActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (ActivityCompat.checkSelfPermission(IdentificationActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(IdentificationActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+                        return;
                     }
                     identificationController.createUser(pseudo.getText().toString());
                     startActivity(intent);
