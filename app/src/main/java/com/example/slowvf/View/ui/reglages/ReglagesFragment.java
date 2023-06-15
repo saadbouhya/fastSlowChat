@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.slowvf.Controller.ParametersController;
 import com.example.slowvf.databinding.FragmentReglagesBinding;
 
 
@@ -24,9 +25,9 @@ public class ReglagesFragment extends Fragment {
 
         binding = FragmentReglagesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        final TextView textView = binding.textReglages;
-        reglagesViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textViewId;
+        ParametersController parametersController = new ParametersController(getContext());
+        textView.setText(parametersController.getUserId());
         return root;
     }
 
