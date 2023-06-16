@@ -75,19 +75,28 @@ public class ExchangeDaoImpl implements ExchangeDao {
     public List<MessageEchange> getMessagesFromFile(Context context, String fileName) {
         List<MessageEchange> messages = new ArrayList<>();
         Gson gson = new Gson();
-        Type messageType = new TypeToken<List<MessageEchange>>() {}.getType();
+        Type containerType = new TypeToken<MessagesContainer>() {}.getType();
 
         try {
             InputStream inputStream = context.getAssets().open(fileName);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            List<MessageEchange> parsedMessages = gson.fromJson(bufferedReader, messageType);
-            messages.addAll(parsedMessages);
+            MessagesContainer container = gson.fromJson(bufferedReader, containerType);
+            if (container != null && container.getMessages() != null) {
+                messages.addAll(container.getMessages());
+            }
             inputStream.close();
         } catch (IOException e) {
+            Log.e(TAG, "Une erreur s'est produite lors de l'implémentation DAO");
             e.printStackTrace();
         }
-
         return messages;
+    }
+    public class MessagesContainer {
+        private List<MessageEchange> messages;
+
+        public List<MessageEchange> getMessages() {
+            return messages;
+        }
     }
 
     public void writeMessagesToFile(Context context, List<MessageEchange> messages, boolean isLocal) {

@@ -1,5 +1,7 @@
 package com.example.slowvf.Model;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageEchange {
-    private String idSender;
-    private String idReceiver;
-    private String dateWriting;
-    private String messageText;
-    private String dateReceived;
+public class MessageEchange implements Serializable {
+    private String id_sender;
+    private String id_receiver;
+    private String date_writing;
+    private String message_text;
+    private String date_received;
 
     @Override
     public boolean equals(Object o) {
@@ -21,18 +23,18 @@ public class MessageEchange {
 
         MessageEchange that = (MessageEchange) o;
 
-        if (!idSender.equals(that.idSender)) return false;
-        if (!idReceiver.equals(that.idReceiver)) return false;
-        if (!dateWriting.equals(that.dateWriting)) return false;
-        return messageText.equals(that.messageText);
+        if (!id_sender.equals(that.id_sender)) return false;
+        if (!id_sender.equals(that.id_sender)) return false;
+        if (!date_writing.equals(that.date_writing)) return false;
+        return message_text.equals(that.message_text);
     }
 
     @Override
     public int hashCode() {
-        int result = idSender.hashCode();
-        result = 31 * result + idReceiver.hashCode();
-        result = 31 * result + dateWriting.hashCode();
-        result = 31 * result + messageText.hashCode();
+        int result = id_sender.hashCode();
+        result = 31 * result + id_receiver.hashCode();
+        result = 31 * result + date_writing.hashCode();
+        result = 31 * result + message_text.hashCode();
         return result;
     }
 }

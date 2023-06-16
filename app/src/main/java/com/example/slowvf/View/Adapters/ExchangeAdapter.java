@@ -55,7 +55,7 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                 builder.setTitle("Confirmation");
                 builder.setMessage("Êtes-vous sûr de vouloir vous synchroniser avec cet appareil " + device.getName());
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Créer un nouveau thread
@@ -73,7 +73,7 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
                         connectThread.start();
                     }
                 });
-                builder.setNegativeButton("No", null);
+                builder.setNegativeButton("Non", null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }

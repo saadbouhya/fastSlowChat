@@ -16,15 +16,22 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
+import com.example.slowvf.Model.BluetoothItem;
+import com.example.slowvf.Model.MessageEchange;
 import com.example.slowvf.View.Exchange.Exchange;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -92,6 +99,7 @@ public class BluetoothController implements Serializable {
                 {
                     try {
                         // Attendre une connexion entrante (cette opération bloque l'exécution)
+
                         socketAccepte = serverSocket.accept();
                         Log.d(TAG, "Connexion acceptée !");
 
@@ -104,8 +112,6 @@ public class BluetoothController implements Serializable {
                         // Lecture du message reçu
                         String receivedMessage = bufferedReader.readLine();
                         Log.d(TAG, "Message reçu : " + receivedMessage);
-
-
 
                         activity.runOnUiThread(new Runnable() {
                             @Override
@@ -122,6 +128,17 @@ public class BluetoothController implements Serializable {
                                         public void onClick(DialogInterface dialog, int which) {
                                             //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
                                             sendMessage(ACCEPT_MESSAGE,socketAccepte);
+
+                                            // Partie du code où on fait de la sync
+
+                                            //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
+                                            try {
+                                                secondaryConnection(socketAccepte);
+                                            } catch (IOException e) {
+                                                throw new RuntimeException(e);
+                                            }
+
+                                            // fermeture du socket
                                             try {
                                                 socketAccepte.close();
                                             } catch (IOException e) {
@@ -145,9 +162,6 @@ public class BluetoothController implements Serializable {
                                 }
                             }
                         });
-
-                        //while(true);
-                        //socketAccepte.close();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -253,6 +267,8 @@ public class BluetoothController implements Serializable {
             socket = device.createInsecureRfcommSocketToServiceRecord(APP_UUID);
             socket.connect();
 
+            handler.removeCallbacks(timeoutRunnable);
+
             sendMessage(REQUEST_MESSAGE,socket);
             String answer = waitForMessageAndReturn();
 
@@ -275,12 +291,22 @@ public class BluetoothController implements Serializable {
                     @Override
                     public void run() {
                         handler.removeCallbacks(timeoutRunnable);
+
+
+                        //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
+                        try {
+                            primaryConnection(socket);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+/*
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                        builder.setTitle("Connection Accepted");
-                        builder.setMessage("The device has accepted the connection !");
+                        builder.setTitle("Connexion acceptée");
+                        builder.setMessage("L'appareil a accepté la connexion !");
                         builder.setPositiveButton("OK", null);
                         AlertDialog dialog = builder.create();
-                        dialog.show();
+                        dialog.show();*/
                     }
                 });
 
@@ -290,8 +316,8 @@ public class BluetoothController implements Serializable {
                     public void run() {
                         handler.removeCallbacks(timeoutRunnable);
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                        builder.setTitle("Connection Refused");
-                        builder.setMessage("The device has refused the connection.");
+                        builder.setTitle("Connexion refusée");
+                        builder.setMessage("L'appareil a refusé la connexion.");
                         builder.setPositiveButton("OK", null);
                         AlertDialog dialog = builder.create();
                         dialog.show();
@@ -336,6 +362,83 @@ public class BluetoothController implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void primaryConnection(BluetoothSocket destinataire) throws IOException {
+        sendAllMessages(destinataire);
+        startReceivingMessages(destinataire);
+        /*onMessagesReceived(receivedMessages);
+        stopReceivingMessages();
+        startListeningForMessages();*/
+    }
+
+    public void secondaryConnection(BluetoothSocket destinataire) throws IOException {
+        startReceivingMessages(destinataire);
+        sendAllMessages(destinataire);
+        /*onMessagesReceived(receivedMessages);
+        stopReceivingMessages();
+        startListeningForMessages();*/
+    }
+
+
+
+    public void startReceivingMessages(BluetoothSocket socket) throws IOException {
+        InputStream inputStream = socket.getInputStream();
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+        try {
+            // Lire les données sérialisées du InputStream
+            List<MessageEchange> receivedMessages = (List<MessageEchange>) objectInputStream.readObject();
+
+            // Traiter les messages reçus
+            for (MessageEchange message : receivedMessages) {
+                Log.d(TAG, "MESSAGES RECUS - id: " + message.getId_sender() + " contenu: " + message.getMessage_text());
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendAllMessages(BluetoothSocket destinataire) throws IOException {
+        List<MessageEchange> exchangeMessages = exchangeDao.getExchangeMessages(activity);
+        List<MessageEchange> localMessages = exchangeDao.getLocalMessages(activity);
+        List<MessageEchange> allMessages = new ArrayList<>();
+        allMessages.addAll(exchangeMessages);
+        allMessages.addAll(localMessages);
+
+        for (MessageEchange message : allMessages) {
+            Log.d(TAG, "MESSAGES ENVOYES - id: " + message.getId_sender() + " contenu: " + message.getMessage_text());
+        }
+
+        OutputStream outputStream = destinataire.getOutputStream();
+
+        try {
+            // Sérialiser l'ArrayList
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(allMessages);
+
+            // Écrire les données sérialisées du ByteArrayOutputStream dans le OutputStream du BluetoothSocket
+            byte[] serializedData = byteArrayOutputStream.toByteArray();
+            outputStream.write(serializedData);
+            outputStream.flush();
+
+        } catch (IOException e) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    onSendError();
+                }
+            });
+            e.printStackTrace();
+        }
+    }
+
+    public void onSendError() {
+        Log.e(TAG,"Erreur lors de l'envoi des messages");
+    }
+    public void onReceiveError() {
+        Log.e(TAG,"Erreur lors de l'envoi des messages");
     }
 
     public void closeSockets() {
