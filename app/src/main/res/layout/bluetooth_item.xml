@@ -38,6 +38,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_below="@id/textView"
+            android:layout_alignLeft="@id/textView"
+            android:text="Line 2"
+            android:textColor="#E3E3E3"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

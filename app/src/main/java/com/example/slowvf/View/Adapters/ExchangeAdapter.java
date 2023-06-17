@@ -1,19 +1,12 @@
 package com.example.slowvf.View.Adapters;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import android.graphics.drawable.ColorDrawable;
@@ -21,19 +14,22 @@ import android.graphics.drawable.ColorDrawable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.slowvf.Controller.Exchange.BluetoothController;
 import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
-import com.example.slowvf.View.Exchange.Synchronization;
 
-import java.io.Serializable;
+import java.io.IOException;
 import java.util.List;
 
 public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.ExchangeViewHolder> {
     private List<BluetoothItem> bluetoothDevices;
+    private BluetoothController bluetoothController;
+    private Thread connectThread;
     private Context context;
 
-    public ExchangeAdapter(List<BluetoothItem> devices, Context context) {
+    public ExchangeAdapter(List<BluetoothItem> devices, BluetoothController bluetoothController, Context context) {
         bluetoothDevices = devices;
+        this.bluetoothController = bluetoothController;
         this.context = context;
     }
 
@@ -48,70 +44,40 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
     public void onBindViewHolder(@NonNull ExchangeViewHolder holder, int position) {
         BluetoothItem device = bluetoothDevices.get(position);
         holder.textView.setText(device.getName());
+        holder.addressTextView.setText(device.getMacAddress());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View popupView = LayoutInflater.from(v.getContext()).inflate(R.layout.activity_connection_confirmation, null);
+
+                if (connectThread != null && connectThread.isAlive()) {
+                    // Un thread est déjà en cours d'exécution, annulez-le si nécessaire
+                    connectThread.interrupt();
+                }
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                builder.setView(popupView);
-                ImageView closeButton = popupView.findViewById(R.id.close_button);
-                AlertDialog alertDialog = builder.create();
-                View.OnClickListener closeListener = new View.OnClickListener() {
+                builder.setTitle("Confirmation");
+                builder.setMessage("Êtes-vous sûr de vouloir vous synchroniser avec cet appareil " + device.getName());
+                builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-
-                        // Obtention des attributs du thème
-                        TypedArray themeAttributes = context.getTheme().obtainStyledAttributes(R.style.Theme_SlowVF,
-                                new int[]{android.R.attr.colorBackground, com.google.android.material.R.attr.colorOnBackground, com.google.android.material.R.attr.colorPrimary});
-
-// Récupération des valeurs des attributs
-                        int colorBackgroundValue = themeAttributes.getColor(0, 0);
-                        int colorOnBackgroundValue = themeAttributes.getColor(1, 0);
-                        int colorPrimaryValue = themeAttributes.getColor(2, 0);
-
-                        // Dismiss the popup when the Close button is clicked
-                        alertDialog.dismiss();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext(),R.style.MyAlertDialogTheme);
-
-                        SpannableString titre = new SpannableString("Demande déclinée");
-                        titre.setSpan(new ForegroundColorSpan(colorOnBackgroundValue), 0, titre.length(), 0);
-                        builder.setTitle(titre);
-
-                        // Set the dialog message to the device name and MAC address
-                        SpannableString message = new SpannableString("Demande de synchronisation declinée");
-                        message.setSpan(new ForegroundColorSpan(colorOnBackgroundValue), 0, message.length(), 0);
-                        builder.setMessage(message);
-
-                        SpannableString boutton = new SpannableString("Fermer");
-                        boutton.setSpan(new ForegroundColorSpan(colorPrimaryValue), 0, boutton.length(), 0);
-                        builder.setNegativeButton(boutton, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Créer un nouveau thread
+                        connectThread = new Thread(new Runnable() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Do something when Close button is clicked
+                            public void run() {
+                                try {
+                                    bluetoothController.connectToDevice(device.getMacAddress());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
                             }
                         });
-
-                        // Show the dialog
-                        AlertDialog dialog = builder.create();
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(colorBackgroundValue));
-                        dialog.show();
-                    }
-                };
-                closeButton.setOnClickListener(closeListener);
-                Button declineButton = popupView.findViewById(R.id.synch_decline);
-                declineButton.setOnClickListener(closeListener);
-                Button acceptButton = popupView.findViewById(R.id.synch_accept);
-                acceptButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Context context = holder.itemView.getContext();
-                        Intent intent = new Intent(context, Synchronization.class);
-                        intent.putExtra("bluetoothItem", (Serializable) device);
-                        context.startActivity(intent);
+                        // Démarrer le thread
+                        connectThread.start();
                     }
                 });
-
-                alertDialog.show();
+                builder.setNegativeButton("Non", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
@@ -123,10 +89,12 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
 
     public static class ExchangeViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
+        public TextView addressTextView;
 
         public ExchangeViewHolder(View view) {
             super(view);
             textView = view.findViewById(R.id.textView);
+            addressTextView = view.findViewById(R.id.address);
         }
     }
 }

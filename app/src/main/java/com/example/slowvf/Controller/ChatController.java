@@ -80,13 +80,13 @@ private static ChatController chatController;
         List<String> uniqueSendersAndReceivers = getUniqueIdSendersAndReceivers();
         List<LocalForMessage> lastMessages = new ArrayList<>();
 
-        // Map pour stocker le dernier message de chaque id_sender et id_receiver
+        // Map pour stocker le dernier message de chaque id_sender et idReceiver
         Map<String, String> lastMessagesMap = new HashMap<>();
 
-        // Map pour stocker la date du dernier message de chaque id_sender et id_receiver
+        // Map pour stocker la date du dernier message de chaque id_sender et idReceiver
         Map<String, String> lastDatesMap = new HashMap<>();
 
-        // Itération à travers les sent_messages de Local
+        // Itération à travers les sentMessages de Local
         for (SentMessage sentMessage : local.getSentMessages()) {
             String id_receiver = sentMessage.getIdReceiver();
             String message = sentMessage.getTexte();
@@ -102,7 +102,7 @@ private static ChatController chatController;
             }
         }
 
-        // Itération à travers les received_messages de Local
+        // Itération à travers les receivedMessages de Local
         for (ReceivedMessage receivedMessage : local.getReceivedMessages()) {
             String id_sender = receivedMessage.getIdSender();
             String message = receivedMessage.getTexte();

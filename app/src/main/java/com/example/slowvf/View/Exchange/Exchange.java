@@ -1,86 +1,232 @@
 package com.example.slowvf.View.Exchange;
+
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.slowvf.Controller.Exchange.BluetoothController;
 import com.example.slowvf.Model.BluetoothItem;
+import com.example.slowvf.Model.Local;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.ExchangeAdapter;
 import com.example.slowvf.View.Adapters.MypagerAdapter;
+import com.google.gson.Gson;
 
+import java.io.FileInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class Exchange extends Fragment {
+import lombok.Getter;
+
+public class Exchange extends Fragment implements Serializable{
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_LOCATION_PERMISSION = 2;
     private final static String emptyList = "Cliquer sur le bouton scan pour chercher les appareils à proximité";
-    private final static String nonEmptyList ="Choisir un appareil pour échanger vos données";
+    private final static String nonEmptyList = "Choisir un appareil pour échanger vos données";
+
     private RecyclerView exchangeView;
-    private  RecyclerView.Adapter exchangeAdapter;
+    private ExchangeAdapter exchangeAdapter;
     private RecyclerView.LayoutManager exchangeLayoutManager;
+    BluetoothController bluetoothController;
+
     private List<BluetoothItem> bluetoothDevices = new ArrayList<>();
+
+    @Getter
+    private ProgressDialog progressDialog;
+    private TextView instructionView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_exchange, container, false);
+
+        bluetoothController = new BluetoothController(this);
+
+
+        //Bluetooth Visibility
+       if (bluetoothController.checkBluetoothPermission()) {
+           Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
+           discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
+           startActivity(discoverableIntent);
+       }
+
         exchangeView = rootView.findViewById(R.id.exchange_view);
         exchangeLayoutManager = new LinearLayoutManager(getContext());
-        exchangeAdapter = new ExchangeAdapter(bluetoothDevices, getContext());
+        exchangeAdapter = new ExchangeAdapter(bluetoothDevices, bluetoothController,getContext());
         exchangeView.setLayoutManager(exchangeLayoutManager);
         exchangeView.setAdapter(exchangeAdapter);
 
-        TextView instructionView = rootView.findViewById(R.id.instruction_view);
+        instructionView = rootView.findViewById(R.id.instruction_view);
         Button scanButton = rootView.findViewById(R.id.scan_button);
 
         // Hide the RecyclerView and show the empty view initially
         exchangeView.setVisibility(View.GONE);
         instructionView.setText(emptyList);
 
+
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Populate the Bluetooth devices list
-                populateBluetoothDevices();
+                if (bluetoothController.checkBluetoothPermission()) {
+                    // Show a waiting dialog
+                    progressDialog = new ProgressDialog(getContext());
+                    progressDialog.setMessage("Waiting for Bluetooth devices...");
+                    progressDialog.setCancelable(false);
+                     progressDialog.show();
 
-                if (bluetoothDevices.isEmpty()) {
-                    // If the list is empty, show the empty view and hide the RecyclerView
-                    instructionView.setVisibility(View.VISIBLE);
-                    exchangeView.setVisibility(View.GONE);
-                } else {
-                    // If the list has devices, hide the empty view and show the RecyclerView
-                    instructionView.setText(nonEmptyList);
-                    exchangeView.setVisibility(View.VISIBLE);
+                    // Clear the list of Bluetooth devices
+                    bluetoothDevices.clear();
+                    bluetoothController.startDiscovery();
 
-                    // Update the adapter with the new list of devices
-                    exchangeAdapter.notifyDataSetChanged();
+
+
+                    // Register a BroadcastReceiver to listen for scan results
+                    BroadcastReceiver receiver = new BroadcastReceiver() {
+                        @Override
+                        public void onReceive(Context context, Intent intent) {
+                            String action = intent.getAction();
+                            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                                if (!TextUtils.isEmpty(device.getName())) {
+                                    boolean isDuplicate = false;
+                                    for (BluetoothItem bluetoothItem : bluetoothDevices) {
+                                        if (bluetoothItem.getMacAddress().equals(device.getAddress())) {
+                                            isDuplicate = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!isDuplicate) {
+                                        bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
+                                    }
+                                }
+                            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+
+                                bluetoothController.stopDiscovery();
+                                refreshBluetoothList();
+                                // Dismiss the waiting dialog
+                                progressDialog.dismiss();
+                                // Unregister the BroadcastReceiver
+                                requireActivity().unregisterReceiver(this);
+                            }
+                        }
+                    };
+
+                    // Register the BroadcastReceiver for scan results
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction(BluetoothDevice.ACTION_FOUND);
+                    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                    requireActivity().registerReceiver(receiver, filter);
                 }
             }
         });
+
+        //Let for tests, delete after !!
+        Set<BluetoothDevice> pairedDevices = bluetoothController.getBluetoothAdapter().getBondedDevices();
+        for (BluetoothDevice device : pairedDevices) {
+            bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
+        }
+        refreshBluetoothList();
         return rootView;
     }
 
-    private void populateBluetoothDevices() {
-        // Clear the list
-        bluetoothDevices.clear();
-        // Add Bluetooth devices to the list
-        bluetoothDevices.add(new BluetoothItem("Galaxy S21", "F8:DA:0C:1A:BE:71"));
-        bluetoothDevices.add(new BluetoothItem("iPhone 12 Pro Max", "B0:3B:C6:2F:6C:54"));
-        bluetoothDevices.add(new BluetoothItem("Pixel 5", "9C:3D:3E:1F:0B:91"));
-        bluetoothDevices.add(new BluetoothItem("iPad Air 4", "E9:6C:1D:0A:C8:17"));
-        bluetoothDevices.add(new BluetoothItem("Surface Pro 7", "A4:9B:4F:4A:11:32"));
-        bluetoothDevices.add(new BluetoothItem("ThinkPad X1 Carbon", "D1:BF:9C:FA:43:7E"));
-        bluetoothDevices.add(new BluetoothItem("MacBook Air M1", "F0:18:98:29:94:2A"));
-        bluetoothDevices.add(new BluetoothItem("Lenovo Yoga C940", "C8:62:9F:31:0D:7B"));
-        bluetoothDevices.add(new BluetoothItem("Galaxy Tab S7", "5C:89:D4:2A:01:5E"));
-        bluetoothDevices.add(new BluetoothItem("iPad Pro 2021", "60:77:E2:3A:DE:0D"));
-        bluetoothDevices.add(new BluetoothItem("Pixelbook Go", "A4:C3:61:47:3E:24"));
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Ajoutez le code pour fermer le BluetoothServerSocket ici
+        if (bluetoothController != null) {
+            bluetoothController.closeSockets();
+        }
+    }
+
+
+
+
+
+
+    public void refreshBluetoothList(){
+        if (bluetoothDevices.isEmpty()) {
+            // If the list is empty, show the empty view and hide the RecyclerView
+            instructionView.setVisibility(View.VISIBLE);
+            exchangeView.setVisibility(View.GONE);
+        } else {
+            // If the list has devices, hide the empty view and show the RecyclerView
+            instructionView.setText(nonEmptyList);
+            exchangeView.setVisibility(View.VISIBLE);
+        }
         exchangeAdapter.notifyDataSetChanged();
     }
+
+
+    public void openSynchronization(BluetoothItem bluetoothItem) {
+        Intent intent = new Intent(getContext(), Synchronization.class);
+        intent.putExtra("bluetoothItem", bluetoothItem);
+        startActivity(intent);
+    }
+
+    public void showDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton("Fermer", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position) {
+                dialogInterface.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    // à remplacer par l'appel à Params Contrommer apres merge develop
+    public String getUserId() {
+        String filename = "Local.json";
+        try {
+            FileInputStream inputStream = getContext().openFileInput(filename);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            int data;
+            while ((data = inputStream.read()) != -1) {
+                stringBuilder.append((char) data);
+            }
+            String contenuFichier = stringBuilder.toString();
+
+            Gson gson = new Gson();
+            Local local = gson.fromJson(contenuFichier, Local.class);
+
+            return local.getIdLocal();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.slowvf.Controller.Exchange.BluetoothController;
 import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
 
@@ -21,6 +22,7 @@ public class Synchronization extends AppCompatActivity {
     private int CurrentProgress = 0;
     private ProgressBar progressBar;
     private BluetoothItem selectedDevice;
+    private BluetoothController bluetoothController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class Synchronization extends AppCompatActivity {
         actionBar.setTitle("Synchronisation");
 
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");
+
         TextView deviceNameTextView = findViewById(R.id.device_name_textview);
         deviceNameTextView.setText(selectedDevice.getName());
 /*
