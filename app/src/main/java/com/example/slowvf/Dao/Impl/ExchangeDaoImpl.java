@@ -129,7 +129,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
         Type containerType = new TypeToken<MessagesContainer>() {}.getType();
 
         try {
-            InputStream inputStream = context.getAssets().open(LOCALE_FILE);
+            FileInputStream inputStream = context.openFileInput(LOCALE_FILE);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             MessagesContainer container = gson.fromJson(bufferedReader, containerType);
             if (container != null) {
@@ -139,34 +139,12 @@ public class ExchangeDaoImpl implements ExchangeDao {
             }
             inputStream.close();
         } catch (IOException e) {
-            Log.e(TAG, "Une erreur s'est produite lors de l'implémentation DAO");
+            Log.e(TAG, "An error occurred during DAO implementation");
             e.printStackTrace();
         }
         return messages;
     }
 
-    @Override
-    public List<SentMessage> getSentMessages(Context context) {
-        List<SentMessage> messages = new ArrayList<>();
-        Gson gson = new Gson();
-        Type containerType = new TypeToken<MessagesContainer>() {}.getType();
-
-        try {
-            InputStream inputStream = context.getAssets().open(LOCALE_FILE);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            MessagesContainer container = gson.fromJson(bufferedReader, containerType);
-            if (container != null) {
-                if (container.getSent_messages() != null) {
-                    messages.addAll(container.getSent_messages());
-                }
-            }
-            inputStream.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Une erreur s'est produite lors de l'implémentation DAO");
-            e.printStackTrace();
-        }
-        return messages;
-    }
 
     @Override
     public void addReceivedMessage(Context context, ReceivedMessage message) {
@@ -194,6 +172,29 @@ public class ExchangeDaoImpl implements ExchangeDao {
         }
         return -1;
     }
+    @Override
+    public List<SentMessage> getSentMessages(Context context) {
+        List<SentMessage> messages = new ArrayList<>();
+        Gson gson = new Gson();
+        Type containerType = new TypeToken<MessagesContainer>() {}.getType();
+
+        try {
+            FileInputStream inputStream = context.openFileInput(LOCALE_FILE);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            MessagesContainer container = gson.fromJson(bufferedReader, containerType);
+            if (container != null) {
+                if (container.getSent_messages() != null) {
+                    messages.addAll(container.getSent_messages());
+                }
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            Log.e(TAG, "An error occurred during DAO implementation");
+            e.printStackTrace();
+        }
+        return messages;
+    }
+
 
     @Override
     public void addSentMessage(Context context, SentMessage message) {
@@ -245,7 +246,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
         Type containerType = new TypeToken<MessagesContainer>() {}.getType();
 
         try {
-            InputStream inputStream = context.getAssets().open(LOCALE_FILE);
+            FileInputStream inputStream = context.openFileInput(LOCALE_FILE);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             MessagesContainer container = gson.fromJson(bufferedReader, containerType);
             inputStream.close();
@@ -256,6 +257,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
         }
         return null;
     }
+
 
     private void saveMessagesContainer(Context context, MessagesContainer container) {
         Gson gson = new Gson();
