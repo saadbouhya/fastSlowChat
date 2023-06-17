@@ -27,9 +27,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.slowvf.Controller.Exchange.BluetoothController;
 import com.example.slowvf.Model.BluetoothItem;
+import com.example.slowvf.Model.Local;
 import com.example.slowvf.R;
 import com.example.slowvf.View.Adapters.ExchangeAdapter;
+import com.google.gson.Gson;
 
+import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.Set;
 
 import lombok.Getter;
 
-public class Exchange extends AppCompatActivity {
+public class Exchange extends AppCompatActivity implements Serializable{
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
@@ -61,6 +64,7 @@ public class Exchange extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         bluetoothController = new BluetoothController(this);
+        bluetoothController.checkBluetoothPermission();
 
 
 /*
@@ -116,7 +120,7 @@ public class Exchange extends AppCompatActivity {
                                         }
                                     }
                                     if (!isDuplicate) {
-                                        bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress(), device));
+                                        bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
                                     }
                                 }
                             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -141,7 +145,7 @@ public class Exchange extends AppCompatActivity {
         });
         Set<BluetoothDevice> pairedDevices = bluetoothController.getBluetoothAdapter().getBondedDevices();
         for (BluetoothDevice device : pairedDevices) {
-            bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress(), device));
+            bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
         }
         refreshBluetoothList();
     }
@@ -207,5 +211,29 @@ public class Exchange extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    // à remplacer par l'aappel à Params Contrommer
+    public String getUserId() {
+        String filename = "Local.json";
+        try {
+            FileInputStream inputStream = this.openFileInput(filename);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            int data;
+            while ((data = inputStream.read()) != -1) {
+                stringBuilder.append((char) data);
+            }
+            String contenuFichier = stringBuilder.toString();
+
+            Gson gson = new Gson();
+            Local local = gson.fromJson(contenuFichier, Local.class);
+
+            return local.getId_local();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

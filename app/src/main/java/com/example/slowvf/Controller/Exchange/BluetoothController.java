@@ -22,6 +22,7 @@ import com.example.slowvf.View.Exchange.Exchange;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,6 +30,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -126,7 +129,6 @@ public class BluetoothController implements Serializable {
                                     builder.setPositiveButton("Accepter", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
                                             sendMessage(ACCEPT_MESSAGE,socketAccepte);
 
                                             // Partie du code où on fait de la sync
@@ -366,23 +368,21 @@ public class BluetoothController implements Serializable {
 
     public void primaryConnection(BluetoothSocket destinataire) throws IOException {
         sendAllMessages(destinataire);
-        startReceivingMessages(destinataire);
-        /*onMessagesReceived(receivedMessages);
-        stopReceivingMessages();
-        startListeningForMessages();*/
+        List<MessageEchange> receivedMessages = startReceivingMessages(destinataire);
+        onMessagesReceived(receivedMessages);
+        closeExchangeSocket();
     }
 
     public void secondaryConnection(BluetoothSocket destinataire) throws IOException {
-        startReceivingMessages(destinataire);
+        List<MessageEchange> receivedMessages = startReceivingMessages(destinataire);
         sendAllMessages(destinataire);
-        /*onMessagesReceived(receivedMessages);
-        stopReceivingMessages();
-        startListeningForMessages();*/
+        onMessagesReceived(receivedMessages);
+        closeExchangeSocket();
     }
 
 
 
-    public void startReceivingMessages(BluetoothSocket socket) throws IOException {
+    public List<MessageEchange>  startReceivingMessages(BluetoothSocket socket) throws IOException {
         InputStream inputStream = socket.getInputStream();
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
 
@@ -390,21 +390,15 @@ public class BluetoothController implements Serializable {
             // Lire les données sérialisées du InputStream
             List<MessageEchange> receivedMessages = (List<MessageEchange>) objectInputStream.readObject();
 
-            // Traiter les messages reçus
-            for (MessageEchange message : receivedMessages) {
-                Log.d(TAG, "MESSAGES RECUS - id: " + message.getId_sender() + " contenu: " + message.getMessage_text());
-            }
+            return receivedMessages;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return new ArrayList<>();
     }
 
     public void sendAllMessages(BluetoothSocket destinataire) throws IOException {
-        List<MessageEchange> exchangeMessages = exchangeDao.getExchangeMessages(activity);
-        List<MessageEchange> localMessages = exchangeDao.getLocalMessages(activity);
-        List<MessageEchange> allMessages = new ArrayList<>();
-        allMessages.addAll(exchangeMessages);
-        allMessages.addAll(localMessages);
+        List<MessageEchange> allMessages = exchangeDao.getExchangeMessages(activity);
 
         for (MessageEchange message : allMessages) {
             Log.d(TAG, "MESSAGES ENVOYES - id: " + message.getId_sender() + " contenu: " + message.getMessage_text());
@@ -441,25 +435,64 @@ public class BluetoothController implements Serializable {
         Log.e(TAG,"Erreur lors de l'envoi des messages");
     }
 
+
     public void closeSockets() {
+       closeExchangeSocket();
+       closeServerSocket();
+    }
+    public void closeServerSocket() {
         try {
             if (serverSocket != null) {
                 serverSocket.close();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeExchangeSocket() {
+        try {
             if (socket != null) {
                 socket.close();
             }
-            handler.removeCallbacks(timeoutRunnable);
         } catch (IOException e) {
             e.printStackTrace();
-            // Gérer l'erreur de fermeture du BluetoothServerSocket
         }
     }
 
 
+    public void onMessagesReceived(List<MessageEchange> messages) {
+        String currentUser = activity.getUserId();
+        for (MessageEchange message : messages) {
+            if (message.getId_receiver() == currentUser) {
+                if (!exchangeDao.messageExist(activity, message)) {
+                    LocalDateTime now = null;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        now = LocalDateTime.now();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        String formattedDateTime = now.format(formatter);
+                        message.setDate_received(formattedDateTime);
+                       // exchangeDao.updateMessage(activity, message, true);
+                        exchangeDao.addUpdateMessage(activity, message);
+                    }
 
-    private String getUserId(){
-        return "id";
+                }
+            } else if (message.getId_sender() == currentUser) {
+                if (message.getDate_received() != null) {
+                    if (exchangeDao.messageExist(activity, message)) {
+                     //   exchangeDao.deleteMessage(activity, message, true);
+                        exchangeDao.addUpdateMessage(activity, message);
+                    }
+                }
+
+            } else if (exchangeDao.messageExist(activity, message)) {
+                exchangeDao.addUpdateMessage(activity, message);
+            } else {
+                exchangeDao.addUpdateMessage(activity, message);
+            }
+        }
     }
+
+
 
 }

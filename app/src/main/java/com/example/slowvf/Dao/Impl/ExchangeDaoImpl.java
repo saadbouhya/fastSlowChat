@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -33,52 +34,46 @@ public class ExchangeDaoImpl implements ExchangeDao {
     private static final String LOCALE_FILE = "Local.json";
 
     @Override
-    public void addMessage(Context context, MessageEchange message, boolean isLocal) {
-        List<MessageEchange> messages = isLocal ? getLocalMessages(context) : getExchangeMessages(context);
+    public void addUpdateMessage(Context context, MessageEchange message) {
+        List<MessageEchange> messages = getExchangeMessages(context);
         if (!messages.contains(message)) {
             messages.add(message);
-            writeMessagesToFile(context, messages, isLocal);
+            writeMessagesToFile(context, messages);
+        }
+        else {
+            updateMessage(context, message);
         }
     }
 
 
 
     @Override
-    public void updateMessage(Context context, MessageEchange message, boolean isLocal) {
-        List<MessageEchange> messages = isLocal ? getLocalMessages(context) : getExchangeMessages(context);
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).equals(message)) {
-                messages.set(i, message);
-                writeMessagesToFile(context, messages, isLocal);
+    public void updateMessage(Context context, MessageEchange updatedMmessage) {
+        List<MessageEchange> messages = getExchangeMessages(context);
+        for (MessageEchange  message : messages) {
+            if (message.equals(updatedMmessage)) {
+                messages.remove(message);
+                messages.add(updatedMmessage);
                 break;
             }
         }
+        writeMessagesToFile(context, messages);
     }
 
     @Override
-    public boolean messageExist(Context context, MessageEchange message, boolean isLocal) {
-        List<MessageEchange> messages = isLocal ? getLocalMessages(context) : getExchangeMessages(context);
+    public boolean messageExist(Context context, MessageEchange message) {
+        List<MessageEchange> messages = getExchangeMessages(context);
         return messages.contains(message);
     }
 
 
-    @Override
     public List<MessageEchange> getExchangeMessages(Context context) {
-        return getMessagesFromFile(context, ECHANGE_FILE);
-    }
-
-    @Override
-    public List<MessageEchange> getLocalMessages(Context context) {
-        return getMessagesFromFile(context, LOCALE_FILE);
-    }
-
-    public List<MessageEchange> getMessagesFromFile(Context context, String fileName) {
         List<MessageEchange> messages = new ArrayList<>();
         Gson gson = new Gson();
         Type containerType = new TypeToken<MessagesContainer>() {}.getType();
 
         try {
-            InputStream inputStream = context.getAssets().open(fileName);
+            FileInputStream inputStream = context.openFileInput(ECHANGE_FILE);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             MessagesContainer container = gson.fromJson(bufferedReader, containerType);
             if (container != null && container.getMessages() != null) {
@@ -86,11 +81,22 @@ public class ExchangeDaoImpl implements ExchangeDao {
             }
             inputStream.close();
         } catch (IOException e) {
-            Log.e(TAG, "Une erreur s'est produite lors de l'implémentation DAO");
+            Log.e(TAG, "An error occurred during DAO implementation");
             e.printStackTrace();
         }
         return messages;
     }
+
+
+    @Override
+    public List<MessageEchange> getLocalMessages(Context context) {
+        return getMessagesFromFile(context, LOCALE_FILE);
+    }
+
+    public List<MessageEchange> getMessagesFromFile(Context context, String fileName) {
+        return null;
+    }
+    @Data
     public class MessagesContainer {
         private List<MessageEchange> messages;
 
@@ -99,23 +105,27 @@ public class ExchangeDaoImpl implements ExchangeDao {
         }
     }
 
-    public void writeMessagesToFile(Context context, List<MessageEchange> messages, boolean isLocal) {
-        String fileName = isLocal ? LOCALE_FILE : ECHANGE_FILE;
+    public void writeMessagesToFile(Context context, List<MessageEchange> messages) {
+        String fileName = ECHANGE_FILE;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(messages);
-        try {
-            OutputStreamWriter writer = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE));
+
+        MessagesContainer container = new MessagesContainer();
+        container.setMessages(messages);
+
+        String json = gson.toJson(container);
+
+        try (OutputStreamWriter writer = new OutputStreamWriter(context.openFileOutput(fileName, Context.MODE_PRIVATE))) {
             writer.write(json);
-            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteMessage(Context context, MessageEchange message, boolean isLocal) {
-        List<MessageEchange> messages = isLocal ? getLocalMessages(context) : getExchangeMessages(context);
+
+    public void deleteMessage(Context context, MessageEchange message) {
+        List<MessageEchange> messages = getExchangeMessages(context);
         messages.remove(message);
-        writeMessagesToFile(context, messages, isLocal);
+        writeMessagesToFile(context, messages);
     }
 
 

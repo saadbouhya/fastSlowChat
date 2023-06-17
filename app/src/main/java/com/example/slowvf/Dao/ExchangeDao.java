@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface ExchangeDao {
 
-     void addMessage(Context context, MessageEchange message, boolean isLocal);
-     void updateMessage(Context context, MessageEchange message, boolean isLocal);
-     boolean messageExist(Context context, MessageEchange message, boolean isLocal);
+     void addUpdateMessage(Context context, MessageEchange message);
+     void updateMessage(Context context, MessageEchange message);
+     boolean messageExist(Context context, MessageEchange message);
      List<MessageEchange> getExchangeMessages(Context context);
      List<MessageEchange> getLocalMessages(Context context);
 }

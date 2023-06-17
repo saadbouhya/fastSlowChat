@@ -14,17 +14,7 @@ import lombok.NoArgsConstructor;
 public class BluetoothItem implements Serializable {
     String name;
 
-    public String getMacAddress() {
-        return macAddress;
-    }
-
-    public BluetoothDevice getDevice() {
-        return device;
-    }
-
     String macAddress;
-
-    BluetoothDevice device;
 
     @Override
     public boolean equals(Object o) {
