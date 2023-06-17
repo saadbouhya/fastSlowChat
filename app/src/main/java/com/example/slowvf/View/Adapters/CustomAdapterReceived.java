@@ -109,6 +109,6 @@ public class CustomAdapterReceived extends RecyclerView.Adapter<CustomAdapterRec
 
     @Override
     public int getItemCount() {
-        return 0;
+        return localDataSet.getReceivedMessages().size();
     }
 }
