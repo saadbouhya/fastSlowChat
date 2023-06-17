@@ -194,7 +194,6 @@ public class Exchange extends AppCompatActivity implements Serializable{
     public void openSynchronization(BluetoothItem bluetoothItem) {
         Intent intent = new Intent(this, Synchronization.class);
         intent.putExtra("bluetoothItem", bluetoothItem);
-        intent.putExtra("bluetoothController", bluetoothController);
         startActivity(intent);
     }
 

@@ -17,7 +17,10 @@ import androidx.core.content.ContextCompat;
 
 import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
 import com.example.slowvf.Model.BluetoothItem;
+import com.example.slowvf.Model.ExchangeCounter;
 import com.example.slowvf.Model.MessageEchange;
+import com.example.slowvf.Model.ReceivedMessage;
+import com.example.slowvf.Model.SentMessage;
 import com.example.slowvf.View.Exchange.Exchange;
 
 import java.io.BufferedReader;
@@ -67,6 +70,7 @@ public class BluetoothController implements Serializable {
     private Runnable timeoutRunnable;
     private Thread serverThread;
     private volatile boolean isTimeoutExpired = false;
+    private ExchangeCounter counter;
 
     public BluetoothController() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -129,11 +133,12 @@ public class BluetoothController implements Serializable {
                                     builder.setPositiveButton("Accepter", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
                                             sendMessage(ACCEPT_MESSAGE,socketAccepte);
 
                                             // Partie du code où on fait de la sync
 
-                                            //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
+                                            activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress()));
                                             try {
                                                 secondaryConnection(socketAccepte);
                                             } catch (IOException e) {
@@ -295,20 +300,13 @@ public class BluetoothController implements Serializable {
                         handler.removeCallbacks(timeoutRunnable);
 
 
-                        //activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress(),device));
+                        activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress()));
                         try {
                             primaryConnection(socket);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
 
-/*
-                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                        builder.setTitle("Connexion acceptée");
-                        builder.setMessage("L'appareil a accepté la connexion !");
-                        builder.setPositiveButton("OK", null);
-                        AlertDialog dialog = builder.create();
-                        dialog.show();*/
                     }
                 });
 
@@ -359,14 +357,13 @@ public class BluetoothController implements Serializable {
             outputStream = destinataire.getOutputStream();
             byte[] buffer = (message + "\n").getBytes();
             outputStream.write(buffer);
-            //outputStream.flush();
-            //socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void primaryConnection(BluetoothSocket destinataire) throws IOException {
+        counter = new ExchangeCounter();
         sendAllMessages(destinataire);
         List<MessageEchange> receivedMessages = startReceivingMessages(destinataire);
         onMessagesReceived(receivedMessages);
@@ -374,6 +371,7 @@ public class BluetoothController implements Serializable {
     }
 
     public void secondaryConnection(BluetoothSocket destinataire) throws IOException {
+        counter = new ExchangeCounter();
         List<MessageEchange> receivedMessages = startReceivingMessages(destinataire);
         sendAllMessages(destinataire);
         onMessagesReceived(receivedMessages);
@@ -466,29 +464,33 @@ public class BluetoothController implements Serializable {
         for (MessageEchange message : messages) {
             if (message.getId_receiver() == currentUser) {
                 if (!exchangeDao.messageExist(activity, message)) {
+                    counter.setReceivedMessages(counter.getReceivedMessages() + 1);
                     LocalDateTime now = null;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         now = LocalDateTime.now();
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         String formattedDateTime = now.format(formatter);
                         message.setDate_received(formattedDateTime);
-                       // exchangeDao.updateMessage(activity, message, true);
-                        exchangeDao.addUpdateMessage(activity, message);
+                        exchangeDao.addReceivedMessage(activity, new ReceivedMessage(message.getId_sender(),
+                                message.getMessage_text(), message.getDate_writing(), message.getDate_received()));
+                        exchangeDao.addUpdateExchangeMessage(activity, message);
                     }
 
                 }
             } else if (message.getId_sender() == currentUser) {
                 if (message.getDate_received() != null) {
                     if (exchangeDao.messageExist(activity, message)) {
-                     //   exchangeDao.deleteMessage(activity, message, true);
-                        exchangeDao.addUpdateMessage(activity, message);
+                        exchangeDao.updateSentMessage(activity, new SentMessage(message.getId_receiver(),
+                                message.getMessage_text(), message.getDate_writing(), message.getDate_received()));
+                        exchangeDao.addUpdateExchangeMessage(activity, message);
                     }
                 }
 
             } else if (exchangeDao.messageExist(activity, message)) {
-                exchangeDao.addUpdateMessage(activity, message);
+                exchangeDao.addUpdateExchangeMessage(activity, message);
             } else {
-                exchangeDao.addUpdateMessage(activity, message);
+                counter.setReceivedMessages(counter.getReceivedMessages() + 1);
+                exchangeDao.addUpdateExchangeMessage(activity, message);
             }
         }
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ExchangeDao {
 
-     void addUpdateMessage(Context context, MessageEchange message);
+     void addUpdateExchangeMessage(Context context, MessageEchange message);
      void updateMessage(Context context, MessageEchange message);
      boolean messageExist(Context context, MessageEchange message);
      List<MessageEchange> getExchangeMessages(Context context);

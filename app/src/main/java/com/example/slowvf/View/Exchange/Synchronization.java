@@ -30,7 +30,6 @@ public class Synchronization extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         Intent intent = getIntent();
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");
-        bluetoothController = (BluetoothController) intent.getSerializableExtra("bluetoothController");
 
         TextView deviceNameTextView = findViewById(R.id.device_name_textview);
         deviceNameTextView.setText(selectedDevice.getName());
