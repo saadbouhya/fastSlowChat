@@ -50,12 +50,12 @@ public class ExchangeDaoImpl implements ExchangeDao {
     }
 
     @Override
-    public void updateMessage(Context context, MessageEchange updatedMmessage) {
+    public void updateMessage(Context context, MessageEchange updatedMessage) {
         List<MessageEchange> messages = getExchangeMessages(context);
-        for (MessageEchange  message : messages) {
-            if (message.equals(updatedMmessage)) {
+        for (MessageEchange message : messages) {
+            if (message.equals(updatedMessage)) {
                 messages.remove(message);
-                messages.add(updatedMmessage);
+                messages.add(updatedMessage);
                 break;
             }
         }
@@ -68,7 +68,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
         return messages.contains(message);
     }
 
-
+    @Override
     public List<MessageEchange> getExchangeMessages(Context context) {
         List<MessageEchange> messages = new ArrayList<>();
         Gson gson = new Gson();
@@ -89,7 +89,6 @@ public class ExchangeDaoImpl implements ExchangeDao {
         return messages;
     }
 
-
     @Override
     public List<MessageEchange> getLocalMessages(Context context) {
         return getMessagesFromFile(context, LOCALE_FILE);
@@ -98,14 +97,13 @@ public class ExchangeDaoImpl implements ExchangeDao {
     public List<MessageEchange> getMessagesFromFile(Context context, String fileName) {
         return null;
     }
+
     @Data
     public class MessagesContainer {
         private List<MessageEchange> messages;
         private String id_local;
         private List<SentMessage> sent_messages;
         private List<ReceivedMessage> received_messages;
-
-
     }
 
     public void writeMessagesToFile(Context context, List<MessageEchange> messages) {
@@ -124,7 +122,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
         }
     }
 
-
+    @Override
     public List<ReceivedMessage> getReceivedMessages(Context context) {
         List<ReceivedMessage> messages = new ArrayList<>();
         Gson gson = new Gson();
@@ -135,8 +133,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             MessagesContainer container = gson.fromJson(bufferedReader, containerType);
             if (container != null) {
-
-                if(container.getReceived_messages() != null) {
+                if (container.getReceived_messages() != null) {
                     messages.addAll(container.getReceived_messages());
                 }
             }
@@ -148,6 +145,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
         return messages;
     }
 
+    @Override
     public List<SentMessage> getSentMessages(Context context) {
         List<SentMessage> messages = new ArrayList<>();
         Gson gson = new Gson();
@@ -158,8 +156,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             MessagesContainer container = gson.fromJson(bufferedReader, containerType);
             if (container != null) {
-
-                if(container.getSent_messages() != null) {
+                if (container.getSent_messages() != null) {
                     messages.addAll(container.getSent_messages());
                 }
             }
@@ -171,12 +168,14 @@ public class ExchangeDaoImpl implements ExchangeDao {
         return messages;
     }
 
+    @Override
     public void addReceivedMessage(Context context, ReceivedMessage message) {
         List<ReceivedMessage> messages = getReceivedMessages(context);
         messages.add(message);
         saveReceivedMessages(context, messages);
     }
 
+    @Override
     public void updateReceivedMessage(Context context, ReceivedMessage message) {
         List<ReceivedMessage> messages = getReceivedMessages(context);
         int index = findReceivedMessageIndex(messages, message.getId_sender());
@@ -196,12 +195,14 @@ public class ExchangeDaoImpl implements ExchangeDao {
         return -1;
     }
 
+    @Override
     public void addSentMessage(Context context, SentMessage message) {
         List<SentMessage> messages = getSentMessages(context);
         messages.add(message);
         saveSentMessages(context, messages);
     }
 
+    @Override
     public void updateSentMessage(Context context, SentMessage message) {
         List<SentMessage> messages = getSentMessages(context);
         int index = findSentMessageIndex(messages, message.getId_receiver());
@@ -210,6 +211,7 @@ public class ExchangeDaoImpl implements ExchangeDao {
             saveSentMessages(context, messages);
         }
     }
+
     private int findSentMessageIndex(List<SentMessage> messages, String idReceiver) {
         for (int i = 0; i < messages.size(); i++) {
             SentMessage message = messages.get(i);
@@ -259,17 +261,12 @@ public class ExchangeDaoImpl implements ExchangeDao {
         Gson gson = new Gson();
         String json = gson.toJson(container);
 
-        try {
-            OutputStream outputStream = context.getAssets().openFd(LOCALE_FILE).createOutputStream();
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        try (OutputStream outputStream = context.openFileOutput(LOCALE_FILE, Context.MODE_PRIVATE);
+             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))) {
             bufferedWriter.write(json);
-            bufferedWriter.close();
-            outputStream.close();
         } catch (IOException e) {
             Log.e(TAG, "An error occurred while saving the messages container");
             e.printStackTrace();
         }
     }
-
-
 }

@@ -62,16 +62,17 @@ public class Exchange extends AppCompatActivity implements Serializable{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         bluetoothController = new BluetoothController(this);
-        bluetoothController.checkBluetoothPermission();
 
 
-/*
-        Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
-        startActivity(discoverableIntent);
-*/
+        //Bluetooth Visibility
+       if (bluetoothController.checkBluetoothPermission()) {
+           Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
+           discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
+           startActivity(discoverableIntent);
+       }
+
+
         setContentView(R.layout.activity_exchange);
 
         exchangeView = findViewById(R.id.exchangeView);
@@ -143,6 +144,8 @@ public class Exchange extends AppCompatActivity implements Serializable{
                 }
             }
         });
+
+        //Let for tests, delete after !!
         Set<BluetoothDevice> pairedDevices = bluetoothController.getBluetoothAdapter().getBondedDevices();
         for (BluetoothDevice device : pairedDevices) {
             bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
@@ -211,7 +214,7 @@ public class Exchange extends AppCompatActivity implements Serializable{
         dialog.show();
     }
 
-    // à remplacer par l'aappel à Params Contrommer
+    // à remplacer par l'appel à Params Contrommer apres merge develop
     public String getUserId() {
         String filename = "Local.json";
         try {
