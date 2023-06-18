@@ -52,8 +52,6 @@ public class BluetoothController implements Serializable {
     private static final String REQUEST_MESSAGE = "SLOW_CHAT_CONNECTION_REQUEST";
     private static final String ACCEPT_MESSAGE = "SLOW_CHAT_CONNECTION_ACCEPT";
     private static final String REFUSE_MESSAGE = "SLOW_CHAT_CONNECTION_REFUSE";
-
-
     private static final UUID APP_UUID = UUID.fromString("688575AD-9126-4F1C-A82A-495DAE7D5D52");
     private static final String serviceName = "FastSlowChat";
     private static final String TAG = "ExchangeBt";
@@ -73,12 +71,8 @@ public class BluetoothController implements Serializable {
     private ExchangeCounter counter;
 
     public BluetoothController() {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        try {
-            serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(serviceName, APP_UUID);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(bluetoothAdapter == null) {
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         }
         handler = new Handler();
         timeoutRunnable = new Runnable() {
@@ -102,11 +96,18 @@ public class BluetoothController implements Serializable {
             @Override
             public void run() {
 
-                while(true)
+                try {
+                    Log.d(TAG, "On créée le serveur socket...");
+                    serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(serviceName, APP_UUID);
+                } catch (Exception e) {
+                    Log.e(TAG, "Echec de la création du serveur socket.");
+                    e.printStackTrace();
+                }
+                while(!serverThread.isInterrupted())
                 {
                     try {
+                        Log.d(TAG, "Le serveur socket attend une connexion...");
                         // Attendre une connexion entrante (cette opération bloque l'exécution)
-
                         socketAccepte = serverSocket.accept();
                         Log.d(TAG, "Connexion acceptée !");
 
@@ -137,7 +138,7 @@ public class BluetoothController implements Serializable {
                                             sendMessage(ACCEPT_MESSAGE,socketAccepte);
 
                                             // Partie du code où on fait de la sync
-
+                                            Log.d(TAG, "Ouverture activié synchronisation...");
                                             activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress()));
                                             try {
                                                 secondaryConnection(socketAccepte);
@@ -147,6 +148,7 @@ public class BluetoothController implements Serializable {
 
                                             // fermeture du socket
                                             try {
+                                                Log.d(TAG, "Interruption socket connected dans le WHILE...");
                                                 socketAccepte.close();
                                             } catch (IOException e) {
                                                 throw new RuntimeException(e);
@@ -157,7 +159,9 @@ public class BluetoothController implements Serializable {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             sendMessage(REFUSE_MESSAGE,socketAccepte);
+                                            // fermeture du socket
                                             try {
+                                                Log.d(TAG, "Interruption socket connected dans le WHILE...");
                                                 socketAccepte.close();
                                             } catch (IOException e) {
                                                 throw new RuntimeException(e);
@@ -172,11 +176,13 @@ public class BluetoothController implements Serializable {
 
                     } catch (IOException e) {
                         e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
                 }
             }
         });
         serverThread.start();
+        Log.d(TAG,"On start le thread serverSocket...");
     }
 
     public BluetoothController(Exchange activity) {
@@ -207,7 +213,7 @@ public class BluetoothController implements Serializable {
         bluetoothAdapter.cancelDiscovery();
     }
 
-    public boolean checkBluetoothPermission() {
+    public static boolean checkBluetoothPermission(Exchange activity) {
         if (ContextCompat.checkSelfPermission(activity.getContext(), Manifest.permission.BLUETOOTH)
                 != PackageManager.PERMISSION_GRANTED) {
             // Bluetooth permission is not granted, request it
@@ -246,6 +252,9 @@ public class BluetoothController implements Serializable {
             }
         }
         return true;
+    }
+    public boolean checkBluetoothPermission() {
+       return checkBluetoothPermission(activity);
     }
 
     public void connectToDevice(String deviceAddress) throws IOException {
@@ -429,9 +438,14 @@ public class BluetoothController implements Serializable {
     }
     public void closeServerSocket() {
         try {
-            if (serverSocket != null) {
-                serverSocket.close();
+            Log.d(TAG, "Interruption thread serveur...");
+            serverThread.interrupt();
+            if (socketAccepte != null) {
+                Log.d(TAG, "Interruption socket connected...");
+                socketAccepte.close();
             }
+            Log.d(TAG, "Interruption socket serveur...");
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -440,6 +454,7 @@ public class BluetoothController implements Serializable {
     public void closeExchangeSocket() {
         try {
             if (socket != null) {
+                Log.d(TAG, "Interruption socket connexion...");
                 socket.close();
             }
         } catch (IOException e) {
@@ -451,7 +466,7 @@ public class BluetoothController implements Serializable {
     public void onMessagesReceived(List<MessageEchange> messages) {
         String currentUser = activity.getUserId();
         for (MessageEchange message : messages) {
-            if (message.getIdReceiver() == currentUser) {
+            if (message.getIdReceiver().equals( currentUser) ){
                 if (!exchangeDao.messageExist(activity.getContext(), message)) {
                     counter.setReceivedMessages(counter.getReceivedMessages() + 1);
                     LocalDateTime now = null;
@@ -466,7 +481,7 @@ public class BluetoothController implements Serializable {
                     }
 
                 }
-            } else if (message.getIdSender() == currentUser) {
+            } else if (message.getIdSender().equals(currentUser) ){
                 if (message.getDateReceived() != null) {
                     if (exchangeDao.messageExist(activity.getContext(), message)) {
                         exchangeDao.updateSentMessage(activity.getContext(), new SentMessage(message.getIdReceiver(),
