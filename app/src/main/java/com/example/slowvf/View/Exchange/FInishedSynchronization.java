@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.slowvf.Dao.Impl.ExchangeDaoImpl;
 import com.example.slowvf.Model.BluetoothItem;
 import com.example.slowvf.R;
 import com.example.slowvf.View.MainActivityNavigation;
@@ -23,12 +24,11 @@ public class FInishedSynchronization extends AppCompatActivity {
         setContentView(R.layout.activity_finished_synchronization);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Synchronisation terminée");
+        actionBar.setTitle("Synchronisation terminÃ©e");
 
         Intent intent = getIntent();
         selectedDevice = (BluetoothItem) intent.getSerializableExtra("bluetoothItem");
         TextView deviceNameTextView = findViewById(R.id.device_name_textview);
-        deviceNameTextView.setText(selectedDevice.getName());
         Button finishButton = findViewById(R.id.fin_synch);
 
 
@@ -39,15 +39,20 @@ public class FInishedSynchronization extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        });/*
-        ImageButton backButton = findViewById(R.id.back_synchro);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FInishedSynchronization.this, MainActivityNavigation.class);
-                startActivity(intent);
-                finish(); // closes the current activity and returns to the previous one
-            }
-        });*/
+        });
+        TextView totalMessagesTextView = findViewById(R.id.total_messages_textview);
+        TextView totalReceivedTextView = findViewById(R.id.total_received_textview);
+        TextView totalAcknowledgedTextView = findViewById(R.id.total_acknowledged_textview);
+
+        ExchangeDaoImpl exchangeDao = new ExchangeDaoImpl();
+
+        int totalMessages = exchangeDao.getExchangeMessages(this).size();
+        int totalReceived = exchangeDao.getReceivedMessages(this).size();
+        int totalAcknowledged = exchangeDao.getSentMessages(this).size();
+
+        totalMessagesTextView.setText("Total Messages: " + totalMessages);
+        totalReceivedTextView.setText("Total Received: " + totalReceived);
+        totalAcknowledgedTextView.setText("Total Sent: " + totalAcknowledged);
+
     }
 }

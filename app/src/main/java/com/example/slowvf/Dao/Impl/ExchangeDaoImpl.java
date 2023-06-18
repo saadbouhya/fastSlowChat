@@ -271,4 +271,19 @@ public class ExchangeDaoImpl implements ExchangeDao {
             e.printStackTrace();
         }
     }
+
+
+    public int getAcknowledgedMessagesCount(Context context) {
+        List<MessageEchange> exchangeMessages = getExchangeMessages(context);
+        int count = 0;
+
+        for (MessageEchange message : exchangeMessages) {
+            if (message.getDateReceived() != null) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
 }

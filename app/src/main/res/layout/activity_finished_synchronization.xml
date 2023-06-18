@@ -77,14 +77,32 @@
         android:text="Statistiques globales"
         android:textColor="?attr/colorPrimary" />
     <TextView
-        android:id="@+id/global_stats"
+        android:id="@+id/total_messages_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cet appareil est porteur de 85 localForConversations qui doivent
-        \nêtre reçus.
-        \nCet appareil est porteur de 25 accusés de réception.
-        \nTrouver d'autres trucs"
-        android:textColor="?attr/colorOnBackground"/>
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/total_received_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/total_acknowledged_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="20sp" />
+
 
     <Button
         android:id="@+id/fin_synch"
