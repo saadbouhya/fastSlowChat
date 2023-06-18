@@ -63,20 +63,25 @@ public class Exchange extends Fragment implements Serializable{
     @Getter
     private ProgressDialog progressDialog;
     private TextView instructionView;
+    private Button scanButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_exchange, container, false);
+        scanButton = rootView.findViewById(R.id.scan_button);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (BluetoothController.checkBluetoothPermission(Exchange.this)) {
+                    enableBluetoothFunctions(scanButton);
+                }
+            }
+        });
 
-        bluetoothController = new BluetoothController(this);
+        if (BluetoothController.checkBluetoothPermission(this)) {
+            enableBluetoothFunctions( scanButton);
 
-
-        //Bluetooth Visibility
-       if (bluetoothController.checkBluetoothPermission()) {
-           Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
-           discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
-           startActivity(discoverableIntent);
-       }
+        }
 
         exchangeView = rootView.findViewById(R.id.exchange_view);
         exchangeLayoutManager = new LinearLayoutManager(getContext());
@@ -85,12 +90,31 @@ public class Exchange extends Fragment implements Serializable{
         exchangeView.setAdapter(exchangeAdapter);
 
         instructionView = rootView.findViewById(R.id.instruction_view);
-        Button scanButton = rootView.findViewById(R.id.scan_button);
 
         // Hide the RecyclerView and show the empty view initially
         exchangeView.setVisibility(View.GONE);
         instructionView.setText(emptyList);
 
+        return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Ajoutez le code pour fermer le BluetoothServerSocket ici
+        if (bluetoothController != null) {
+            bluetoothController.closeSockets();
+        }
+    }
+
+
+    public void enableBluetoothFunctions(Button scanButton ){
+        bluetoothController = new BluetoothController(this);
+
+        //Bluetooth Visibility
+        Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
+        startActivity(discoverableIntent);
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +124,7 @@ public class Exchange extends Fragment implements Serializable{
                     progressDialog = new ProgressDialog(getContext());
                     progressDialog.setMessage("Waiting for Bluetooth devices...");
                     progressDialog.setCancelable(false);
-                     progressDialog.show();
+                    progressDialog.show();
 
                     // Clear the list of Bluetooth devices
                     bluetoothDevices.clear();
@@ -147,25 +171,7 @@ public class Exchange extends Fragment implements Serializable{
                 }
             }
         });
-
-        //Let for tests, delete after !!
-        Set<BluetoothDevice> pairedDevices = bluetoothController.getBluetoothAdapter().getBondedDevices();
-        for (BluetoothDevice device : pairedDevices) {
-            bluetoothDevices.add(new BluetoothItem(device.getName(), device.getAddress()));
-        }
-        refreshBluetoothList();
-        return rootView;
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // Ajoutez le code pour fermer le BluetoothServerSocket ici
-        if (bluetoothController != null) {
-            bluetoothController.closeSockets();
-        }
-    }
-
 
 
 
@@ -226,6 +232,19 @@ public class Exchange extends Fragment implements Serializable{
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_ENABLE_BT || requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (BluetoothController.checkBluetoothPermission(Exchange.this)) {
+                    enableBluetoothFunctions(scanButton);
+                }
+            }
+        }
     }
 
 

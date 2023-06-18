@@ -53,6 +53,8 @@ public class BluetoothController implements Serializable {
     private static final String ACCEPT_MESSAGE = "SLOW_CHAT_CONNECTION_ACCEPT";
     private static final String REFUSE_MESSAGE = "SLOW_CHAT_CONNECTION_REFUSE";
 
+    private volatile boolean isServerListening = true;
+
 
     private static final UUID APP_UUID = UUID.fromString("688575AD-9126-4F1C-A82A-495DAE7D5D52");
     private static final String serviceName = "FastSlowChat";
@@ -73,8 +75,9 @@ public class BluetoothController implements Serializable {
     private ExchangeCounter counter;
 
     public BluetoothController() {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        if(bluetoothAdapter == null) {
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
         try {
             serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(serviceName, APP_UUID);
         } catch (Exception e) {
@@ -102,7 +105,7 @@ public class BluetoothController implements Serializable {
             @Override
             public void run() {
 
-                while(true)
+                while(isServerListening)
                 {
                     try {
                         // Attendre une connexion entrante (cette opération bloque l'exécution)
@@ -207,7 +210,7 @@ public class BluetoothController implements Serializable {
         bluetoothAdapter.cancelDiscovery();
     }
 
-    public boolean checkBluetoothPermission() {
+    public static boolean checkBluetoothPermission(Exchange activity) {
         if (ContextCompat.checkSelfPermission(activity.getContext(), Manifest.permission.BLUETOOTH)
                 != PackageManager.PERMISSION_GRANTED) {
             // Bluetooth permission is not granted, request it
@@ -246,6 +249,9 @@ public class BluetoothController implements Serializable {
             }
         }
         return true;
+    }
+    public boolean checkBluetoothPermission() {
+       return checkBluetoothPermission(activity);
     }
 
     public void connectToDevice(String deviceAddress) throws IOException {
@@ -424,13 +430,17 @@ public class BluetoothController implements Serializable {
 
 
     public void closeSockets() {
-       closeExchangeSocket();
+       //closeExchangeSocket();
        closeServerSocket();
     }
     public void closeServerSocket() {
         try {
+            isServerListening =false;
             if (serverSocket != null) {
                 serverSocket.close();
+            }
+            if (socketAccepte != null) {
+                socketAccepte.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
