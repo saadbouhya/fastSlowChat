@@ -169,7 +169,8 @@ private static ChatController chatController;
                 localForConversations.add(localForConversation);
             }
         }
-Collections.reverse(localForConversations);
+
+        Collections.sort(localForConversations, Comparator.comparing(LocalForConversation::getDateWriting));
         return localForConversations;
     }
 
