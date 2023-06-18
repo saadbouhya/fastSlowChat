@@ -201,6 +201,7 @@ public class Exchange extends Fragment implements Serializable{
         Intent intent = new Intent(getContext(), FInishedSynchronization.class);
         intent.putExtra("bluetoothItem", bluetoothItem);
         startActivity(intent);
+        getActivity().finish();
     }
 
     public void showDialog(String title, String message) {

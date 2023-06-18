@@ -52,10 +52,6 @@ public class BluetoothController implements Serializable {
     private static final String REQUEST_MESSAGE = "SLOW_CHAT_CONNECTION_REQUEST";
     private static final String ACCEPT_MESSAGE = "SLOW_CHAT_CONNECTION_ACCEPT";
     private static final String REFUSE_MESSAGE = "SLOW_CHAT_CONNECTION_REFUSE";
-
-    private volatile boolean isServerListening = true;
-
-
     private static final UUID APP_UUID = UUID.fromString("688575AD-9126-4F1C-A82A-495DAE7D5D52");
     private static final String serviceName = "FastSlowChat";
     private static final String TAG = "ExchangeBt";
@@ -77,11 +73,6 @@ public class BluetoothController implements Serializable {
     public BluetoothController() {
         if(bluetoothAdapter == null) {
             bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        }
-        try {
-            serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(serviceName, APP_UUID);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         handler = new Handler();
         timeoutRunnable = new Runnable() {
@@ -105,11 +96,18 @@ public class BluetoothController implements Serializable {
             @Override
             public void run() {
 
-                while(isServerListening && !serverThread.isInterrupted())
+                try {
+                    Log.d(TAG, "On créée le serveur socket...");
+                    serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(serviceName, APP_UUID);
+                } catch (Exception e) {
+                    Log.e(TAG, "Echec de la création du serveur socket.");
+                    e.printStackTrace();
+                }
+                while(!serverThread.isInterrupted())
                 {
                     try {
+                        Log.d(TAG, "Le serveur socket attend une connexion...");
                         // Attendre une connexion entrante (cette opération bloque l'exécution)
-
                         socketAccepte = serverSocket.accept();
                         Log.d(TAG, "Connexion acceptée !");
 
@@ -140,7 +138,7 @@ public class BluetoothController implements Serializable {
                                             sendMessage(ACCEPT_MESSAGE,socketAccepte);
 
                                             // Partie du code où on fait de la sync
-
+                                            Log.d(TAG, "Ouverture activié synchronisation...");
                                             activity.openSynchronization(new BluetoothItem(device.getName(), device.getAddress()));
                                             try {
                                                 secondaryConnection(socketAccepte);
@@ -150,6 +148,7 @@ public class BluetoothController implements Serializable {
 
                                             // fermeture du socket
                                             try {
+                                                Log.d(TAG, "Interruption socket connected dans le WHILE...");
                                                 socketAccepte.close();
                                             } catch (IOException e) {
                                                 throw new RuntimeException(e);
@@ -160,7 +159,9 @@ public class BluetoothController implements Serializable {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             sendMessage(REFUSE_MESSAGE,socketAccepte);
+                                            // fermeture du socket
                                             try {
+                                                Log.d(TAG, "Interruption socket connected dans le WHILE...");
                                                 socketAccepte.close();
                                             } catch (IOException e) {
                                                 throw new RuntimeException(e);
@@ -181,7 +182,7 @@ public class BluetoothController implements Serializable {
             }
         });
         serverThread.start();
-        isServerListening = true;
+        Log.d(TAG,"On start le thread serverSocket...");
     }
 
     public BluetoothController(Exchange activity) {
@@ -437,14 +438,14 @@ public class BluetoothController implements Serializable {
     }
     public void closeServerSocket() {
         try {
+            Log.d(TAG, "Interruption thread serveur...");
             serverThread.interrupt();
-            isServerListening =false;
-            if (serverSocket != null) {
-                serverSocket.close();
-            }
             if (socketAccepte != null) {
+                Log.d(TAG, "Interruption socket connected...");
                 socketAccepte.close();
             }
+            Log.d(TAG, "Interruption socket serveur...");
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -453,6 +454,7 @@ public class BluetoothController implements Serializable {
     public void closeExchangeSocket() {
         try {
             if (socket != null) {
+                Log.d(TAG, "Interruption socket connexion...");
                 socket.close();
             }
         } catch (IOException e) {

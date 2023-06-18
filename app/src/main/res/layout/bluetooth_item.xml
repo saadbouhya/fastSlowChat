@@ -46,7 +46,7 @@
             android:layout_below="@id/textView"
             android:layout_alignLeft="@id/textView"
             android:text="Line 2"
-            android:textColor="#E3E3E3"
+            android:textColor="?attr/colorOnBackground"
             android:textSize="20sp"
             android:textStyle="bold" />
 
