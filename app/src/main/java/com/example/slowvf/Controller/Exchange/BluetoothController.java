@@ -440,12 +440,12 @@ public class BluetoothController implements Serializable {
         try {
             Log.d(TAG, "Interruption thread serveur...");
             serverThread.interrupt();
-            Log.d(TAG, "Interruption socket serveur...");
-            serverSocket.close();
             if (socketAccepte != null) {
                 Log.d(TAG, "Interruption socket connected...");
                 socketAccepte.close();
             }
+            Log.d(TAG, "Interruption socket serveur...");
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

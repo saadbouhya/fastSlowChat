@@ -52,6 +52,7 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
                 if (connectThread != null && connectThread.isAlive()) {
                     // Un thread est déjà en cours d'exécution, annulez-le si nécessaire
                     connectThread.interrupt();
+                    bluetoothController.closeExchangeSocket();
                 }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
