@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -51,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Set;
 
 //
 import android.content.pm.PackageManager;
@@ -62,7 +67,8 @@ public class CarteFragment extends Fragment {
     private MapView mapView;
     private Button downloadMap;
     private static final int SELECT_MAP_FILE = 0;
-    private int STORAGE_PERMISSION_CODE = 1000;
+    private static final int STORAGE_PERMISSION_CODE = 100;
+    private static final String TAG = "PERMISSION_TAG";
 
     private FragmentCarteBinding binding;
 
@@ -73,66 +79,43 @@ public class CarteFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_carte, container, false);
 
-        AndroidGraphicFactory.createInstance(getContext());
-
         mapView = rootView.findViewById(R.id.map);
         downloadMap = rootView.findViewById(R.id.downloadMap);
 
-//        // Get the authority from the manifest file provider
-//        String authority = "com.example.slowvf.fileprovider";
-//
-//        File file = new File(requireContext().getFilesDir(), "berlin.map");
-//
-//        // Create the content URI using FileProvider
-//        Uri fileUri = FileProvider.getUriForFile(requireContext(), authority, file);
-//
-//        openMap(fileUri);
+        // Get the authority from the manifest file provider
+        String authority = "com.example.slowvf.fileprovider";
+
+        String fileUrl = "https://download.mapsforge.org/maps/v5/europe/germany/berlin.map";
+        String fileName = "berlin.map"; // Replace with the actual file name
+        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(downloadsDir, fileName);
+
+        if (checkPermission()) {
+            Log.d(TAG, "onClick: Permission alrady Granted");
+
+        } else {
+            Log.d(TAG, "onClick: Permission not granted");
+
+            requestPermission();
+        }
+
+         if(file.exists()) {
+            downloadMap.setVisibility(View.GONE);
+
+            // Create the content URI using FileProvider
+            Uri fileUri = FileProvider.getUriForFile(requireContext(), authority, file);
+
+            AndroidGraphicFactory.createInstance(getContext());
+
+            openMap(fileUri);
+         }
 
         downloadMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // If OS is Marshmallow or above, handle runtime permission sdk between 23 and 29
-               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                   if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                       // Permission denied, request it
-                       Log.i("I", "Request Permission");
-
-                       String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
-                       // Show pop for runtime permission
-                       ActivityCompat.requestPermissions(requireActivity(), permissions, STORAGE_PERMISSION_CODE);
-
-                   } else {
-                       // Permission already granted, launch download
-                       Log.i("I", "Permission granted so launch download!");
-                   }
-               } else {
-                   // System OS is less then marshmallow, perform download
-                   Log.i("I", "No need for permission so launch download!");
-
-               }
+               startDownloading(fileUrl, fileName);
             }
         });
-
-
-//        File file = new File(requireContext().getFilesDir(), "ile-de-france.map");
-//
-//        if (file.exists()) {
-//            Log.i("I", "File exists");
-//
-//            // Get the authority from the manifest file provider
-//            String authority = "com.example.slowvf.fileprovider";
-//
-//            // Create the content URI using FileProvider
-//            Uri fileUri = FileProvider.getUriForFile(requireContext(), authority, file);
-//
-//            openMap(fileUri);
-//
-//            String filePath = file.getAbsolutePath();
-//        } else {
-//            String fileUrl = "https://download.mapsforge.org/maps/v5/europe/france/ile-de-france.map";
-//            String fileName = "ile-de-france.map";
-//        }
 
         return rootView;
     }
@@ -204,13 +187,95 @@ public class CarteFragment extends Fragment {
         super.onDestroy();
     }
 
-    // Handle permission result
+
+
+    private void startDownloading(String url, String fileName) {
+        // Create download request
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
+        // Alow type of network to download files
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        request.setTitle("Téléchargement de la carte");
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+
+        // Get download service and enqueue file
+        DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+
+    }
+
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Log.d(TAG, "reqestPermission: try");
+
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                intent.setData(uri);
+
+                storageActivityResultLauncher.launch(intent);
+            } catch (Exception e) {
+                Log.d(TAG, "RequestPermission: catch", e);
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                storageActivityResultLauncher.launch(intent);
+            }
+        } else {
+            // Android is below R
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requireActivity().requestPermissions(
+                        new String []{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        STORAGE_PERMISSION_CODE
+                );
+            }
+        }
+    }
+
+    private final ActivityResultLauncher<Intent> storageActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    Log.d(TAG, "onActivityResult: ");
+
+                    // Handle the result of our intent
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                       if (Environment.isExternalStorageManager()) {
+                           Log.d(TAG, "onActivityResult: Manage External Storage Permission is granted");
+                           // Launch download
+                       } else {
+                           Log.d(TAG, "onActivityResult: Manager External Storage Permission is denied");
+                           Toast.makeText(requireActivity(), "Permission refusé", Toast.LENGTH_SHORT).show();
+                       }
+                    } else {
+
+                    }
+
+                }
+            }
+    );
+
+    public boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            int write = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+   // Handle permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 // Permission Granted from popup, launch download
                 Log.i("I", "Launch Download");
             } else {
@@ -218,23 +283,5 @@ public class CarteFragment extends Fragment {
                 Toast.makeText(requireContext(), "Permission refusée", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private void startDownloading(String url) {
-        // Create download request
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-
-        // Alow type of network to download files
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        request.setTitle("Download Map");
-//        request.setDescription("Download Map");
-        request.allowScanningByMediaScanner();
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "ileDeFrance.map");
-
-        // Get download service and enque file
-        DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-
     }
 }
