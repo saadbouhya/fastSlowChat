@@ -22,6 +22,7 @@ import com.example.slowvf.View.MainActivityNavigation;
 
 public class IdentificationActivity extends AppCompatActivity {
     private IdentificationController identificationController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -41,9 +42,7 @@ public class IdentificationActivity extends AppCompatActivity {
             EditText pseudo = findViewById(R.id.editTextPseudo);
             signupButton.setEnabled(false);
             importData.setEnabled(false);
-            if (ActivityCompat.checkSelfPermission(IdentificationActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(IdentificationActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-            }
+
             // Ajouter un écouteur de clic pour le bouton d'inscription
             signupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
