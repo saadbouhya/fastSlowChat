@@ -41,14 +41,14 @@ public class IdentificationActivity extends AppCompatActivity {
             EditText pseudo = findViewById(R.id.editTextPseudo);
             signupButton.setEnabled(false);
             importData.setEnabled(false);
+            if (ActivityCompat.checkSelfPermission(IdentificationActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(IdentificationActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+            }
             // Ajouter un écouteur de clic pour le bouton d'inscription
             signupButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (ActivityCompat.checkSelfPermission(IdentificationActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(IdentificationActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-                        return;
-                    }
+
                     identificationController.createUser(pseudo.getText().toString());
                     startActivity(intent);
                 }
