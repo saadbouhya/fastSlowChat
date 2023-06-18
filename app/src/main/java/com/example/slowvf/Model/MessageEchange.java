@@ -1,6 +1,11 @@
 package com.example.slowvf.Model;
 
-public class MessageEchange {
+import java.io.Serializable;
+
+import lombok.Data;
+
+@Data
+public class MessageEchange implements Serializable {
     private String idSender;
     private String idReceiver;
     private String dateWriting;
@@ -15,43 +20,25 @@ public class MessageEchange {
         this.dateReceived = dateReceived;
     }
 
-    public String getIdSender() {
-        return idSender;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MessageEchange)) return false;
+
+        MessageEchange that = (MessageEchange) o;
+
+        if (getIdSender() != null ? !getIdSender().equals(that.getIdSender()) : that.getIdSender() != null)
+            return false;
+        if (getIdReceiver() != null ? !getIdReceiver().equals(that.getIdReceiver()) : that.getIdReceiver() != null)
+            return false;
+        return getDateWriting() != null ? getDateWriting().equals(that.getDateWriting()) : that.getDateWriting() == null;
     }
 
-    public void setIdSender(String idSender) {
-        this.idSender = idSender;
-    }
-
-    public String getIdReceiver() {
-        return idReceiver;
-    }
-
-    public void setIdReceiver(String idReceiver) {
-        this.idReceiver = idReceiver;
-    }
-
-    public String getDateWriting() {
-        return dateWriting;
-    }
-
-    public void setDateWriting(String dateWriting) {
-        this.dateWriting = dateWriting;
-    }
-
-    public String getMessageText() {
-        return messageText;
-    }
-
-    public void setMessageText(String messageText) {
-        this.messageText = messageText;
-    }
-
-    public String getDateReceived() {
-        return dateReceived;
-    }
-
-    public void setDateReceived(String dateReceived) {
-        this.dateReceived = dateReceived;
+    @Override
+    public int hashCode() {
+        int result = getIdSender() != null ? getIdSender().hashCode() : 0;
+        result = 31 * result + (getIdReceiver() != null ? getIdReceiver().hashCode() : 0);
+        result = 31 * result + (getDateWriting() != null ? getDateWriting().hashCode() : 0);
+        return result;
     }
 }
