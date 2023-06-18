@@ -105,11 +105,10 @@ public class BluetoothController implements Serializable {
             @Override
             public void run() {
 
-                while(isServerListening && !serverThread.isInterrupted())
+                while(!serverThread.isInterrupted())
                 {
                     try {
                         // Attendre une connexion entrante (cette opération bloque l'exécution)
-
                         socketAccepte = serverSocket.accept();
                         Log.d(TAG, "Connexion acceptée !");
 
@@ -438,10 +437,8 @@ public class BluetoothController implements Serializable {
     public void closeServerSocket() {
         try {
             serverThread.interrupt();
-            isServerListening =false;
-            if (serverSocket != null) {
-                serverSocket.close();
-            }
+            serverSocket.close();
+
             if (socketAccepte != null) {
                 socketAccepte.close();
             }

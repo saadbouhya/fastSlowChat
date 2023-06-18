@@ -66,6 +66,7 @@ public class ExchangeAdapter extends RecyclerView.Adapter<ExchangeAdapter.Exchan
                             public void run() {
                                 try {
                                     bluetoothController.connectToDevice(device.getMacAddress());
+                                    connectThread.interrupt();
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
