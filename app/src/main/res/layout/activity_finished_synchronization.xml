@@ -45,46 +45,13 @@
             android:textColor="?attr/colorOnBackground"
             android:textSize="20sp" />
     </RelativeLayout>
-    <TextView
-        android:id="@+id/statistics_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Statistiques liées à l'échange"
-        android:textColor="?attr/colorPrimary"
-        android:paddingLeft="20dp"
-        android:paddingTop="20dp"
-        android:layout_gravity="left"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="left"
         android:paddingLeft="30dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="45dp"
-            tools:layout_editor_absoluteY="324dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Messages envoyés : "
-                android:textColor="?attr/colorOnBackground" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Messages reçus :"
-                android:textColor="?attr/colorOnBackground" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Message"
-                android:textColor="?attr/colorOnBackground" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -92,18 +59,6 @@
             android:orientation="vertical"
             tools:layout_editor_absoluteX="175dp"
             tools:layout_editor_absoluteY="324dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="12"
-                android:textColor="?attr/colorPrimary" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5"
-                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"

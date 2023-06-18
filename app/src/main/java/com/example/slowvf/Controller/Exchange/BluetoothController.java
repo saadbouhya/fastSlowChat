@@ -105,7 +105,7 @@ public class BluetoothController implements Serializable {
             @Override
             public void run() {
 
-                while(isServerListening)
+                while(isServerListening && !serverThread.isInterrupted())
                 {
                     try {
                         // Attendre une connexion entrante (cette opération bloque l'exécution)
@@ -175,11 +175,13 @@ public class BluetoothController implements Serializable {
 
                     } catch (IOException e) {
                         e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
                 }
             }
         });
         serverThread.start();
+        isServerListening = true;
     }
 
     public BluetoothController(Exchange activity) {
@@ -430,11 +432,12 @@ public class BluetoothController implements Serializable {
 
 
     public void closeSockets() {
-       //closeExchangeSocket();
+       closeExchangeSocket();
        closeServerSocket();
     }
     public void closeServerSocket() {
         try {
+            serverThread.interrupt();
             isServerListening =false;
             if (serverSocket != null) {
                 serverSocket.close();
@@ -461,7 +464,7 @@ public class BluetoothController implements Serializable {
     public void onMessagesReceived(List<MessageEchange> messages) {
         String currentUser = activity.getUserId();
         for (MessageEchange message : messages) {
-            if (message.getIdReceiver() == currentUser) {
+            if (message.getIdReceiver().equals( currentUser) ){
                 if (!exchangeDao.messageExist(activity.getContext(), message)) {
                     counter.setReceivedMessages(counter.getReceivedMessages() + 1);
                     LocalDateTime now = null;
@@ -476,7 +479,7 @@ public class BluetoothController implements Serializable {
                     }
 
                 }
-            } else if (message.getIdSender() == currentUser) {
+            } else if (message.getIdSender().equals(currentUser) ){
                 if (message.getDateReceived() != null) {
                     if (exchangeDao.messageExist(activity.getContext(), message)) {
                         exchangeDao.updateSentMessage(activity.getContext(), new SentMessage(message.getIdReceiver(),
