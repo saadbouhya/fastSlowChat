@@ -63,15 +63,15 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="100dp"
             android:layout_marginRight="40dp"
-            android:background="?android:attr/colorBackground"
+            android:background="@drawable/background_input_field"
             android:padding="12dp"
             android:textColorHint="?attr/colorOutline"
             android:hint="Votre pseudonyme ici"
+            android:inputType="textShortMessage"
             app:layout_constraintStart_toEndOf="@+id/textViewPseudoLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
