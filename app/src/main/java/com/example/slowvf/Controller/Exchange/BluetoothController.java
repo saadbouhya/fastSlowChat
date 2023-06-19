@@ -48,7 +48,7 @@ public class BluetoothController implements Serializable {
 
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
-    private static final long TIMEOUT_DELAY_MS = 5000; // 10 seconds
+    private static final long TIMEOUT_DELAY_MS = 10000; // 10 seconds
     private static final String REQUEST_MESSAGE = "SLOW_CHAT_CONNECTION_REQUEST";
     private static final String ACCEPT_MESSAGE = "SLOW_CHAT_CONNECTION_ACCEPT";
     private static final String REFUSE_MESSAGE = "SLOW_CHAT_CONNECTION_REFUSE";
