@@ -119,7 +119,7 @@ public class Exchange extends Fragment implements Serializable{
         //Bluetooth Visibility
 
         Intent discoverableIntent = new Intent(bluetoothController.getBluetoothAdapter().ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 1200);
+        discoverableIntent.putExtra(bluetoothController.getBluetoothAdapter().EXTRA_DISCOVERABLE_DURATION, 120);
         startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE);
 
         scanButton.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +259,7 @@ public class Exchange extends Fragment implements Serializable{
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_DISCOVERABLE) {
-            if (resultCode == 1200) {
+            if (resultCode == 120) {
                 visibilityText.setText("Visible en tant que " + bluetoothController.getBluetoothAdapter().getDefaultAdapter().getName());
             } else {
                 // User declined or canceled the discoverability request
