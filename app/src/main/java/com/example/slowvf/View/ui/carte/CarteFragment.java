@@ -85,8 +85,8 @@ public class CarteFragment extends Fragment {
         // Get the authority from the manifest file provider
         String authority = "com.example.slowvf.fileprovider";
 
-        String fileUrl = "https://download.mapsforge.org/maps/v5/europe/france/nord-pas-de-calais.map";
-        String fileName = "nord-pas-de-calais.map"; // Replace with the actual file name
+        String fileUrl = "https://drive.google.com/uc?export=download&id=1aGbGcC1zRa5_Pg44tnFs3CgiTFwyW53v&confirm=t&uuid=cf2223cc-b057-49ac-ba9c-b6da9298d3d7&at=AKKF8vxUq4y5eOzMy0EJ6V_BUw8r:1687169137822";
+        String fileName = "nord-pas-de-calais-rebuilt.map"; // Replace with the actual file name
         File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(downloadsDir, fileName);
 
