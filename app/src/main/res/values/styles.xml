@@ -1,0 +1,15 @@
+<resources>
+    <!-- Style de base de l'application -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Personnalisation de l'apparence de l'application -->
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#000000</item>
+    </style>
+    <style name="MyAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="colorAccent">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+</resources>
