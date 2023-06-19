@@ -97,14 +97,6 @@
         </TableLayout>
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Envoyer msg"
-            android:backgroundTint="?attr/colorPrimary"
-            android:textColor="?attr/colorOnPrimary"
-            android:layout_marginHorizontal="50dp"/>
-        <Button
             android:id="@+id/deleteContact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
