@@ -85,8 +85,8 @@ public class CarteFragment extends Fragment {
         // Get the authority from the manifest file provider
         String authority = "com.example.slowvf.fileprovider";
 
-        String fileUrl = "https://download.mapsforge.org/maps/v5/europe/germany/berlin.map";
-        String fileName = "berlin.map"; // Replace with the actual file name
+        String fileUrl = "https://download.mapsforge.org/maps/v5/europe/france/nord-pas-de-calais.map";
+        String fileName = "nord-pas-de-calais.map"; // Replace with the actual file name
         File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(downloadsDir, fileName);
 
@@ -166,7 +166,7 @@ public class CarteFragment extends Fragment {
              * The map also needs to know which area to display and at what zoom level.
              * Note: this map position is specific to Berlin area.
              */
-            mapView.setCenter(new LatLong(52.517037, 13.38886));
+            mapView.setCenter(new LatLong(50.433456, 2.819352));
             mapView.setZoomLevel((byte) 12);
         } catch (Exception e) {
             /*
@@ -182,8 +182,8 @@ public class CarteFragment extends Fragment {
          * Whenever your activity exits, some cleanup operations have to be performed lest your app
          * runs out of memory.
          */
-        mapView.destroyAll();
-        AndroidGraphicFactory.clearResourceMemoryCache();
+        //mapView.destroyAll();
+        //AndroidGraphicFactory.clearResourceMemoryCache();
         super.onDestroy();
     }
 
